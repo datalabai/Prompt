@@ -1,11 +1,18 @@
 "use client";
 
-import React from "react";
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { UserAuth } from "../context/AuthContext";
 import { addUserToFirestore } from "../firebase";
+import { BsPersonCircle } from 'react-icons/bs';
+
 
 const Navbar = () => {
+  const [open, setOpen] = useState(false);
+    const [state, setState] = useState({
+        left: false,
+    });
+
   const { user, googleSignIn, logOut } = UserAuth();
 
   const formatDisplayName = (displayName) => {
@@ -25,6 +32,10 @@ const Navbar = () => {
     }
   };
 
+  const handleOpenNavbar = () => {
+    setOpen(prev => !prev);
+}
+
   const handleSignOut = async () => {
     try {
       await logOut();
@@ -35,27 +46,39 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 flex flex-col sm:flex-row justify-between items-center py-4 px-6 bg-white shadow">
+    <nav className="fixed top-0 left-0 right-0 z-50 flex flex-col sm:flex-row justify-between items-center py-4 px-6 bg-nav-lab shadow">
       <div className="flex mb-2 sm:mb-0 space-x-2">
-        <img src="https://firebasestorage.googleapis.com/v0/b/data-bounty-9a821.appspot.com/o/WhatsApp%20Image%202024-02-20%20at%204.27.58%20PM.jpeg?alt=media&token=14bd86c5-9492-411c-bdf3-ed5d4798c617" width={35} height={35} alt="Logo" />
+        <img src="./org-logo.png"  width={35} height={35} alt="Logo" />
         <Link href="/" passHref>
-          <span className="text-2xl no-underline text-gray-900 hover:text-blue-700 font-bold">DataLabAi</span>
+          <span className="text-2xl no-underline text-white">DatalabAI</span>
         </Link>
       </div>
 
       <div className="self-center">
         {user ? (
           <div className="flex items-center">
-            <span className="text-md no-underline text-black hover:text-blue-700 ml-2 px-1">
-              {formatDisplayName(user.displayName)}
+            <span className="text-md no-underline text-white ml-2 px-1">
+            Welcome, {formatDisplayName(user.displayName)}   
             </span>
-            <button onClick={handleSignOut} className="text-md no-underline text-black hover:text-blue-700 ml-2 px-4 py-2 bg-blue-500 rounded-md text-white focus:outline-none">
-              Logout
-            </button>
+            
+            <BsPersonCircle onClick={handleOpenNavbar} className='cursor-pointer text-white m-0 w-8 h-8' />
+                    {
+                        open && <div className='absolute top-5 border rounded bg-nav-lab ml-32 mt-6 justify-items-end	text-right'>
+                            <div className='flex flex-col space '>
+                               <button onClick={handleSignOut} className="text-md no-underline ml-2 px-4 py-2 text-white focus:outline-none">
+                                  View Profile
+                                </button>
+                                <button onClick={handleSignOut} className="text-md no-underline ml-2 px-4 py-2 text-white focus:outline-none">
+                                  Logout
+                                </button>
+                            </div>
+                        </div>
+                    }
+           
           </div>
         ) : (
-          <button onClick={handleSignIn} className="text-md no-underline text-black hover:text-blue-700 ml-2 px-4 py-2 bg-blue-500 rounded-md text-white focus:outline-none">
-            Login With Google
+          <button onClick={handleSignIn} className="text-md no-underline ml-2 px-4 py-2  text-white focus:outline-none">
+            Login
           </button>
         )}
       </div>

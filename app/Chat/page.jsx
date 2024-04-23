@@ -8,6 +8,11 @@ import { updateLikesInFirebase } from '../firebase';
 import ReplySection from '../components/Reply.jsx'; // Update the path as per your file structure
 import { listenForMessages } from '../firebase'; // Update the path as per your file structure
 import { addMessageToChannel, addCommentToMessage, getAllMessagesFromChannel, getAllCommentsFromMessage } from '../firebase';
+import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
+import RepeatIcon from "@mui/icons-material/Repeat";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import PublishIcon from "@mui/icons-material/Publish";
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 const Chat = () => {
     const searchParams = useSearchParams();
@@ -176,55 +181,65 @@ const Chat = () => {
     // }, [messages]);
 
     return (
-        <div className={`flex flex-col h-[700px]  ${showReplySection ? 'w-[50rem]' : ''} bg-gray-100 ml-72`} style={{ marginTop: '68px' }}>
+        <div className={`flex flex-col h-[700px]  ${showReplySection ? 'w-[50rem]' : ''} ml-72`} style={{ marginTop: '68px' }}>
             {/* Header */}
             {user ? (
                 <React.Fragment>
-                    <div className="p-4 shadow-lg bg-white">
+                    <div className="p-4 bg-white border	border-slate-300	">
                         <h2 className="text-lg font-semibold text-gray-800"># {type}</h2>
                     </div>
 
                     {/* Messages display area */}
-                    <div className="flex-grow p-4 overflow-y-auto">
+                    <div className="flex-grow overflow-y-auto ">
                         {messages.map((message, index) => (
-                            <div key={message.id} className="flex flex-col mb-3">
+                            <div key={message.id} className="flex flex-col border	border-slate-300">
                                 {/* Display date with border */}
-                                {index === 0 || formatDate(new Date(message.timestamp)) !== formatDate(new Date(messages[index - 1].timestamp)) ? (
+                                {/* {index === 0 || formatDate(new Date(message.timestamp)) !== formatDate(new Date(messages[index - 1].timestamp)) ? (
                                     <div className="border-b border-gray-300 pb-2 mb-2">
                                         <div className="text-lg text-gray-500 text-center">{formatDate(new Date(message.timestamp))}</div>
                                     </div>
-                                ) : null}
+                                ) : null} */}
                                 {/* Individual message with time */}
                                 <div className={`flex items-start space-x-4`}>
+                                    <div className={'flex bg-white rounded-lg p-6 w-full'}>
                                     <img src={message.userPhoto} alt="Profile" className="w-10 h-10 rounded-full" />
-                                    <div className="bg-gray-200 rounded-lg p-6 w-full">
+                                    <div className="ml-2 bg-white rounded-lg w-full">
+                                        
                                         <div className="flex justify-between items-center mb-2">
-                                            <span className="font-semibold text-gray-800">{message.userName}</span>
+                                            <span className="font-semibold text-gray-800">{message.userName}<span className="post__headerSpecial">@{message.userName}</span></span>
                                             <span className="text-sm text-gray-500">{formatTime(new Date(message.timestamp))}</span>
                                         </div>
                                         <p className="text-gray-800">{message.text}</p>
                                         {message.imageUrl && (
                                             <img src={message.imageUrl} alt="Message Image" width={250} height={250} onLoad={handleImageLoad} />
                                         )}
-                                        <div className="flex items-center space-x-4 mt-2">
+                                        <div className="flex items-center space-x-4 mt-2 post__footer">
                                             {/* Reply icon */}
-                                            <FiCornerUpLeft
+                                            <div>
+                                            <ChatBubbleOutlineIcon
                                                 className="cursor-pointer text-gray-500 hover:text-gray-700"
                                                 size={18}
-                                                onClick={() => handleReply(message)}
+                                                onClick={() => handleReply(message)}  
                                             />
+                                            {/* Display the number of replies */}
+                                            <span className="text-sm text-gray-500">{message.replies}</span>
+                                            </div>
+                                            <RepeatIcon fontSize="small" className="chatBubble"/>
                                             {/* Like icon */}
-                                            <FiThumbsUp
+                                            <div>
+                                            <FavoriteBorderIcon
                                                 className={`cursor-pointer text-gray-500 hover:text-gray-700 ${likedMessages.has(message.id) ? 'text-blue-500' : ''}`}
                                                 size={18}
                                                 onClick={() => handleLike(message)}
                                             />
                                             {/* Display the number of likes */}
                                             <span className="text-sm text-gray-500">{message.likes}</span>
-                                            {/* Display the number of replies */}
-                                            <span className="text-sm text-gray-500">Replies: {message.replies}</span>
+                                            </div>
+                                            <PublishIcon fontSize="small" className="chatBubble"/>
                                         </div>
                                     </div>
+                                     </div>   
+                                    
                                 </div>                
                             </div>
                         ))}
@@ -232,20 +247,21 @@ const Chat = () => {
                     </div>
 
                     {/* Footer */}
-                    <div className="p-4 bg-white mb-5">
-                        <div className="flex items-center">
-                            <input
+                    <div className="flex items-center p-4 bg-white mb-5">
+                        <div className="mr-4 flex-grow">
+                            <input 
                                 type="text"
                                 value={inputValue}
                                 onChange={handleInputChange}
                                 onKeyPress={handleKeyPress}
                                 placeholder="Type your message..."
-                                className="flex-grow border border-gray-300 rounded-md p-2 mr-2 resize-none text-black focus:outline-none"
+                                className="min-w-full border border-gray-300 rounded-xl p-2  resize-none text-black focus:outline-none"
                             />
+                            
+                        </div>
+                        <div className="bg-nav-lab rounded-xl cursor-pointer w-12 text-center">
                             {/* Replace send button with an icon */}
-                            <FiSend
-                                className="cursor-pointer text-blue-500 hover:text-blue-600"
-                                size={36}
+                            <ArrowForwardIcon
                                 onClick={handleSendMessage}
                             />
                         </div>

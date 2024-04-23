@@ -2,7 +2,7 @@ import { auth } from '../firebase';
 import { listenForComments, addCommentToMessage } from '../firebase';
 import { useState,useEffect,useRef } from 'react';
 import { FiSend, FiCornerUpLeft, FiThumbsUp } from 'react-icons/fi';
-
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 
 const ReplySection = ({ message ,type,setShowReplySection,setSelectedMessage}) => {
     const [comments, setComments] = useState([]);
@@ -83,13 +83,16 @@ return (
             <div className="flex items-start space-x-4">
                 <img src={message.userPhoto} alt="Profile" className="w-10 h-10 rounded-full" />
                 <div className="flex flex-col w-full">
-                    <div className="bg-gray-100 rounded-lg p-2 mb-2">
-                        <span className="font-semibold text-gray-800">{message.userName}</span>
+                    <div className="rounded-lg  mb-2">
+                        <span className="font-semibold text-gray-800">{message.userName}<span className="post__headerSpecial">@{message.userName}</span></span>
                         <span className="text-sm text-gray-500 ml-2">{formatTime(new Date(message.timestamp))}</span>
                     </div>
                     <p className="text-gray-800">{message.text}</p>
+                    {message.imageUrl && (
+                        <img src={message.imageUrl} alt="Message" width={200} height={200} />
+                    )}
                     <div className="flex items-center space-x-4 mt-2">
-                        <FiThumbsUp
+                        <FavoriteBorderIcon
                             className="cursor-pointer text-gray-500 hover:text-gray-700"
                             size={18}
                             onClick={handleLike}
@@ -106,14 +109,14 @@ return (
                 {comments.map((comment, index) => (
                     <div key={index} className="flex items-start">
                         <img src={comment.userPhoto} alt="Profile" className="w-8 h-8 rounded-full" />
-                        <div className="bg-gray-200 rounded-lg p-2 ml-2 w-full">
+                        <div className="rounded-lg p-2 ml-2 w-full">
                             <div className="flex justify-between items-center">
-                                <span className="font-semibold text-gray-800">{comment.sender}</span>
+                                <span className="font-semibold text-gray-800">{comment.sender}<span className="post__headerSpecial">@{comment.sender}</span></span>
                                 <span className="text-sm text-gray-500">{formatTime(new Date(comment.date))}</span>
                             </div>
                             <p className="text-gray-800">{comment.text}</p>
                             <div className="flex items-center space-x-4 mt-2">
-                                <FiThumbsUp
+                                <FavoriteBorderIcon
                                     className="cursor-pointer text-gray-500 hover:text-gray-700"
                                     size={16}
                                     onClick={() => handleLike(comment)}
@@ -122,12 +125,12 @@ return (
                             </div>
                         </div>
                     </div>
-                ))}
+                ))} 
                 <div ref={commentsEndRef} /> {/* Ref for scrolling to end */}
             </div>
         </div>
         {/* Comment input */}
-        <div className="flex items-center mt-4">
+        <div className="flex items-center mt-4 mb-28">
             <input
                 type="text"
                 value={inputValue}
@@ -145,4 +148,4 @@ return (
 );
 };
 
-export default ReplySection;   
+export default ReplySection;
