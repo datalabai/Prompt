@@ -1,4 +1,4 @@
-// File: /Users/kishore/Desktop/discord/app/layout.js
+// File: /Users/kishore/Desktop/Data-Web/app/layout.js
 import * as entry from '../../../app/layout.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

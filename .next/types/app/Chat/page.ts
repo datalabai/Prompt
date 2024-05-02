@@ -1,4 +1,4 @@
-// File: /Users/kishore/Desktop/discord/app/Chat/page.jsx
+// File: /Users/kishore/Desktop/Data-Web/app/Chat/page.jsx
 import * as entry from '../../../../app/Chat/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

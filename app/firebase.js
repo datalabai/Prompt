@@ -57,7 +57,7 @@ const fetchImageForMessage = async (message) => {
   }
 };
 
-export const addMessageToChannel = async (channelId,messageData) => {
+export const addMessageToChannel = async (channelId,messageData,prompt) => {
   // Create channel document if not exists
   const channelRef = doc(db, "channels", channelId);
   await setDoc(channelRef, { name: channelId }, { merge: true });
@@ -69,9 +69,8 @@ export const addMessageToChannel = async (channelId,messageData) => {
 
   console.log(user);
   console.log(messageData.text);
+  if(prompt){
   const image= await fetchImageForMessage(messageData.text);
-
-
   try {
     await addDoc(messagesRef, {
       text: messageData.text,
@@ -86,6 +85,22 @@ export const addMessageToChannel = async (channelId,messageData) => {
   } catch (error) {
     console.error("Error adding message: ", error);
   }
+  }
+  else{
+  try {
+    await addDoc(messagesRef, {
+      text: messageData.text,
+      userName: user.displayName,
+      userPhoto: user.photoURL,
+      timestamp: Date.now(),
+      likes: 0,
+      replies: 0
+    });
+    console.log("Message added successfully.");
+  } catch (error) {
+    console.error("Error adding message: ", error);
+  }
+}
 };
 
 export const listenForComments = (channelId, messageId, callback) => {

@@ -40,12 +40,15 @@ const Sidebar = () => {
                             <span className="text-lg  text-black-400 ml-4">Home</span>
                         </div>
                     </Link>
-                    <Link  href="/Chat?type=Personal" >
-                        <div className='flex items-center p-3 rounded-lg hover:bg-sky-100 transition duration-300 ease-in-out'>
-                            <AccountCircleIcon/>
-                            <span className="text-lg  text-black-400 ml-4">{user.displayName}</span>
-                        </div>
-                    </Link>
+                    {user ? (
+                        <Link href="/Chat?type=Personal">
+                            <div className='flex items-center p-3 rounded-lg hover:bg-sky-100 transition duration-300 ease-in-out'>
+                                <AccountCircleIcon/>
+                                <span className="text-lg  text-black-400 ml-4">{user.displayName}</span>
+                            </div>
+                        </Link>
+                    ) : ''
+                        }
                     <Link  href="/Chat?type=Memes" >
                         <div className='flex items-center p-3 rounded-lg hover:bg-sky-100 transition duration-300 ease-in-out'>
                             <FlutterDashIcon/>
