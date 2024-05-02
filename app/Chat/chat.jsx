@@ -186,11 +186,11 @@ const Chat = () => {
     };
 
     return (
-        <div className={`flex flex-col h-[700px]  ${showReplySection ? 'w-[50rem]' : ''} ml-72`} style={{ marginTop: '68px' }}>
+        <div className={`flex flex-col h-[650px] max-w-2xl ${showReplySection ? '' : ''} ml-72`} style={{ marginTop: '68px' }}>
             {/* Header */}
             {user ? (
                 <React.Fragment>
-                   <div className={`flex space-x-4 p-4 shadow-lg bg-white`}>
+                   <div className={`flex space-x-4 p-4 bg-white`}>
                         <h2 className="text-lg font-semibold text-gray-800"># {type}</h2>
                         <h1 className='items-center mt-1 text-sm text-gray-600'>-</h1>
                         <h1 className='items-center mt-1 text-sm text-gray-600'>This is a {type} channel , users can generate images</h1>
@@ -198,7 +198,7 @@ const Chat = () => {
 
 
                     {/* Messages display area */}
-                    <div className="flex-grow overflow-y-auto ">
+                    <div className="flex-grow overflow-y-auto max-w-2xl">
                         {messages.map((message, index) => (
                             <div key={message.id} className="flex flex-col border border-slate-300 border-x-0 border-b-0">
                                 {/* Display date with border */}
@@ -214,7 +214,7 @@ const Chat = () => {
                                     <div className="ml-2 bg-white rounded-lg w-full">
                                         
                                         <div className="flex justify-between items-center mb-2">
-                                            <span className="font-semibold text-gray-800">{message.userName}<span className="post__headerSpecial">@{message.userName}</span></span>
+                                            <span className="font-semibold text-gray-800">{message.userName}</span>
                                             <span className="text-sm text-gray-500">{formatTime(new Date(message.timestamp))}</span>
                                         </div>
                                         <p className="text-gray-800">{message.text}</p>
@@ -230,7 +230,7 @@ const Chat = () => {
                                                 onClick={() => handleReply(message)}  
                                             />
                                             {/* Display the number of replies */}
-                                            <span className="text-sm text-gray-500">{message.replies}</span>
+                                            <span className="text-sm text-gray-500 ml-0.5">{message.replies}</span>
                                             </div>
                                             <RepeatIcon fontSize="small" className="chatBubble"/>
                                             {/* Like icon */}
@@ -241,7 +241,7 @@ const Chat = () => {
                                                 onClick={() => handleLike(message)}
                                             />
                                             {/* Display the number of likes */}
-                                            <span className="text-sm text-gray-500">{message.likes}</span>
+                                            <span className="text-sm text-gray-500 ml-0.5">{message.likes}</span>
                                             </div>
                                             <PublishIcon fontSize="small" className="chatBubble"/>
                                         </div>
@@ -282,13 +282,13 @@ const Chat = () => {
             {selectedMenuOption === 'prompt' && (
                 <div className="flex items-center space-x-2">
                     <AutoFixHighIcon color="primary" />
-                    <span className="text-xl text-gray-500">:</span>
+                   
                 </div>
             )}
             {selectedMenuOption === 'chat' && (
                 <div className="flex items-center space-x-2">
                     <ChatBubbleOutlineIcon color="primary" className='items-center mt-1'/>
-                    <span className="text-xl text-gray-500">:</span>
+                   
                 </div>
             )}
             <input 

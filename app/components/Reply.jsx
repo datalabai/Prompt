@@ -3,6 +3,9 @@ import { listenForComments, addCommentToMessage } from '../firebase';
 import { useState,useEffect,useRef } from 'react';
 import { FiSend, FiCornerUpLeft, FiThumbsUp } from 'react-icons/fi';
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import DisabledByDefaultRoundedIcon from '@mui/icons-material/DisabledByDefaultRounded';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 
 const ReplySection = ({ message ,type,setShowReplySection,setSelectedMessage}) => {
     const [comments, setComments] = useState([]);
@@ -66,8 +69,8 @@ const ReplySection = ({ message ,type,setShowReplySection,setSelectedMessage}) =
     };
 
 return (
-    <div className="fixed top-15 right-0 h-full w-1/4 bg-white z-10 p-4 shadow-lg overflow-y-auto">
-        <div className="flex justify-between items-center mb-4">
+    <div className="border-x fixed top-15 right-0 h-full w-1/3 bg-white z-10 p-4 overflow-y-auto">
+        <div className="flex justify-between items-center pb-4 border-b">
             <h3 className="text-lg font-semibold text-gray-800">Replying to:</h3>
             <button
                 className="text-red-500 hover:text-red-700"
@@ -76,52 +79,66 @@ return (
                     setSelectedMessage(null);
                 }}
             >
-                Close
+                <DisabledByDefaultRoundedIcon color="primary" />
             </button>
         </div>
-        <div className="bg-gray-200 rounded-lg p-3 mb-4">
+        <div className="bg-white-200 rounded-lg p-3 mb-4">
             <div className="flex items-start space-x-4">
                 <img src={message.userPhoto} alt="Profile" className="w-10 h-10 rounded-full" />
                 <div className="flex flex-col w-full">
-                    <div className="rounded-lg  mb-2">
-                        <span className="font-semibold text-gray-800">{message.userName}<span className="post__headerSpecial">@{message.userName}</span></span>
+                    <div className="flex justify-between items-center mb-2">
+                        <span className="font-semibold text-gray-800">{message.userName}</span>
                         <span className="text-sm text-gray-500 ml-2">{formatTime(new Date(message.timestamp))}</span>
                     </div>
                     <p className="text-gray-800">{message.text}</p>
                     {message.imageUrl && (
                         <img src={message.imageUrl} alt="Message" width={200} height={200} />
                     )}
-                    <div className="flex items-center space-x-4 mt-2">
-                        <FavoriteBorderIcon
+                    <div className="flex items-center mt-2">
+                        <ThumbUpIcon
                             className="cursor-pointer text-gray-500 hover:text-gray-700"
                             size={18}
                             onClick={handleLike}
                         />
-                        <span className="text-sm text-gray-500">{likes}</span>
+                        <span className="text-sm text-gray-500 ml-0.5 mr-8">{likes}</span>
+                        <ThumbDownIcon
+                            className="cursor-pointer text-gray-500 hover:text-gray-700"
+                            size={18}
+                            onClick={handleLike}
+                        />
+                        <span className="text-sm text-gray-500 ml-0.5">{likes}</span>
                     </div>
+                    
                 </div>
             </div>
         </div>
         {/* Comments section with scrollbar */}
-        <div className="bg-gray-100 rounded-lg p-3 mb-4 overflow-y-auto" style={{ maxHeight: '300px' }}>
-            <h4 className="text-lg font-semibold text-gray-800 mb-2">Comments</h4>
+        <div className="bg-white-100 rounded-lg p-3 mb-4 overflow-y-auto" style={{ maxHeight: '300px' }}>
+            <h4 className="text-lg font-semibold text-gray-800 mb-2">Suggest a prompt</h4>
             <div className="space-y-2">
                 {comments.map((comment, index) => (
                     <div key={index} className="flex items-start">
                         <img src={comment.userPhoto} alt="Profile" className="w-8 h-8 rounded-full" />
                         <div className="rounded-lg p-2 ml-2 w-full">
                             <div className="flex justify-between items-center">
-                                <span className="font-semibold text-gray-800">{comment.sender}<span className="post__headerSpecial">@{comment.sender}</span></span>
+                                <span className="font-semibold text-gray-800">{comment.sender}</span>
                                 <span className="text-sm text-gray-500">{formatTime(new Date(comment.date))}</span>
                             </div>
                             <p className="text-gray-800">{comment.text}</p>
-                            <div className="flex items-center space-x-4 mt-2">
-                                <FavoriteBorderIcon
+                            <div className="flex items-center mt-2">
+                                <ThumbUpIcon
                                     className="cursor-pointer text-gray-500 hover:text-gray-700"
                                     size={16}
                                     onClick={() => handleLike(comment)}
                                 />
-                                <span className="text-sm text-gray-500">{comment.likes}</span>
+                                <span className="text-sm text-gray-500 ml-0.5 mr-8">{comment.likes}</span>
+
+                                <ThumbDownIcon
+                                    className="cursor-pointer text-gray-500 hover:text-gray-700"
+                                    size={16}
+                                    onClick={() => handleLike(comment)}
+                                />
+                                <span className="text-sm text-gray-500 ml-0.5">{comment.likes}</span>
                             </div>
                         </div>
                     </div>
@@ -130,7 +147,7 @@ return (
             </div>
         </div>
         {/* Comment input */}
-        <div className="flex items-center mt-4 mb-28">
+        <div className="flex items-center mt-4 mb-28 ">
             <input
                 type="text"
                 value={inputValue}

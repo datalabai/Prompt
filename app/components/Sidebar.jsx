@@ -37,14 +37,14 @@ const Sidebar = () => {
                     <Link  href="/Chat?type=Home" >
                         <div className='flex items-center p-3 rounded-lg hover:bg-sky-100 transition duration-300 ease-in-out'>
                             <HomeIcon/>
-                            <span className="text-lg  text-black-400 ml-4">Home</span>
+                            <span className="text-lg  text-black-400 ml-4">Public</span>
                         </div>
                     </Link>
                     {user ? (
                         <Link href="/Chat?type=Personal">
                             <div className='flex items-center p-3 rounded-lg hover:bg-sky-100 transition duration-300 ease-in-out'>
                                 <AccountCircleIcon/>
-                                <span className="text-lg  text-black-400 ml-4">{user.displayName}</span>
+                                <span className="text-lg  text-black-400 ml-4">Private</span>
                             </div>
                         </Link>
                     ) : ''
