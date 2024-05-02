@@ -24,7 +24,10 @@
   font-size: 1.25rem; /* Adjust as needed */
 
   .bg-nav-lab{
-    background-color:#618cb7 ;
+    background-color:#fff ;
+  }
+  .text-dlab-blue{
+    color:#618cb7 ;
   }
   .post__footer {
     display: flex;

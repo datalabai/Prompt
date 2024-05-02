@@ -7,8 +7,21 @@ import RedditIcon from '@mui/icons-material/Reddit';
 import ImageIcon from '@mui/icons-material/Image';
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import AssignmentIcon from '@mui/icons-material/Assignment';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { useState, useEffect } from 'react';
+import { auth } from '../firebase';
+
 
 const Sidebar = () => {
+    const [user, setUser] = useState('');
+    useEffect(() => {
+        const unsubscribeAuth = auth.onAuthStateChanged((user) => {
+            setUser(user); // Update user state based on authentication status
+        });
+
+        return () => unsubscribeAuth(); // Clean up the listener when the component unmounts
+    }, []);
+
     const items = [
         { label: 'Memes', href: '/Chat?type=Memes', icon: faLaugh },
         { label: 'Logos', href: '/Chat?type=Logos', icon: faPalette },
@@ -21,6 +34,18 @@ const Sidebar = () => {
         <div className="w-72 mt-16 bg-white h-full fixed shadow-md opacity-100" style={{ fontFamily: 'Arial, sans-serif' }}>
             <div className="flex flex-col p-4 space-y-2">
                 
+                    <Link  href="/Chat?type=Home" >
+                        <div className='flex items-center p-3 rounded-lg hover:bg-sky-100 transition duration-300 ease-in-out'>
+                            <HomeIcon/>
+                            <span className="text-lg  text-black-400 ml-4">Home</span>
+                        </div>
+                    </Link>
+                    <Link  href="/Chat?type=Personal" >
+                        <div className='flex items-center p-3 rounded-lg hover:bg-sky-100 transition duration-300 ease-in-out'>
+                            <AccountCircleIcon/>
+                            <span className="text-lg  text-black-400 ml-4">{user.displayName}</span>
+                        </div>
+                    </Link>
                     <Link  href="/Chat?type=Memes" >
                         <div className='flex items-center p-3 rounded-lg hover:bg-sky-100 transition duration-300 ease-in-out'>
                             <FlutterDashIcon/>

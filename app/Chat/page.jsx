@@ -13,6 +13,9 @@ import RepeatIcon from "@mui/icons-material/Repeat";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import PublishIcon from "@mui/icons-material/Publish";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
+
 
 const Chat = () => {
     const searchParams = useSearchParams();
@@ -25,6 +28,7 @@ const Chat = () => {
     const [selectedMessage, setSelectedMessage] = useState(null); // Track which message is being replied to
     const [likedMessages, setLikedMessages] = useState(new Set());
     const [imageLoading, setImageLoading] = useState(true);
+    const [showMenu, setShowMenu] = useState(false); // Track menu visibility
 
     const handleImageLoad = () => {
         // Handle image loading completion if needed
@@ -34,6 +38,9 @@ const Chat = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
 
+    const handleMenuClick = () => {
+        setShowMenu(!showMenu); // Toggle menu visibility on icon click
+    };
     useEffect(() => {
         const unsubscribeAuth = auth.onAuthStateChanged((user) => {
             setUser(user); // Update user state based on authentication status
@@ -78,6 +85,7 @@ const Chat = () => {
                     text: inputValue,
                     userName: userName,
                     userPhoto: userPhoto,
+                    imageUrl: './load-32_128.gif',
                     replies: 0,
                     likes: 0,
                     timestamp: Date.now(),
@@ -185,14 +193,14 @@ const Chat = () => {
             {/* Header */}
             {user ? (
                 <React.Fragment>
-                    <div className="p-4 bg-white border	border-slate-300	">
+                    <div className="p-4 bg-white ">
                         <h2 className="text-lg font-semibold text-gray-800"># {type}</h2>
                     </div>
 
                     {/* Messages display area */}
                     <div className="flex-grow overflow-y-auto ">
                         {messages.map((message, index) => (
-                            <div key={message.id} className="flex flex-col border	border-slate-300">
+                            <div key={message.id} className="flex flex-col border border-slate-300 border-x-0 border-b-0">
                                 {/* Display date with border */}
                                 {/* {index === 0 || formatDate(new Date(message.timestamp)) !== formatDate(new Date(messages[index - 1].timestamp)) ? (
                                     <div className="border-b border-gray-300 pb-2 mb-2">
@@ -248,23 +256,40 @@ const Chat = () => {
 
                     {/* Footer */}
                     <div className="flex items-center p-4 bg-white mb-5">
+                        <div>
+                        {showMenu && (
+                        <div className=" top-full right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg">
+                            {/* Menu options */}
+                            <button className="block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left">
+                                <AutoFixHighIcon color="primary"/>
+                            </button>
+                            <button className="block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left">
+                                <ChatBubbleOutlineIcon color="primary"/>
+                            </button>
+                        </div>
+                    )}
+                        <AddCircleOutlineIcon fontSize="large" color="primary"  className="cursor-pointer text-gray-500 hover:text-gray-700"
+                        size={24}
+                        onClick={handleMenuClick}/>
+                    
+                        </div>
+                    
                         <div className="mr-4 flex-grow">
                             <input 
                                 type="text"
                                 value={inputValue}
                                 onChange={handleInputChange}
-                                onKeyPress={handleKeyPress}
                                 placeholder="Type your message..."
                                 className="min-w-full border border-gray-300 rounded-xl p-2  resize-none text-black focus:outline-none"
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        handleSendMessage(e.target.value);
+                                    }
+                                }}
                             />
                             
                         </div>
-                        <div className="bg-nav-lab rounded-xl cursor-pointer w-12 text-center">
-                            {/* Replace send button with an icon */}
-                            <ArrowForwardIcon
-                                onClick={handleSendMessage}
-                            />
-                        </div>
+                        
                     </div>
 
                     {/* Render reply section if showReplySection is true */}
