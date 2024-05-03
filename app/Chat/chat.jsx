@@ -219,9 +219,9 @@ const Chat = () => {
                                         </div>
                                         <p className="text-gray-800">{message.text}</p>
                                         {message.imageUrl && (
-                                            <img src={message.imageUrl} alt="Message Image" width={250} height={250} onLoad={handleImageLoad} />
+                                            <img src={message.imageUrl} className='rounded-lg mt-2' alt="Message Image" width={450} height={450} onLoad={handleImageLoad} />
                                         )}
-                                        <div className="flex items-center space-x-4 mt-2 post__footer">
+                                        <div className="flex flex-row mt-2 post__footer">
                                             {/* Reply icon */}
                                             <div>
                                             <ChatBubbleOutlineIcon
@@ -232,7 +232,6 @@ const Chat = () => {
                                             {/* Display the number of replies */}
                                             <span className="text-sm text-gray-500 ml-0.5">{message.replies}</span>
                                             </div>
-                                            <RepeatIcon fontSize="small" className="chatBubble"/>
                                             {/* Like icon */}
                                             <div>
                                             <FavoriteBorderIcon
@@ -243,7 +242,6 @@ const Chat = () => {
                                             {/* Display the number of likes */}
                                             <span className="text-sm text-gray-500 ml-0.5">{message.likes}</span>
                                             </div>
-                                            <PublishIcon fontSize="small" className="chatBubble"/>
                                         </div>
                                     </div>
                                      </div>   

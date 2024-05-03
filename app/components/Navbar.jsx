@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { UserAuth } from "../context/AuthContext";
 import { addUserToFirestore } from "../firebase";
 import { BsPersonCircle } from 'react-icons/bs';
+import Image from 'next/image';
 
 
 const Navbar = () => {
@@ -23,7 +24,9 @@ const Navbar = () => {
   };
 
   const handleSignIn = async () => {
+    console.log("Signing in...");
     try {
+      console.log("Si...");
       await googleSignIn();
       console.log("User signed in successfully.");
       addUserToFirestore(user);
@@ -62,6 +65,18 @@ const Navbar = () => {
             </span>
             
             <BsPersonCircle onClick={handleOpenNavbar} className='cursor-pointer text-dlab-blue m-0 w-8 h-8' />
+            {
+                        open && <div className='absolute top-5 border rounded bg-nav-lab ml-32 mt-6 justify-items-end	text-right'>
+                            <div className='flex flex-col space '>
+                               <button onClick={handleSignOut} className="text-md no-underline ml-2 px-4 py-2 text-dlab-blue focus:outline-none">
+                                  View Profile
+                                </button>
+                                <button onClick={handleSignOut} className="text-md no-underline ml-2 px-4 py-2 text-dlab-blue focus:outline-none">
+                                  Logout
+                                </button>
+                            </div>
+                        </div>
+                    }
           </div>
         ) : (
           <button onClick={handleSignIn} className="text-md no-underline ml-2 px-4 py-2  text-dlab-blue focus:outline-none">

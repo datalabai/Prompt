@@ -1,12 +1,12 @@
+"use client";
 import { useContext, createContext, useState, useEffect } from "react";
 import {
   signInWithPopup,
   signOut,
   onAuthStateChanged,
   GoogleAuthProvider,
-  signInWithRedirect,
 } from "firebase/auth";
-import { addUserToFirestore, auth } from "../firebase";
+import { auth } from "../firebase";
 
 const AuthContext = createContext();
 
@@ -16,23 +16,20 @@ export const AuthContextProvider = ({ children }) => {
 
   const googleSignIn = () => {
     const provider = new GoogleAuthProvider();
-    return signInWithRedirect(auth, provider);
+    signInWithPopup(auth, provider);
   };
 
   const logOut = () => {
-    return signOut(auth);
+    signOut(auth);
   };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (currentUser) {
-        setUser(currentUser);
-      } else {
-        setUser(null); // Set user to null when logged out
-      }
+
+      setUser(currentUser);
     });
     return () => unsubscribe();
-  }, []);
+  }, [user]);
 
   return (
     <AuthContext.Provider value={{ user, googleSignIn, logOut }}>

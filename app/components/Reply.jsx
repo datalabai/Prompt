@@ -94,21 +94,6 @@ return (
                     {message.imageUrl && (
                         <img src={message.imageUrl} alt="Message" width={200} height={200} />
                     )}
-                    <div className="flex items-center mt-2">
-                        <ThumbUpIcon
-                            className="cursor-pointer text-gray-500 hover:text-gray-700"
-                            size={18}
-                            onClick={handleLike}
-                        />
-                        <span className="text-sm text-gray-500 ml-0.5 mr-8">{likes}</span>
-                        <ThumbDownIcon
-                            className="cursor-pointer text-gray-500 hover:text-gray-700"
-                            size={18}
-                            onClick={handleLike}
-                        />
-                        <span className="text-sm text-gray-500 ml-0.5">{likes}</span>
-                    </div>
-                    
                 </div>
             </div>
         </div>
