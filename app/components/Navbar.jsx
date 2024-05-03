@@ -65,7 +65,7 @@ const Navbar = () => {
             </span>
             
             <BsPersonCircle onClick={handleOpenNavbar} className='cursor-pointer text-dlab-blue m-0 w-8 h-8' />
-            {
+             {
                         open && <div className='absolute top-5 border rounded bg-nav-lab ml-32 mt-6 justify-items-end	text-right'>
                             <div className='flex flex-col space '>
                                <button onClick={handleSignOut} className="text-md no-underline ml-2 px-4 py-2 text-dlab-blue focus:outline-none">
