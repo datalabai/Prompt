@@ -186,11 +186,11 @@ const Chat = () => {
     };
 
     return (
-        <div className={`flex flex-col h-[650px] max-w-2xl ${showReplySection ? '' : ''} ml-72`} style={{ marginTop: '68px' }}>
+        <div className={`flex flex-col border-r-2 border-l-4 h-[700px] max-w-2xl w-[39rem] ${showReplySection ? '' : ''} ml-[22rem] `} style={{ marginTop: '68px' }}>
             {/* Header */}
             {user ? (
                 <React.Fragment>
-                   <div className={`flex space-x-4 p-4 bg-white`}>
+                   <div className={`flex space-x-4 p-4 bg-white fixed border-b-2 w-[38rem] ml-2`}>
                         <h2 className="text-lg font-semibold text-gray-800"># {type}</h2>
                         <h1 className='items-center mt-1 text-sm text-gray-600'>-</h1>
                         <h1 className='items-center mt-1 text-sm text-gray-600'>This is a {type} channel , users can generate images</h1>
@@ -198,7 +198,7 @@ const Chat = () => {
 
 
                     {/* Messages display area */}
-                    <div className="flex-grow overflow-y-auto max-w-2xl">
+                    <div className="flex-grow overflow-y-auto max-w-2xl mt-16">
                         {messages.map((message, index) => (
                             <div key={message.id} className="flex flex-col border border-slate-300 border-x-0 border-b-0">
                                 {/* Display date with border */}
@@ -253,9 +253,9 @@ const Chat = () => {
                         ))}
                         <div ref={messagesEndRef} />
                     </div>
-
+                    <div className='m-4'></div>
                     {/* Footer */}
-                    <div className="flex items-center p-4 bg-white mb-5">
+                    <div className="flex items-center p-4 bg-white mb-5  space-x-10">
             <div className='mr-2 relative'>
                 {showMenu && (
                     <div className="absolute bottom-full right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg">
@@ -271,14 +271,14 @@ const Chat = () => {
                 <AddCircleOutlineIcon
                     fontSize="large"
                     color="primary"
-                    className="cursor-pointer text-gray-500 hover:text-gray-700"
+                    className="cursor-pointer text-gray-500 hover:text-gray-700 fixed bottom-0 mb-6 "
                     size={24}
                     onClick={handleMenuClick}
                 />
             </div>
             
             <div className="mr-4 flex-grow relative">
-            <div className="flex items-center border border-gray-300 rounded-lg p-2 space-x-2">
+            <div className="flex items-center border border-gray-300 rounded-lg p-2 space-x-2 fixed bottom-5 w-[34rem] ">
             {selectedMenuOption === 'prompt' && (
                 <div className="flex items-center space-x-2">
                     <AutoFixHighIcon color="primary" />

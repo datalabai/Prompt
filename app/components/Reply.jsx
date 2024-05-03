@@ -69,7 +69,7 @@ const ReplySection = ({ message ,type,setShowReplySection,setSelectedMessage}) =
     };
 
 return (
-    <div className="border-x fixed top-15 right-0 h-full w-1/3 bg-white z-10 p-4 overflow-y-auto">
+    <div className="border-x fixed top-15 right-0 h-full w-[29rem] bg-white z-10 p-4 overflow-y-auto">
         <div className="flex justify-between items-center pb-4 border-b">
             <h3 className="text-lg font-semibold text-gray-800">Replying to:</h3>
             <button
@@ -79,7 +79,7 @@ return (
                     setSelectedMessage(null);
                 }}
             >
-                <DisabledByDefaultRoundedIcon color="primary" />
+                <DisabledByDefaultRoundedIcon color="primary" fontSize='large' />
             </button>
         </div>
         <div className="bg-white-200 rounded-lg p-3 mb-4">
@@ -152,7 +152,7 @@ return (
                 type="text"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                placeholder="Add a comment..."
+                placeholder="Suggest a prompt..."
                 className="border border-gray-300 rounded-md p-2 w-full resize-none text-black focus:outline-none"
                 onKeyDown={(e) => {
                     if (e.key === 'Enter') {
