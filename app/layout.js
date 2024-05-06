@@ -12,18 +12,25 @@ import Sidebar from "./components/Sidebar";
 const RootLayout = ({ children }) => {
   return (
     <html lang="en">
-      <body> 
+      <body>
         <AuthContextProvider>
-        <div className="flex flex-col min-h-screen">
-          <Navbar />
-          <div className="flex flex-grow">
-            <Sidebar />
-            <div className="flex-grow h-full w-3/4 overflow-y-auto">{children}</div>
-          </div>
-        </div>
+          <section className="relative">
+
+            <div className="fixed top-0 left-0 h-screen bg-sidebar md:w-72">
+              <Sidebar />
+            </div>
+
+
+            <div className="md:pl-80 md:pr-4">
+              <Navbar />
+              <div className="overflow-y-auto">{children}</div>
+            </div>
+
+          </section>
         </AuthContextProvider>
       </body>
     </html>
+
   );
 };
 

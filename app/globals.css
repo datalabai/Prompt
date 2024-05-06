@@ -34,3 +34,6 @@
     justify-content: space-between;
     margin-top: 20px;
   }
+  .min-w-33rm {
+    min-width: 33rem;
+  }

@@ -20,26 +20,26 @@ const Sidebar = () => {
     }, []);
 
     const items = [
-        { label: 'Memes', href: '/Chat?type=Memes', icon: <FlutterDashOutlinedIcon fontSize='large' /> },
-        { label: 'Logos', href: '/Chat?type=Logos', icon: <BusinessOutlinedIcon fontSize='large' /> },
-        { label: 'Images', href: '/Chat?type=Images', icon: <ImageIcon fontSize='large' /> },
-        { label: 'Resumes', href: '/Chat?type=Resumes', icon: <AssignmentOutlinedIcon fontSize='large' /> },
-        { label: 'Texts', href: '/Chat?type=Texts', icon: <FormatListBulletedOutlinedIcon fontSize='large' /> },
+        { label: 'Memes', href: '/Chat?type=Memes', icon: <FlutterDashOutlinedIcon  /> },
+        { label: 'Logos', href: '/Chat?type=Logos', icon: <BusinessOutlinedIcon  /> },
+        { label: 'Images', href: '/Chat?type=Images', icon: <ImageIcon  /> },
+        { label: 'Resumes', href: '/Chat?type=Resumes', icon: <AssignmentOutlinedIcon  /> },
+        { label: 'Texts', href: '/Chat?type=Texts', icon: <FormatListBulletedOutlinedIcon  /> },
     ];
 
     return (
-        <div className="w-1/4 mt-16 bg-white h-full fixed shadow-md opacity-100" style={{ fontFamily: 'Arial, sans-serif' }}>
-            <div className="flex flex-col p-4 space-y-2 w-1/2 m-auto mt-10">
+        <div className="mt-16 bg-white h-full fixed" style={{ fontFamily: 'Arial, sans-serif' }}>
+            <div className="flex flex-col p-4 space-y-2">
                 <Link href="/Chat?type=Home">
                     <div className='flex items-center p-3 rounded-lg hover:bg-sky-100 transition duration-300 ease-in-out'>
-                        <HomeOutlinedIcon fontSize='large' />
+                        <HomeOutlinedIcon  />
                         <span className="text-xl text-black-400 ml-4">Public</span>
                     </div>
                 </Link>
                 {user ? (
                     <Link href="/Chat?type=Private">
                         <div className='flex items-center p-3 rounded-lg hover:bg-sky-100 transition duration-300 ease-in-out'>
-                            <LockOutlinedIcon fontSize='large' />
+                            <LockOutlinedIcon  />
                             <span className="text-xl text-black-400 ml-4">Private</span>
                         </div>
                     </Link>

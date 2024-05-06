@@ -6,12 +6,16 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import DisabledByDefaultRoundedIcon from '@mui/icons-material/DisabledByDefaultRounded';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
+import RepeatIcon from "@mui/icons-material/Repeat";
+import PublishIcon from "@mui/icons-material/Publish";
 
 const ReplySection = ({ message ,type,setShowReplySection,setSelectedMessage}) => {
     const [comments, setComments] = useState([]);
     const [inputValue, setInputValue] = useState('');
     const [likes, setLikes] = useState(message.likes);
     const commentsEndRef = useRef(null); // Ref for scrolling to end of comments
+    const [likedMessages, setLikedMessages] = useState(new Set());
 
 
     useEffect(() => {
@@ -69,7 +73,7 @@ const ReplySection = ({ message ,type,setShowReplySection,setSelectedMessage}) =
     };
 
 return (
-    <div className="border-x fixed top-15 right-0 h-full w-[29rem] bg-white z-10 p-4 overflow-y-auto">
+    <div className="fixed top-15 right-0 h-full min-w-33rm bg-white z-10 p-4 overflow-y-auto">
         <div className="flex justify-between items-center pb-4 border-b">
             <h3 className="text-lg font-semibold text-gray-800">Replying to:</h3>
             <button
@@ -94,7 +98,32 @@ return (
                     {message.imageUrl && (
                         <img src={message.imageUrl} alt="Message" width={200} height={200} />
                     )}
+                    <div className="flex items-center space-x-4 mt-2 post__footer">
+                    {/* Reply icon */}
+                    <div>
+                        <ChatBubbleOutlineIcon
+                            className="cursor-pointer text-gray-500 hover:text-gray-700"
+                            size={18}
+                            onClick={() => handleReply(message)}
+                        />
+                        {/* Display the number of replies */}
+                        <span className="text-sm text-gray-500 ml-0.5">{message.replies}</span>
+                    </div>
+                    <RepeatIcon fontSize="small" className="chatBubble" />
+                    {/* Like icon */}
+                    <div>
+                        <FavoriteBorderIcon
+                            className={`cursor-pointer text-gray-500 hover:text-gray-700 ${likedMessages.has(message.id) ? 'text-blue-500' : ''}`}
+                            size={18}
+                            onClick={() => handleLike(message)}
+                        />
+                        {/* Display the number of likes */}
+                        <span className="text-sm text-gray-500 ml-0.5">{message.likes}</span>
+                    </div>
+                    <PublishIcon fontSize="small" className="chatBubble" />
                 </div>
+                </div>
+                
             </div>
         </div>
         {/* Comments section with scrollbar */}
