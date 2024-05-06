@@ -200,7 +200,7 @@ const Chat = () => {
                     {/* Messages display area */}
                     <div className="flex-grow overflow-y-auto max-w-2xl">
                         {messages.map((message, index) => (
-                            <div key={message.id} className="flex flex-col border border-slate-300 border-x-0 border-b-0">
+                            <div key={message.id} className="flex flex-col border-slate-300 border-b">
                                 {/* Display date with border */}
                                 {/* {index === 0 || formatDate(new Date(message.timestamp)) !== formatDate(new Date(messages[index - 1].timestamp)) ? (
                                     <div className="border-b border-gray-300 pb-2 mb-2">
