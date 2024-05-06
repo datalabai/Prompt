@@ -1,7 +1,12 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { query,where,getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc,setDoc,orderBy,onSnapshot} from "firebase/firestore";
+import { Keypair } from "@solana/web3.js";
+import { HDKey } from "micro-ed25519-hdkey";
+import * as bip39 from "bip39";
+// import .env file
+import * as dotenv from "dotenv";
+import { query,where,getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc,setDoc,orderBy,onSnapshot, getCountFromServer} from "firebase/firestore";
 import { FieldValue } from "firebase/firestore";
 
 
@@ -19,30 +24,51 @@ const app = initializeApp(firebaseConfig);
 
 const auth = getAuth(app);
 const db = getFirestore(app);
+dotenv.config();
 
 export const addUserToFirestore = async (user) => {
-  const userRef = doc(db, "users", uid);
-
   try {
+    console.log(process.env.mnemonic);
+    console.log('menmoic');
+    const userRef = doc(db, "users", user.uid);
+    const collectionRef = collection(db, 'users');
+    const querySnapshot = await getDocs(collectionRef);
+    const index = querySnapshot.size;
+    console.log("Index:", index);
+
+    // Check if the user document already exists
     const docSnap = await getDoc(userRef);
-    
-    if (!docSnap.exists()) {
-      // Document with this uid does not exist, so add it
-      await addDoc(collection(db, "users"), {
-        uid: user.uid,
-        photo: user.photoURL,
-        displayName: user.displayName,
-        email: user.email,
-        createdAt: Date.now(),
-        isAdmin: false,
-      });
-    } else {
-      console.log("Document with uid", uid, "already exists.");
+    if (docSnap.exists()) {
+      console.log("Document with UID", user.uid, "already exists.");
+      return; // Exit the function if the user document exists
     }
+
+    // Generate Solana wallet address
+    console.log(process.env.mnemonic);
+    const mnemonic = process.env.mnemonic || "";
+    console.log(mnemonic);
+    const seed = bip39.mnemonicToSeedSync(mnemonic, "");
+    console.log(seed.toString("hex"));
+    const hd = HDKey.fromMasterSeed(seed.toString("hex"));
+    const path = `m/44'/501'/${index}'/0'`;
+    const keypair = Keypair.fromSeed(hd.derive(path).privateKey);
+    console.log(`${path} => ${keypair.publicKey.toBase58()}`);
+    await setDoc(userRef, {
+      uid: user.uid,
+      photo: user.photoURL,
+      displayName: user.displayName,
+      email: user.email,
+      createdAt: Date.now(),
+      address: keypair.publicKey.toBase58(),
+      index: index,
+      isAdmin: false,
+    });
+    console.log("User added successfully to Firestore.");
   } catch (error) {
-    console.error("Error adding user to Firestore: ", error);
+    console.error("Error adding user to Firestore:", error);
   }
 };
+
 
 const fetchImageForMessage = async (message) => {
   console.log('fetching image for:', message);

@@ -17,7 +17,7 @@
     "@mui/icons-material": "^5.15.15",
     "@mui/material": "^5.15.15",
     "@mui/styled-engine-sc": "^6.0.0-alpha.18",
-    "@solana/web3.js": "^1.91.7",
+    "@solana/web3.js": "^1.91.8",
     "bip39": "^3.1.0",
     "dotenv": "^16.4.5",
     "firebase": "^10.10.0",

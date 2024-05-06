@@ -6,7 +6,7 @@ import {
   onAuthStateChanged,
   GoogleAuthProvider,
 } from "firebase/auth";
-import { auth } from "../firebase";
+import { addUserToFirestore, auth } from "../firebase";
 
 const AuthContext = createContext();
 
@@ -25,8 +25,8 @@ export const AuthContextProvider = ({ children }) => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-
       setUser(currentUser);
+      addUserToFirestore(currentUser);
     });
     return () => unsubscribe();
   }, [user]);

@@ -68,9 +68,9 @@ const Navbar = () => {
              {
                         open && <div className='absolute top-5 border rounded bg-nav-lab ml-32 mt-6 justify-items-end	text-right'>
                             <div className='flex flex-col space '>
-                               <button onClick={handleSignOut} className="text-md no-underline ml-2 px-4 py-2 text-dlab-blue focus:outline-none">
+                               <Link href="/profile"  className="text-md no-underline ml-2 px-4 py-2 text-dlab-blue focus:outline-none">
                                   View Profile
-                                </button>
+                                </Link>
                                 <button onClick={handleSignOut} className="text-md no-underline ml-2 px-4 py-2 text-dlab-blue focus:outline-none">
                                   Logout
                                 </button>
