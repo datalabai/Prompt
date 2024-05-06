@@ -86,7 +86,7 @@ return (
                 <DisabledByDefaultRoundedIcon color="primary" fontSize='large' />
             </button>
         </div>
-        <div className="bg-white-200 rounded-lg p-3 mb-4">
+        <div className="bg-white-200 rounded-lg p-3 mb-4 max-w-lg">
             <div className="flex items-start space-x-4">
                 <img src={message.userPhoto} alt="Profile" className="w-10 h-10 rounded-full" />
                 <div className="flex flex-col w-full">
