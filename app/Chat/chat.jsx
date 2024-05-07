@@ -186,7 +186,7 @@ const Chat = () => {
     };
 
     return (
-        <div className={`flex flex-col h-[650px] max-w-xl border-x ${showReplySection ? '' : ''} `} style={{ marginTop: '68px' }}>
+        <div className={`flex flex-col h-[650px] max-w-36rm border-x ${showReplySection ? '' : ''} `} style={{ marginTop: '68px' }}>
             {/* Header */}
             {user ? (
                 <React.Fragment>
@@ -198,7 +198,7 @@ const Chat = () => {
 
 
                     {/* Messages display area */}
-                    <div className="flex-grow overflow-y-auto max-w-2xl">
+                    <div className="flex-grow overflow-y-auto max-w-36rm">
                         {messages.map((message, index) => (
                             <div key={message.id} className="flex flex-col border-slate-300 border-b">
                                 {/* Display date with border */}

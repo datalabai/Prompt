@@ -21,7 +21,7 @@ const RootLayout = ({ children }) => {
             </div>
 
 
-            <div className="md:pl-80 md:pr-4">
+            <div className="md:pl-64 md:pr-4">
               <Navbar />
               <div className="overflow-y-auto">{children}</div>
             </div>

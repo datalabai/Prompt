@@ -1,129 +1,53 @@
 "use client";
+import React from 'react';
+import { MDBCol, MDBContainer, MDBRow, MDBCard, MDBCardText, MDBCardBody, MDBCardImage, MDBBtn, MDBTypography } from 'mdb-react-ui-kit';
 
-import React, { useState } from 'react';
-import { Container, Typography, Card, CardContent, Grid, IconButton, Tooltip, Tab, Tabs, Box } from '@mui/material';
-import { FileCopyOutlined as FileCopyOutlinedIcon, OpenInNew as OpenInNewIcon } from '@mui/icons-material'; // Importing icons
-
-const Profile = () => {
-    const profileData = {
-        name: 'Kishore Challapalli',
-        email: 'johndoe@example.com',
-        walletBalance: 5000,
-        walletAddress: '0x1234567890abcdef',
-        tokens: 100,
-        transactions: [
-            { id: 1, amount: 10, type: 'Deposit' },
-            { id: 2, amount: 20, type: 'Withdrawal' },
-            { id: 3, amount: 5, type: 'Deposit' },
-        ],
-    };
-
-    const [copied, setCopied] = useState(false);
-    const [activeTab, setActiveTab] = useState('tokens');
-
-    const copyToClipboard = () => {
-        navigator.clipboard.writeText(profileData.walletAddress);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-    };
-
-    // Shortened address for display
-    const shortenedAddress = `${profileData.walletAddress.slice(0, 6)}...${profileData.walletAddress.slice(-4)}`;
-
+import TransactionCard from './TransactionCard';
+export default function EditButton() {
     return (
-        <Container maxWidth="md" sx={{ mt: 8 }} className='ml-96 mt-24'>
-            <Typography variant="h3" align="center" className='ml-10' sx={{ mb: 4 }}>
-                {profileData.name}
-            </Typography>
-            <Card variant="outlined" sx={{ backgroundColor: '#f5f5f5', boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)', borderRadius: '12px' }}>
-                <CardContent>
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <IconButton
-                    aria-label="export"
-                    onClick={() => {
-                        // Add logic to open the wallet in Solana explorer
-                        window.open(`https://solanaexplorer.com/address/${profileData.walletAddress}`, '_blank');
-                    }}
-                    sx={{ color: '#007bff', mr: 1 }}
-                >
-                    {/* Export icon */}
-                    <OpenInNewIcon />
-                </IconButton>
-            </Box>
-                    <Grid container spacing={3} justifyContent="center" alignItems="center">
-                        <Grid item xs={12}>
-                            <Typography variant="h3" className='space-x-2' align="center" sx={{ color: '#007bff' }}>
-                                <span>$</span>
-                                <span>{profileData.walletBalance}</span>
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Typography variant="body1" gutterBottom align="center">
-                                <Tooltip title={profileData.walletAddress} arrow placement="right">
-                                    <Typography variant='h4' className='ml-10'>
-                                        {shortenedAddress}
-                                         <IconButton
-                                    aria-label="copy"
-                                    onClick={copyToClipboard}
-                                    sx={{ ml: 1, color: '#333333' }}
-                                >
-                                    <FileCopyOutlinedIcon />
-                                </IconButton>
-                                    </Typography>
-                                </Tooltip>
-                            </Typography>
-                        </Grid>
-                    </Grid>
-                </CardContent>
-            </Card>
+        <div className="gradient-custom-2 mt-7 border-l" style={{ backgroundColor: '#f8f9fa' }}>
+            <MDBContainer className="py-5 h-100">
+                <MDBRow className="justify-content-center align-items-center h-100">
+                    <MDBCol lg="9" xl="7">
+                        <MDBCard>
+                            <div className="rounded-top text-white  flex" style={{ backgroundColor: '#618cb7' }}>
+                                <div className="m-5 d-flex flex">
+                                    <MDBCardImage src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+                                        alt="Generic placeholder image" className="mt-4 mb-2 rounded-full" fluid style={{ width: '150px', zIndex: '1' }} />
 
-            <Tabs value={activeTab} onChange={(e, newValue) => setActiveTab(newValue)} variant="fullWidth" sx={{ mt: 4, backgroundColor: '#f0f0f0', borderRadius: '12px' }}>
-                <Tab label="Tokens" value="tokens" sx={{ color: '#007bff' }} />
-                <Tab label="Transactions" value="transactions" sx={{ color: '#007bff' }} />
-            </Tabs>
+                                </div>
+                                <div className="m-8 ml-0">
+                                    <MDBTypography >Shiva Sankar</MDBTypography>
+                                    <MDBCardText>Shiva.pabbu@gmail.com</MDBCardText>
 
-            <Box sx={{ mt: 2 }}>
-    {activeTab === 'tokens' && (
-        <Card variant="outlined" sx={{ backgroundColor: '#f5f5f5', boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)', borderRadius: '12px' }}>
-            <CardContent>
-                <Typography variant="h5" gutterBottom sx={{ color: '#333333' }}>
-                    Tokens
-                </Typography>
-                <Typography variant="body1" gutterBottom sx={{ color: '#007bff' }}>
-                    <strong>Total Tokens:</strong> {profileData.tokens}
-                </Typography>
-                {/* Display two Solana tokens */}
-                <Typography variant="body1" gutterBottom>
-                    Solana Token 1: 50 Tokens
-                </Typography>
-                <Typography variant="body1" gutterBottom>
-                    Solana Token 2: 50 Tokens
-                </Typography>
-            </CardContent>
-        </Card>
-    )}
+                                    <div className="mt-12 text-white">
+                                        <div className=" ">
+                                            <div>
 
+                                                <MDBCardText className="small  mb-0">Balance : $ 253 </MDBCardText>
+                                            </div>
+                                            <div >
 
+                                                <MDBCardText className="small mb-0">Prompts Generated : 1026</MDBCardText>
+                                            </div>
+                                            <div>
 
-                {activeTab === 'transactions' && (
-                    <Card variant="outlined" sx={{ backgroundColor: '#f5f5f5', boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)', borderRadius: '12px' }}>
-                        <CardContent>
-                            <Typography variant="h5" gutterBottom sx={{ color: '#333333' }}>
-                                Transactions
-                            </Typography>
-                            <ul>
-                                {profileData.transactions.map((transaction) => (
-                                    <li key={transaction.id} sx={{ color: '#007bff' }}>
-                                        {transaction.type}: {transaction.amount} Tokens
-                                    </li>
-                                ))}
-                            </ul>
-                        </CardContent>
-                    </Card>
-                )}
-            </Box>
-        </Container>
+                                                <MDBCardText className="small mb-0">Rewards Earned : $ 478</MDBCardText>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <MDBCardBody className="text-black">
+                                    <TransactionCard/>
+
+                            </MDBCardBody>
+                        </MDBCard>
+                    </MDBCol>
+                </MDBRow>
+            </MDBContainer>
+        </div>
     );
-};
-
-export default Profile;
+}
