@@ -9,6 +9,7 @@ import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import RepeatIcon from "@mui/icons-material/Repeat";
 import PublishIcon from "@mui/icons-material/Publish";
+import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 
 const ReplySection = ({ message ,type,setShowReplySection,setSelectedMessage}) => {
     const [comments, setComments] = useState([]);
@@ -139,20 +140,25 @@ return (
                                 <span className="text-sm text-gray-500">{formatTime(new Date(comment.date))}</span>
                             </div>
                             <p className="text-gray-800">{comment.text}</p>
-                            <div className="flex items-center mt-2">
+                            <div className="flex items-center space-x-3 mt-2 post__footer">
+                            <div>
                                 <ThumbUpIcon
                                     className="cursor-pointer text-gray-500 hover:text-gray-700"
                                     size={16}
                                     onClick={() => handleLike(comment)}
                                 />
                                 <span className="text-sm text-gray-500 ml-0.5 mr-8">{comment.likes}</span>
-
+                                </div>
+                                <div>
                                 <ThumbDownIcon
                                     className="cursor-pointer text-gray-500 hover:text-gray-700"
                                     size={16}
                                     onClick={() => handleLike(comment)}
                                 />
-                                <span className="text-sm text-gray-500 ml-0.5">{comment.likes}</span>
+                                <span className="text-sm text-gray-500 ml-0.5 mr-8">{comment.likes}</span>
+                                </div>
+                                <AutoFixHighIcon className="cursor-pointer text-gray-500 hover:text-gray-700"
+                                    size={16}/>
                             </div>
                         </div>
                     </div>
