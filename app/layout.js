@@ -14,7 +14,7 @@ const RootLayout = ({ children }) => {
     <html lang="en">
       <body>
         <AuthContextProvider>
-          <section className="relative">
+          <section className="relative container">
 
             <div className="fixed top-0 left-0 h-screen bg-sidebar md:w-72">
               <Sidebar />

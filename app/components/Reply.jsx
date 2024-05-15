@@ -74,7 +74,7 @@ const ReplySection = ({ message ,type,setShowReplySection,setSelectedMessage}) =
     };
 
 return (
-    <div className="fixed top-15 right-0 h-full min-w-36rm bg-white z-10 p-4 overflow-y-auto">
+    <div className="fixed top-15 right-0 h-full min-w-36rm bg-white z-10 p-4 overflow-y-auto box">
         <div className="flex justify-between items-center pb-4 border-b">
             <h3 className="text-lg font-semibold text-gray-800">Replying to:</h3>
             <button
