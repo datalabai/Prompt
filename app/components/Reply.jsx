@@ -10,6 +10,8 @@ import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import RepeatIcon from "@mui/icons-material/Repeat";
 import PublishIcon from "@mui/icons-material/Publish";
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
+import { updateLikesInFirebase } from '../firebase';
+import { addLiketoComment,addDisLiketoComment } from '../firebase';
 
 const ReplySection = ({ message ,type,setShowReplySection,setSelectedMessage}) => {
     const [comments, setComments] = useState([]);
@@ -27,6 +29,31 @@ const ReplySection = ({ message ,type,setShowReplySection,setSelectedMessage}) =
 
         return () => unsubscribeComments(); // Clean up the listener
     }, [type, message.id]);
+
+    const addLike = async (comment) => {
+        // Update the like count for the comment in Firebase
+        await addLiketoComment(type, message.id, comment.id, comment.likes + 1);
+
+        // Update the local state with the new like count
+        setComments((prevComments) =>
+            prevComments.map((cmt) =>
+                cmt.id === comment.id ? { ...cmt, likes: cmt.likes + 1 } : cmt
+            )
+        );
+    };
+
+    const addDislike = async (comment) => {
+        // Update the dislike count for the comment in Firebase
+        await addDisLiketoComment(type, message.id, comment.id, comment.dislikes + 1);
+
+        // Update the local state with the new like count
+        setComments((prevComments) =>
+            prevComments.map((cmt) =>
+                cmt.id === comment.id ? { ...cmt, dislikes: cmt.dislikes + 1 } : cmt
+            )
+        );
+    };
+
 
     const formatTime = (date) => {
         const hours = date.getHours().toString().padStart(2, '0');
@@ -53,6 +80,25 @@ const ReplySection = ({ message ,type,setShowReplySection,setSelectedMessage}) =
     const scrollToBottom = () => {
         commentsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
+
+    const generatePrompt=async(text)=>{
+        if (commentText.trim() !== '') {
+            const newComment = {
+                text: commentText,
+                sender: auth.currentUser.displayName,
+                userPhoto: auth.currentUser.photoURL,
+                date: Date.now(),
+                likes: 0, // Initialize likes for each comment
+            };
+
+            // Update local state to add the new comment to the existing comments
+            // Add the comment to Firestore
+            await addCommentToMessage(type, message.id, newComment,true);
+
+            // Clear the input value
+            setInputValue('');
+        }         
+    }
     
     const handleAddComment = async (commentText) => {
         if (commentText.trim() !== '') {
@@ -66,7 +112,7 @@ const ReplySection = ({ message ,type,setShowReplySection,setSelectedMessage}) =
 
             // Update local state to add the new comment to the existing comments
             // Add the comment to Firestore
-            await addCommentToMessage(type, message.id, newComment);
+            await addCommentToMessage(type, message.id, newComment,false);
 
             // Clear the input value
             setInputValue('');
@@ -74,9 +120,9 @@ const ReplySection = ({ message ,type,setShowReplySection,setSelectedMessage}) =
     };
 
 return (
-    <div className="fixed top-15 right-0 h-full min-w-36rm bg-white z-10 p-4 overflow-y-auto box">
-        <div className="flex justify-between items-center pb-4 border-b">
-            <h3 className="text-lg font-semibold text-gray-800">Replying to:</h3>
+    <div className="fixed top-15  h-full min-w-[36rem] bg-white z-10  overflow-y-auto box  ml-[37.9rem]">
+        <div className="flex justify-between items-center border-b-2 p-3">
+            <h3 className="text-lg font-semibold text-gray-800 ">Replying to:</h3>
             <button
                 className="text-red-500 hover:text-red-700"
                 onClick={() => {
@@ -97,7 +143,7 @@ return (
                     </div>
                     <p className="text-gray-800">{message.text}</p>
                     {message.imageUrl && (
-                        <img src={message.imageUrl} alt="Message" width={200} height={200} />
+                        <img className="mt-2" src={message.imageUrl} alt="Message" width={250} height={250} />
                     )}
                     <div className="flex items-center space-x-4 mt-2 post__footer">
                     {/* Reply icon */}
@@ -145,7 +191,7 @@ return (
                                 <ThumbUpIcon
                                     className="cursor-pointer text-gray-500 hover:text-gray-700"
                                     size={16}
-                                    onClick={() => handleLike(comment)}
+                                    onClick={() => addLike(comment)}
                                 />
                                 <span className="text-sm text-gray-500 ml-0.5 mr-8">{comment.likes}</span>
                                 </div>
@@ -153,12 +199,12 @@ return (
                                 <ThumbDownIcon
                                     className="cursor-pointer text-gray-500 hover:text-gray-700"
                                     size={16}
-                                    onClick={() => handleLike(comment)}
+                                    onClick={() => addDislike(comment)}
                                 />
-                                <span className="text-sm text-gray-500 ml-0.5 mr-8">{comment.likes}</span>
+                                <span className="text-sm text-gray-500 ml-0.5 mr-8">{comment.dislikes}</span>
                                 </div>
                                 <AutoFixHighIcon className="cursor-pointer text-gray-500 hover:text-gray-700"
-                                    size={16}/>
+                                    size={16} onClick={()=>generatePrompt(comment.text)}/>
                             </div>
                         </div>
                     </div>
@@ -167,7 +213,7 @@ return (
             </div>
         </div>
         {/* Comment input */}
-        <div className="flex items-center mt-4 mb-28 ">
+        <div className="flex items-center mt-4 mb-28 p-2 ">
             <input
                 type="text"
                 value={inputValue}

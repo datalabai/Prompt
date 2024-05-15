@@ -1,14 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { Keypair } from "@solana/web3.js";
-import { HDKey } from "micro-ed25519-hdkey";
-import * as bip39 from "bip39";
-// import .env file
-import * as dotenv from "dotenv";
 import { query,where,getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc,setDoc,orderBy,onSnapshot, getCountFromServer} from "firebase/firestore";
-import { FieldValue } from "firebase/firestore";
-
 
 const firebaseConfig = {
   apiKey: "AIzaSyBe7LVB7NZGQ4ih869GmtX2iwYvE0hzbLE",
@@ -24,49 +17,116 @@ const app = initializeApp(firebaseConfig);
 
 const auth = getAuth(app);
 const db = getFirestore(app);
-dotenv.config();
+
+export const transactions = async () => {
+  try {
+    const uid = auth.currentUser.uid; 
+    console.log('uid:', uid); 
+    const response = await fetch(`https://wallet-api-vyxx.onrender.com/trans?uid=${uid}`);
+    const data = await response.json();
+    console.log('data:', data);
+    return data; 
+  }
+  catch (error) {
+    console.error('Error fetching transactions data:', error.message); // Handling any errors that occur during the fetch
+  }
+};
+
+export const getProfile = async () => {
+  try {
+    const uid = auth.currentUser.uid; 
+    console.log('uid:', uid); // Logging the UID for debugging purposes
+    const response = await fetch(`https://wallet-api-vyxx.onrender.com/profile?uid=${uid}`);
+    const data = await response.json();
+    return data; 
+  } catch (error) {
+    console.error('Error fetching profile data:', error.message); // Handling any errors that occur during the fetch
+  }
+};
+
 
 export const addUserToFirestore = async (user) => {
   try {
-    console.log(process.env.mnemonic);
-    console.log('menmoic');
     const userRef = doc(db, "users", user.uid);
-    const collectionRef = collection(db, 'users');
-    const querySnapshot = await getDocs(collectionRef);
-    const index = querySnapshot.size;
-    console.log("Index:", index);
-
     // Check if the user document already exists
     const docSnap = await getDoc(userRef);
     if (docSnap.exists()) {
       console.log("Document with UID", user.uid, "already exists.");
       return; // Exit the function if the user document exists
-    }
-
-    // Generate Solana wallet address
-    console.log(process.env.mnemonic);
-    const mnemonic = process.env.mnemonic || "";
-    console.log(mnemonic);
-    const seed = bip39.mnemonicToSeedSync(mnemonic, "");
-    console.log(seed.toString("hex"));
-    const hd = HDKey.fromMasterSeed(seed.toString("hex"));
-    const path = `m/44'/501'/${index}'/0'`;
-    const keypair = Keypair.fromSeed(hd.derive(path).privateKey);
-    console.log(`${path} => ${keypair.publicKey.toBase58()}`);
+    }    
     await setDoc(userRef, {
       uid: user.uid,
       photo: user.photoURL,
       displayName: user.displayName,
       email: user.email,
       createdAt: Date.now(),
-      address: keypair.publicKey.toBase58(),
-      index: index,
       isAdmin: false,
     });
+    await createPrivateChannel(user.uid);
+    await fetch(`https://wallet-api-vyxx.onrender.com/wallet?uid=${user.uid}`);
     console.log("User added successfully to Firestore.");
   } catch (error) {
     console.error("Error adding user to Firestore:", error);
   }
+};
+
+export const createPrivateChannel = async (userId) => {
+  const userChannelRef = doc(db, "privateChannels", userId);
+
+  try {
+    // Check if the private channel already exists
+    const channelSnapshot = await getDoc(userChannelRef);
+
+    if (!channelSnapshot.exists()) {
+      // Private channel does not exist, so create it
+      console.log("Private channel created for user:", userId);
+    } else {
+      console.log("Private channel already exists for user:", userId);
+    }
+  } catch (error) {
+    console.error("Error creating private channel:", error);
+  }
+};
+
+export const addMessageToPrivateChannel = async (messageData) => {
+  const user = auth.currentUser;
+  let privateChannelRef ;
+
+
+  privateChannelRef = doc(db, "privateChannels", user.uid);
+
+  // Ensure the private channel exists
+  const privateChannelSnap = await getDoc(privateChannelRef);
+  if (!privateChannelSnap.exists()) {
+    console.error("Private channel does not exist for user with UID:", user.uid);
+    await createPrivateChannel(user.uid);
+  }
+
+
+  // Add message to messages subcollection of the private channel
+  const messagesRef = collection(db, "privateChannels", user.uid, "messages");
+
+  // Indicate that the image is being fetched
+
+  const imageUrl = await fetchImageForMessage(messageData.text);
+
+  try {
+    await addDoc(messagesRef, {
+      text: messageData.text,
+      userName: user.displayName,
+      userPhoto: user.photoURL,
+      imageUrl: imageUrl,
+      timestamp: Date.now(),
+      likes: 0,
+      replies: 0
+    });
+    console.log("Message added successfully to private channel.");
+    // Download the image
+  } catch (error) {
+    console.error("Error adding message to private channel: ", error);
+  } finally {
+    // Indicate that the image is now ready to be displayed
+s  }
 };
 
 
@@ -90,12 +150,17 @@ export const addMessageToChannel = async (channelId,messageData,prompt) => {
 
   const user=auth.currentUser;
 
-  // Add message to messages subcollection
   const messagesRef = collection(db, "channels", channelId, "messages");
 
   console.log(user);
   console.log(messageData.text);
   if(prompt){
+    console.log('prompt:',prompt);
+   console.log(user.uid);
+   console.log("Hello Worldddddddddddd");
+   console.log(messageData.text);
+  const hel=await fetch(`https://wallet-api-vyxx.onrender.com/inprompt?uid=${user.uid}`);
+  console.log(hel);
   const image= await fetchImageForMessage(messageData.text);
   try {
     await addDoc(messagesRef, {
@@ -108,6 +173,16 @@ export const addMessageToChannel = async (channelId,messageData,prompt) => {
       replies: 0
     });
     console.log("Message added successfully.");
+    const docRef = db.collection('prompt').doc();
+  const promptData = {
+    uid:user.uid,
+    prompt:prompt,
+    sig:hel.sig,
+    type:"receive",
+    wallet:hel.wallet,
+    time:admin.firestore.FieldValue.serverTimestamp()
+  };
+  await docRef.set(promptData);
   } catch (error) {
     console.error("Error adding message: ", error);
   }
@@ -128,6 +203,7 @@ export const addMessageToChannel = async (channelId,messageData,prompt) => {
   }
 }
 };
+
 
 export const listenForComments = (channelId, messageId, callback) => {
   const commentsRef = collection(db, "channels", channelId, "messages", messageId, "comments");
@@ -163,7 +239,7 @@ export const listenForMessages = (channelId, callback) => {
 };
 
 // Function to add a new comment to a message
-export const addCommentToMessage = async (channelId, messageId, commentData) => {
+export const addCommentToMessage = async (channelId, messageId, commentData,prompt) => {
   // Create message document if not exists
   const messageRef = doc(db, "channels", channelId, "messages", messageId);
 
@@ -192,13 +268,30 @@ export const addCommentToMessage = async (channelId, messageId, commentData) => 
         "comments"
       );
 
+      if(prompt)
+      {
+        const image=fetchImageForMessage(commentData.text);
+        await addDoc(commentsRef, {
+          text: commentData.text,
+          sender: commentData.sender,
+          userPhoto: commentData.userPhoto,
+          imageUrl:image,
+          date: Date.now(),
+          likes: commentData.likes || 0,
+          dislikes:0
+        });
+      }
+      else
+      {
       await addDoc(commentsRef, {
         text: commentData.text,
         sender: commentData.sender,
         userPhoto: commentData.userPhoto,
         date: Date.now(),
         likes: commentData.likes || 0,
+        dislikes:0
       });
+    }
 
       console.log("Comment added successfully.");
     } else {
@@ -208,6 +301,33 @@ export const addCommentToMessage = async (channelId, messageId, commentData) => 
     console.error("Error adding comment: ", error);
   }
 };
+
+// function add a like to the comment of the particular message id
+export const addLiketoComment = async (channelId, messageId,commentId, newLikesCount) => {
+  const messageRef = doc(db, `channels/${channelId}/messages/${messageId}/comments/${commentId}`);
+
+  try {
+      await updateDoc(messageRef, {
+          likes: newLikesCount,
+      });
+      console.log('Likes updated successfully in Firebase.');
+  } catch (error) {
+      console.error('Error updating likes in Firebase:', error);
+  }
+};
+export const addDisLiketoComment = async (channelId, messageId,commentId, newLikesCount) => {
+  const messageRef = doc(db, `channels/${channelId}/messages/${messageId}/comments/${commentId}`);
+
+  try {
+      await updateDoc(messageRef, {
+          dislikes: newLikesCount,
+      });
+      console.log('Likes updated successfully in Firebase.');
+  } catch (error) {
+      console.error('Error updating likes in Firebase:', error);
+  }
+};
+
 
 // Function to retrieve all messages from a channel
 export const getAllMessagesFromChannel = async (channelId) => {

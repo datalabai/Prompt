@@ -28,7 +28,7 @@ const Sidebar = () => {
     ];
 
     return (
-        <div className="mt-16 bg-white h-full fixed" style={{ fontFamily: 'Arial, sans-serif' }}>
+        <div className="mt-16 bg-white h-full fixed border-r-2 w-[16rem]" style={{ fontFamily: 'Arial, sans-serif' }}>
             <div className="flex flex-col p-4 space-y-2">
                 <Link href="/Chat?type=Home">
                     <div className='flex items-center p-3 rounded-lg hover:bg-sky-100 transition duration-300 ease-in-out'>

@@ -15,6 +15,7 @@ import PublishIcon from "@mui/icons-material/Publish";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
+import { toast } from 'react-toastify';
 
 
 const Chat = () => {
@@ -93,6 +94,16 @@ const Chat = () => {
 
                 setMessages((prevMessages) => [...prevMessages, newMessage]);
                 setInputValue('');
+                toast.success('0.001 Sol deducted from wallet', {
+                    position: 'top-right',
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
+
                 await addMessageToChannel(type,{text:inputValue},true);
             }
             else
@@ -186,7 +197,7 @@ const Chat = () => {
     };
 
     return (
-        <div className={`flex flex-col h-[650px] max-w-36rm border-x ${showReplySection ? '' : ''} `} style={{ marginTop: '68px' }}>
+        <div className={`fixed flex flex-col h-[685px] w-[42%] border-r-2  ${showReplySection ? '' : ''} `} style={{ marginTop: '68px' }}>
             {/* Header */}
             {user ? (
                 <React.Fragment>
@@ -201,13 +212,7 @@ const Chat = () => {
                     <div className="flex-grow overflow-y-auto max-w-36rm">
                         {messages.map((message, index) => (
                             <div key={message.id} className="flex flex-col border-slate-300 border-b">
-                                {/* Display date with border */}
-                                {/* {index === 0 || formatDate(new Date(message.timestamp)) !== formatDate(new Date(messages[index - 1].timestamp)) ? (
-                                    <div className="border-b border-gray-300 pb-2 mb-2">
-                                        <div className="text-lg text-gray-500 text-center">{formatDate(new Date(message.timestamp))}</div>
-                                    </div>
-                                ) : null} */}
-                                {/* Individual message with time */}
+                                
                                 <div className={`flex items-start space-x-4`}>
                                     <div className={'flex bg-white rounded-lg p-6 w-full'}>
                                     <img src={message.userPhoto} alt="Profile" className="w-10 h-10 rounded-full" />
@@ -219,7 +224,7 @@ const Chat = () => {
                                         </div>
                                         <p className="text-gray-800">{message.text}</p>
                                         {message.imageUrl && (
-                                            <img src={message.imageUrl} alt="Message Image" width={250} height={250} onLoad={handleImageLoad} />
+                                            <img className="rounded-lg mt-2" src={message.imageUrl} alt="Message Image" width={450} height={350} onLoad={handleImageLoad}/>
                                         )}
                                         <div className="flex items-center space-x-4 mt-2 post__footer">
                                             {/* Reply icon */}
@@ -255,7 +260,7 @@ const Chat = () => {
                     </div>
 
                     {/* Footer */}
-                    <div className="flex items-center p-4 bg-white mb-5">
+                    <div className="flex items-center p-4 bg-white">
             <div className='mr-2 relative'>
                 {showMenu && (
                     <div className="absolute bottom-full right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg">
