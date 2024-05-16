@@ -82,22 +82,17 @@ const ReplySection = ({ message ,type,setShowReplySection,setSelectedMessage}) =
     };
 
     const generatePrompt=async(text)=>{
-        if (commentText.trim() !== '') {
             const newComment = {
-                text: commentText,
+                text: text,
                 sender: auth.currentUser.displayName,
                 userPhoto: auth.currentUser.photoURL,
                 date: Date.now(),
                 likes: 0, // Initialize likes for each comment
             };
 
-            // Update local state to add the new comment to the existing comments
-            // Add the comment to Firestore
             await addCommentToMessage(type, message.id, newComment,true);
 
-            // Clear the input value
-            setInputValue('');
-        }         
+            setInputValue('');       
     }
     
     const handleAddComment = async (commentText) => {
