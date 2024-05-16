@@ -181,6 +181,9 @@ return (
                                 <span className="text-sm text-gray-500">{formatTime(new Date(comment.date))}</span>
                             </div>
                             <p className="text-gray-800">{comment.text}</p>
+                            {comment.imageUrl && (
+                        <img className="mt-2" src={comment.imageUrl} alt="Message" width={250} height={250} />
+                    )}
                             <div className="flex items-center space-x-3 mt-2 post__footer">
                             <div>
                                 <ThumbUpIcon

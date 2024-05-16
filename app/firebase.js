@@ -248,16 +248,6 @@ export const addCommentToMessage = async (channelId, messageId, commentData,prom
     const messageDoc = await getDoc(messageRef);
     if (messageDoc.exists()) {
       // Get the current replies count from the message data
-      const currentReplies = messageDoc.data().replies || 0;
-
-      // Increment the replies count by 1
-      const newRepliesCount = currentReplies + 1;
-
-      // Update the message document with the new replies count
-      await updateDoc(messageRef, {
-        replies: newRepliesCount,
-      });
-
       // Add comment to comments subcollection
       const commentsRef = collection(
         db,
@@ -270,7 +260,7 @@ export const addCommentToMessage = async (channelId, messageId, commentData,prom
 
       if(prompt)
       {
-        const image=fetchImageForMessage(commentData.text);
+        const image= await fetchImageForMessage(commentData.text);
         await addDoc(commentsRef, {
           text: commentData.text,
           sender: commentData.sender,
@@ -292,6 +282,16 @@ export const addCommentToMessage = async (channelId, messageId, commentData,prom
         dislikes:0
       });
     }
+    const currentReplies = messageDoc.data().replies || 0;
+
+      // Increment the replies count by 1
+      const newRepliesCount = currentReplies + 1;
+
+      // Update the message document with the new replies count
+      await updateDoc(messageRef, {
+        replies: newRepliesCount,
+      });
+
 
       console.log("Comment added successfully.");
     } else {
