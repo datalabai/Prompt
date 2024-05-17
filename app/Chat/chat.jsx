@@ -11,12 +11,12 @@ import { addMessageToChannel, addCommentToMessage, getAllMessagesFromChannel, ge
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import RepeatIcon from "@mui/icons-material/Repeat";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import PublishIcon from "@mui/icons-material/Publish";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import { toast } from 'react-toastify';
-
 
 const Chat = () => {
     const searchParams = useSearchParams();
@@ -43,6 +43,7 @@ const Chat = () => {
     const handleMenuClick = () => {
         setShowMenu(!showMenu); // Toggle menu visibility on icon click
     };
+
     useEffect(() => {
         const unsubscribeAuth = auth.onAuthStateChanged((user) => {
             setUser(user); // Update user state based on authentication status
@@ -73,7 +74,7 @@ const Chat = () => {
         return () => unsubscribeMessages();
     }, [searchParams]);
     
-      const handleSendMessage = async () => {
+    const handleSendMessage = async () => {
         if (inputValue.trim() !== '') {
             if (selectedMessage !== null) {
                 await addCommentToMessage(type, selectedMessage.id, { text: inputValue, user: 'user' });
@@ -105,9 +106,7 @@ const Chat = () => {
                 });
 
                 await addMessageToChannel(type,{text:inputValue},true);
-            }
-            else
-            {
+            } else {
                 const userName = auth.currentUser.displayName;
                 const userPhoto = auth.currentUser.photoURL;
                 const newMessage = {
@@ -122,11 +121,9 @@ const Chat = () => {
                 setMessages((prevMessages) => [...prevMessages, newMessage]);
                 setInputValue('');
                 await addMessageToChannel(type,{text:inputValue},false);
-            
             }
         }
     };
-    
 
     useEffect(() => {
         scrollToBottom();
@@ -141,34 +138,21 @@ const Chat = () => {
         setInputValue(e.target.value);
     };
 
-
     const handleLike = async (message) => {
-        // Check if the message ID is already in the likedMessages set
-        const isLiked = likedMessages.has(message.id);
-    
-        // Update like count locally and in Firebase
-        const updatedLikesCount = isLiked ? message.likes - 1 : message.likes + 1;
-        await updateLikesInFirebase(message.channelId, message.id, updatedLikesCount);
-    
-        // Update the message in the messages state array with the new like count
-        setMessages((prevMessages) =>
-            prevMessages.map((msg) =>
-                msg.id === message.id ? { ...msg, likes: updatedLikesCount } : msg
-            )
-        );
-    
-        // Update likedMessages set based on like/unlike action
-        setLikedMessages((prevLikedMessages) => {
-            const newLikedMessages = new Set(prevLikedMessages);
-            if (isLiked) {
-                newLikedMessages.delete(message.id); // Remove from likedMessages if unliked
-            } else {
-                newLikedMessages.add(message.id); // Add to likedMessages if liked
-            }
-            return newLikedMessages;
-        });
+        console.log(message.id);
+        console.log(likedMessages);
+        if(likedMessages.has(message.id)){
+            await updateLikesInFirebase(type, message.id);
+            likedMessages.delete(message.id);
+            return;
+        }
+        else
+        {
+            likedMessages.add(message.id);
+            await updateLikesInFirebase(type, message.id);
+        }
+        console.log(likedMessages);
     };
-    
 
     const handleReply = (message) => {
         setShowReplySection(true);
@@ -180,7 +164,6 @@ const Chat = () => {
         const minutes = date.getMinutes().toString().padStart(2, '0');
         return `${hours}:${minutes}`;
     };
-    
 
     const formatDate = (date) => {
         const today = new Date();
@@ -197,63 +180,60 @@ const Chat = () => {
     };
 
     return (
-        <div className={`fixed flex flex-col h-[685px] w-[42%] border-r-2  ${showReplySection ? '' : ''} `} style={{ marginTop: '68px' }}>
+        <div className={`fixed flex flex-col h-[685px] w-[42%] border-r-2 ${showReplySection ? '' : ''}`} style={{ marginTop: '68px' }}>
             {/* Header */}
             {user ? (
                 <React.Fragment>
-                   <div className={`flex space-x-4 p-4 bg-white border-b`}>
+                    <div className={`flex space-x-4 p-4 bg-white border-b`}>
                         <h2 className="text-lg font-semibold text-gray-800"># {type}</h2>
                         <h1 className='items-center mt-1 text-sm text-gray-600'>-</h1>
                         <h1 className='items-center mt-1 text-sm text-gray-600'>This is a {type} channel , users can generate images</h1>
                     </div>
 
-
                     {/* Messages display area */}
                     <div className="flex-grow overflow-y-auto max-w-36rm">
                         {messages.map((message, index) => (
                             <div key={message.id} className="flex flex-col border-slate-300 border-b">
-                                
                                 <div className={`flex items-start space-x-4`}>
                                     <div className={'flex bg-white rounded-lg p-6 w-full'}>
-                                    <img src={message.userPhoto} alt="Profile" className="w-10 h-10 rounded-full" />
-                                    <div className="ml-2 bg-white rounded-lg w-full">
-                                        
-                                        <div className="flex justify-between items-center mb-2">
-                                            <span className="font-semibold text-gray-800">{message.userName}</span>
-                                            <span className="text-sm text-gray-500">{formatTime(new Date(message.timestamp))}</span>
-                                        </div>
-                                        <p className="text-gray-800">{message.text}</p>
-                                        {message.imageUrl && (
-                                            <img className="rounded-lg mt-2" src={message.imageUrl} alt="Message Image" width={450} height={350} onLoad={handleImageLoad}/>
-                                        )}
-                                        <div className="flex items-center space-x-4 mt-2 post__footer">
-                                            {/* Reply icon */}
-                                            <div>
-                                            <ChatBubbleOutlineIcon
-                                                className="cursor-pointer text-gray-500 hover:text-gray-700"
-                                                size={18}
-                                                onClick={() => handleReply(message)}  
-                                            />
-                                            {/* Display the number of replies */}
-                                            <span className="text-sm text-gray-500 ml-0.5">{message.replies}</span>
+                                        <img src={message.userPhoto} alt="Profile" className="w-10 h-10 rounded-full" />
+                                        <div className="ml-2 bg-white rounded-lg w-full">
+                                            <div className="flex justify-between items-center mb-2">
+                                                <span className="font-semibold text-gray-800">{message.userName}</span>
+                                                <span className="text-sm text-gray-500">{formatTime(new Date(message.timestamp))}</span>
                                             </div>
-                                            <RepeatIcon fontSize="small" className="chatBubble"/>
-                                            {/* Like icon */}
-                                            <div>
-                                            <FavoriteBorderIcon
-                                                className={`cursor-pointer text-gray-500 hover:text-gray-700 ${likedMessages.has(message.id) ? 'text-blue-500' : ''}`}
-                                                size={18}
-                                                onClick={() => handleLike(message)}
-                                            />
-                                            {/* Display the number of likes */}
-                                            <span className="text-sm text-gray-500 ml-0.5">{message.likes}</span>
+                                            <p className="text-gray-800">{message.text}</p>
+                                            {message.imageUrl && (
+                                                <img className="rounded-lg mt-2" src={message.imageUrl} alt="Message Image" width={450} height={350} onLoad={handleImageLoad} />
+                                            )}
+                                            <div className="flex items-center space-x-4 mt-2 post__footer">
+                                                {/* Reply icon */}
+                                                <div>
+                                                    <ChatBubbleOutlineIcon
+                                                        className="cursor-pointer text-gray-500 hover:text-gray-700"
+                                                        size={18}
+                                                        onClick={() => handleReply(message)}
+                                                    />
+                                                    {/* Display the number of replies */}
+                                                    <span className="text-sm text-gray-500 ml-0.5">{message.replies}</span>
+                                                </div>
+                                                <RepeatIcon fontSize="small" className="chatBubble" />
+                                                {/* Like icon */}
+                                                <div>
+                                                   
+                                                        <FavoriteBorderIcon
+                                                            className="cursor-pointer text-gray-500 hover:text-gray-700"
+                                                            size={18}
+                                                            onClick={() => handleLike(message)}
+                                                        />
+                                                    {/* Display the number of likes */}
+                                                    <span className="text-sm text-gray-500 ml-0.5">{message.likes}</span>
+                                                </div>
+                                                <PublishIcon fontSize="small" className="chatBubble" />
                                             </div>
-                                            <PublishIcon fontSize="small" className="chatBubble"/>
                                         </div>
                                     </div>
-                                     </div>   
-                                    
-                                </div>                
+                                </div>
                             </div>
                         ))}
                         <div ref={messagesEndRef} />
@@ -261,63 +241,60 @@ const Chat = () => {
 
                     {/* Footer */}
                     <div className="flex items-center p-4 bg-white">
-            <div className='mr-2 relative'>
-                {showMenu && (
-                    <div className="absolute bottom-full right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg">
-                        {/* Menu options */}
-                        <button className="block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('prompt')}>
-                            <AutoFixHighIcon color="primary" />
-                        </button>
-                        <button className="block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('chat')}>
-                            <ChatBubbleOutlineIcon color="primary" />
-                        </button>
-                    </div>
-                )}
-                <AddCircleOutlineIcon
-                    fontSize="large"
-                    color="primary"
-                    className="cursor-pointer text-gray-500 hover:text-gray-700"
-                    size={24}
-                    onClick={handleMenuClick}
-                />
-            </div>
-            
-            <div className="mr-4 flex-grow relative">
-            <div className="flex items-center border border-gray-300 rounded-lg p-2 space-x-2">
-            {selectedMenuOption === 'prompt' && (
-                <div className="flex items-center space-x-2">
-                    <AutoFixHighIcon color="primary" />
-                   
-                </div>
-            )}
-            {selectedMenuOption === 'chat' && (
-                <div className="flex items-center space-x-2">
-                    <ChatBubbleOutlineIcon color="primary" className='items-center mt-1'/>
-                   
-                </div>
-            )}
-            <input 
-                    type="text"
-                    value={inputValue}
-                    onChange={handleInputChange}
-                    {...(selectedMenuOption === 'prompt' && { placeholder: 'Type your prompt...' })}
-                    {...(selectedMenuOption === 'chat' && { placeholder: 'Type your message...' })}
-                    className="flex-grow bg-transparent outline-none"
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                            handleSendMessage(e.target.value);
-                        }
-                    }}
-                />
-        </div>
-            </div>
-        </div>
+                        <div className='mr-2 relative'>
+                            {showMenu && (
+                                <div className="absolute bottom-full right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg">
+                                    {/* Menu options */}
+                                    <button className="block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('prompt')}>
+                                        <AutoFixHighIcon color="primary" />
+                                    </button>
+                                    <button className="block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('chat')}>
+                                        <ChatBubbleOutlineIcon color="primary" />
+                                    </button>
+                                </div>
+                            )}
+                            <AddCircleOutlineIcon
+                                fontSize="large"
+                                color="primary"
+                                className="cursor-pointer text-gray-500 hover:text-gray-700"
+                                size={24}
+                                onClick={handleMenuClick}
+                            />
+                        </div>
 
+                        <div className="mr-4 flex-grow relative">
+                            <div className="flex items-center border border-gray-300 rounded-lg p-2 space-x-2">
+                                {selectedMenuOption === 'prompt' && (
+                                    <div className="flex items-center space-x-2">
+                                        <AutoFixHighIcon color="primary" />
+                                    </div>
+                                )}
+                                {selectedMenuOption === 'chat' && (
+                                    <div className="flex items-center space-x-2">
+                                        <ChatBubbleOutlineIcon color="primary" className='items-center mt-1' />
+                                    </div>
+                                )}
+                                <input
+                                    type="text"
+                                    value={inputValue}
+                                    onChange={handleInputChange}
+                                    {...(selectedMenuOption === 'prompt' && { placeholder: 'Type your prompt...' })}
+                                    {...(selectedMenuOption === 'chat' && { placeholder: 'Type your message...' })}
+                                    className="flex-grow bg-transparent outline-none"
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            handleSendMessage(e.target.value);
+                                        }
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    </div>
 
                     {/* Render reply section if showReplySection is true */}
-                    {showReplySection && <ReplySection message={selectedMessage} type={type} 
-                    setShowReplySection={setShowReplySection}
-                    setSelectedMessage={setSelectedMessage}
+                    {showReplySection && <ReplySection message={selectedMessage} type={type}
+                        setShowReplySection={setShowReplySection}
+                        setSelectedMessage={setSelectedMessage}
                     />}
                 </React.Fragment>
             ) : (

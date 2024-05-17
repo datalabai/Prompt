@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { MDBCol, MDBContainer, MDBRow, MDBCard, MDBCardText, MDBCardBody, MDBCardImage, MDBBtn, MDBTypography, MDBSpinner } from 'mdb-react-ui-kit'; // Added MDBSpinner
 import TransactionCard from './TransactionCard';
 import { getProfile } from  '../firebase';
+import CircularProgress from '@mui/material/CircularProgress';
+
 
 export default function EditButton() {
     const [profileData, setProfileData] = useState(null);
@@ -26,10 +28,8 @@ export default function EditButton() {
 
     return (
         <div className="gradient-custom-2 mt-7 border-l py-5 h-100" style={{ backgroundColor: '#f8f9fa' }}>
-            {loading ? ( // Display loading spinner if data is still loading
-                <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
-                    <MDBSpinner grow />
-                </div>
+            {loading ? ( // Display loading spinner if data is still loading\
+                    <CircularProgress color='secondary' className='mt-40 ml-[50%] items-center' />
             ) : (
                 profileData && ( // Render only if profileData is available
                     <MDBRow className="justify-content-center align-items-center h-100">

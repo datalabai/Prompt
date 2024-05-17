@@ -16,7 +16,6 @@ import { addLiketoComment,addDisLiketoComment } from '../firebase';
 const ReplySection = ({ message ,type,setShowReplySection,setSelectedMessage}) => {
     const [comments, setComments] = useState([]);
     const [inputValue, setInputValue] = useState('');
-    const [likes, setLikes] = useState(message.likes);
     const commentsEndRef = useRef(null); // Ref for scrolling to end of comments
     const [likedMessages, setLikedMessages] = useState(new Set());
 
@@ -24,32 +23,31 @@ const ReplySection = ({ message ,type,setShowReplySection,setSelectedMessage}) =
     useEffect(() => {
         const unsubscribeComments = listenForComments(type, message.id, (newComments) => {
             // Append new comments to the existing comments array
-            setComments((prevComments) => [...prevComments, ...newComments]);
+            setComments(newComments);
         });
 
         return () => unsubscribeComments(); // Clean up the listener
     }, [type, message.id]);
 
     const addLike = async (comment) => {
-        // Update the like count for the comment in Firebase
-        await addLiketoComment(type, message.id, comment.id, comment.likes + 1);
 
-        // Update the local state with the new like count
+        const value = await addLiketoComment(type, message.id, comment.id);
+
         setComments((prevComments) =>
             prevComments.map((cmt) =>
-                cmt.id === comment.id ? { ...cmt, likes: cmt.likes + 1 } : cmt
+                cmt.id === comment.id ? { ...cmt, likes: value } : cmt
             )
         );
     };
 
     const addDislike = async (comment) => {
         // Update the dislike count for the comment in Firebase
-        await addDisLiketoComment(type, message.id, comment.id, comment.dislikes + 1);
+       const value= await addDisLiketoComment(type, message.id, comment.id);
 
         // Update the local state with the new like count
         setComments((prevComments) =>
             prevComments.map((cmt) =>
-                cmt.id === comment.id ? { ...cmt, dislikes: cmt.dislikes + 1 } : cmt
+                cmt.id === comment.id ? { ...cmt, dislikes: value} : cmt
             )
         );
     };
@@ -86,10 +84,12 @@ const ReplySection = ({ message ,type,setShowReplySection,setSelectedMessage}) =
                 text: text,
                 sender: auth.currentUser.displayName,
                 userPhoto: auth.currentUser.photoURL,
+                imageUrl: './load-32_128.gif',
                 date: Date.now(),
-                likes: 0, // Initialize likes for each comment
+                likes: 0,
             };
 
+            setComments((prevComments) => [...prevComments,newComment]);
             await addCommentToMessage(type, message.id, newComment,true);
 
             setInputValue('');       
@@ -102,14 +102,11 @@ const ReplySection = ({ message ,type,setShowReplySection,setSelectedMessage}) =
                 sender: auth.currentUser.displayName,
                 userPhoto: auth.currentUser.photoURL,
                 date: Date.now(),
-                likes: 0, // Initialize likes for each comment
+                likes: 0,
             };
 
-            // Update local state to add the new comment to the existing comments
-            // Add the comment to Firestore
+            setComments((prevComments) => [...prevComments,newComment]);
             await addCommentToMessage(type, message.id, newComment,false);
-
-            // Clear the input value
             setInputValue('');
         }
     };

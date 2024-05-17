@@ -35,9 +35,11 @@ export const transactions = async () => {
 export const getProfile = async () => {
   try {
     const uid = auth.currentUser.uid; 
+    console.log("profile data");
     console.log('uid:', uid); // Logging the UID for debugging purposes
     const response = await fetch(`https://wallet-api-vyxx.onrender.com/profile?uid=${uid}`);
     const data = await response.json();
+    console.log(data);
     return data; 
   } catch (error) {
     console.error('Error fetching profile data:', error.message); // Handling any errors that occur during the fetch
@@ -159,8 +161,8 @@ export const addMessageToChannel = async (channelId,messageData,prompt) => {
    console.log(user.uid);
    console.log("Hello Worldddddddddddd");
    console.log(messageData.text);
-  const hel=await fetch(`https://wallet-api-vyxx.onrender.com/inprompt?uid=${user.uid}`);
-  console.log(hel);
+  // const hel=await fetch(`https://wallet-api-vyxx.onrender.com/inprompt?uid=${user.uid}`);
+  // console.log(hel);
   const image= await fetchImageForMessage(messageData.text);
   try {
     await addDoc(messagesRef, {
@@ -170,18 +172,19 @@ export const addMessageToChannel = async (channelId,messageData,prompt) => {
       imageUrl: image,
       timestamp: Date.now(),
       likes: 0,
-      replies: 0
-    });
+      replies: 0,
+      Ulikes: []
+      });
     console.log("Message added successfully.");
-    const docRef = db.collection('prompt').doc();
-  const promptData = {
-    uid:user.uid,
-    prompt:prompt,
-    sig:hel.sig,
-    type:"receive",
-    wallet:hel.wallet,
-    time:admin.firestore.FieldValue.serverTimestamp()
-  };
+  //   const docRef = db.collection('prompt').doc();
+  // const promptData = {
+  //   uid:user.uid,
+  //   prompt:prompt,
+  //   sig:hel.sig,
+  //   type:"receive",
+  //   wallet:hel.wallet,
+  //   time:admin.firestore.FieldValue.serverTimestamp()
+  // };
   await docRef.set(promptData);
   } catch (error) {
     console.error("Error adding message: ", error);
@@ -195,7 +198,8 @@ export const addMessageToChannel = async (channelId,messageData,prompt) => {
       userPhoto: user.photoURL,
       timestamp: Date.now(),
       likes: 0,
-      replies: 0
+      replies: 0,
+      Ulikes:[]
     });
     console.log("Message added successfully.");
   } catch (error) {
@@ -211,10 +215,8 @@ export const listenForComments = (channelId, messageId, callback) => {
 
   const unsubscribe = onSnapshot(orderedCommentsQuery, (snapshot) => {
     const newComments = [];
-    snapshot.docChanges().forEach((change) => {
-      if (change.type === "added") {
-        newComments.push({ id: change.doc.id, ...change.doc.data() });
-      }
+    snapshot.forEach((doc) => {
+      newComments.push({ id: doc.id, ...doc.data() });
     });
     callback(newComments);
   });
@@ -268,7 +270,9 @@ export const addCommentToMessage = async (channelId, messageId, commentData,prom
           imageUrl:image,
           date: Date.now(),
           likes: commentData.likes || 0,
-          dislikes:0
+          dislikes:0,
+          plikes:[],
+          pdislikes:[]
         });
       }
       else
@@ -279,7 +283,9 @@ export const addCommentToMessage = async (channelId, messageId, commentData,prom
         userPhoto: commentData.userPhoto,
         date: Date.now(),
         likes: commentData.likes || 0,
-        dislikes:0
+        dislikes:0,
+        plikes:[],
+        pdislikes:[]
       });
     }
     const currentReplies = messageDoc.data().replies || 0;
@@ -303,31 +309,64 @@ export const addCommentToMessage = async (channelId, messageId, commentData,prom
 };
 
 // function add a like to the comment of the particular message id
-export const addLiketoComment = async (channelId, messageId,commentId, newLikesCount) => {
+export const addLiketoComment = async (channelId, messageId,commentId) => {
+  const messageRef = doc(db, `channels/${channelId}/messages/${messageId}/comments/${commentId}`);
+  try {
+    const docSnap = await getDoc(messageRef);
+    console.log(docSnap.data());
+    if(docSnap.data().plikes.includes(auth.currentUser.uid)){
+      await updateDoc(messageRef, {
+        likes: docSnap.data().likes-1,
+    });
+    const tlikes=docSnap.data().plikes;
+    const index=tlikes.indexOf(auth.currentUser.uid);
+    tlikes.splice(index,1);
+    await updateDoc(messageRef, {
+        plikes:tlikes
+    });
+      return docSnap.data().likes-1;
+    } 
+    const tlikes=docSnap.data().plikes;
+    tlikes.push(auth.currentUser.uid);
+    await updateDoc(messageRef, {
+        likes: docSnap.data().likes+1,
+        plikes:tlikes
+    });
+    return docSnap.data().likes+1;
+} catch (error) {
+    console.error('Error updating likes in Firebase:', error);
+}
+};
+
+export const addDisLiketoComment = async (channelId, messageId,commentId) => {
   const messageRef = doc(db, `channels/${channelId}/messages/${messageId}/comments/${commentId}`);
 
   try {
+    const docSnap = await getDoc(messageRef);
+    console.log(docSnap.data());
+    if(docSnap.data().pdislikes.includes(auth.currentUser.uid)){
       await updateDoc(messageRef, {
-          likes: newLikesCount,
-      });
-      console.log('Likes updated successfully in Firebase.');
-  } catch (error) {
-      console.error('Error updating likes in Firebase:', error);
-  }
+        dislikes: docSnap.data().dislikes-1,
+    });
+    const tlikes=docSnap.data().pdislikes;
+    const index=tlikes.indexOf(auth.currentUser.uid);
+    tlikes.splice(index,1);
+    await updateDoc(messageRef, {
+        pdislikes:tlikes
+    });
+      return docSnap.data().likes-1;
+    } 
+    const tlikes=docSnap.data().pdislikes;
+    tlikes.push(auth.currentUser.uid);
+    await updateDoc(messageRef, {
+        dislikes: docSnap.data().dislikes+1,
+        pdislikes:tlikes
+    });
+    return docSnap.data().dislikes+1;
+} catch (error) {
+    console.error('Error updating likes in Firebase:', error);
+}
 };
-export const addDisLiketoComment = async (channelId, messageId,commentId, newLikesCount) => {
-  const messageRef = doc(db, `channels/${channelId}/messages/${messageId}/comments/${commentId}`);
-
-  try {
-      await updateDoc(messageRef, {
-          dislikes: newLikesCount,
-      });
-      console.log('Likes updated successfully in Firebase.');
-  } catch (error) {
-      console.error('Error updating likes in Firebase:', error);
-  }
-};
-
 
 // Function to retrieve all messages from a channel
 export const getAllMessagesFromChannel = async (channelId) => {
@@ -367,12 +406,29 @@ export const getAllCommentsFromMessage = async (channelId, messageId) => {
   }
 };
 
-export const updateLikesInFirebase = async (channelId, messageId, newLikesCount) => {
+export const updateLikesInFirebase = async (channelId, messageId) => {
   const messageRef = doc(db, `channels/${channelId}/messages/${messageId}`);
 
   try {
+      const docSnap = await getDoc(messageRef);
+      console.log(docSnap.data());
+      if(docSnap.data().Ulikes.includes(auth.currentUser.uid)){
+        await updateDoc(messageRef, {
+          likes: docSnap.data().likes-1,
+      });
+      const tlikes=docSnap.data().Ulikes;
+      const index=tlikes.indexOf(auth.currentUser.uid);
+      tlikes.splice(index,1);
       await updateDoc(messageRef, {
-          likes: newLikesCount,
+          Ulikes:tlikes
+      });
+        return;
+      } 
+      const tlikes=docSnap.data().Ulikes;
+      tlikes.push(auth.currentUser.uid);
+      await updateDoc(messageRef, {
+          likes: docSnap.data().likes+1,
+          Ulikes:tlikes
       });
       console.log('Likes updated successfully in Firebase.');
   } catch (error) {
