@@ -180,7 +180,7 @@ const Chat = () => {
     };
 
     return (
-        <div className={`fixed flex flex-col h-[685px] w-[42%] border-r-2 ${showReplySection ? '' : ''}`} style={{ marginTop: '68px' }}>
+        <div className={`fixed flex flex-col h-[91.333333%] w-[42%] border-r-2 ${showReplySection ? '' : ''}`} style={{ marginTop: '68px' }}>
             {/* Header */}
             {user ? (
                 <React.Fragment>
