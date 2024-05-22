@@ -12,10 +12,13 @@ import PublishIcon from "@mui/icons-material/Publish";
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import { updateLikesInFirebase } from '../firebase';
 import { addLiketoComment,addDisLiketoComment } from '../firebase';
+import { toast } from 'react-toastify';
+
 
 const ReplySection = ({ message ,type,setShowReplySection,setSelectedMessage}) => {
     const [comments, setComments] = useState([]);
     const [inputValue, setInputValue] = useState('');
+    const [likes,setLikes]=useState(message.likes);
     const commentsEndRef = useRef(null); // Ref for scrolling to end of comments
     const [likedMessages, setLikedMessages] = useState(new Set());
 
@@ -61,14 +64,8 @@ const ReplySection = ({ message ,type,setShowReplySection,setSelectedMessage}) =
 
     const handleLike = async (message) => {
         // Update the like count in Firebase
-        await updateLikesInFirebase(message.channelId, message.id, message.likes + 1);
-    
-        // Update the local state with the new like count
-        setMessages((prevMessages) =>
-            prevMessages.map((msg) =>
-                msg.id === message.id ? { ...msg, likes: msg.likes + 1 } : msg
-            )
-        );
+        const value= await updateLikesInFirebase(type,message.id);
+        setLikes(value);
     };
 
     useEffect(() => {
@@ -90,8 +87,35 @@ const ReplySection = ({ message ,type,setShowReplySection,setSelectedMessage}) =
             };
 
             setComments((prevComments) => [...prevComments,newComment]);
-            await addCommentToMessage(type, message.id, newComment,true);
-
+            const response=await addCommentToMessage(type, message.id, newComment,true);
+            if(response!="100")
+            {
+                toast.success('0.01 Sol deducted from wallet', {
+                    position: 'top-right',
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
+            }
+            else
+            {
+                toast.warning('Not Enough Sol', {
+                    position: 'top-right',
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
+                const unsubscribeComments = listenForComments(type, message.id, (newComments) => {
+                    // Append new comments to the existing comments array
+                    setComments(newComments);
+                });
+            }
             setInputValue('');       
     }
     
@@ -106,7 +130,8 @@ const ReplySection = ({ message ,type,setShowReplySection,setSelectedMessage}) =
             };
 
             setComments((prevComments) => [...prevComments,newComment]);
-            await addCommentToMessage(type, message.id, newComment,false);
+            const response=await addCommentToMessage(type, message.id, newComment,false);
+            console.log(response);
             setInputValue('');
         }
     };
@@ -157,7 +182,7 @@ return (
                             onClick={() => handleLike(message)}
                         />
                         {/* Display the number of likes */}
-                        <span className="text-sm text-gray-500 ml-0.5">{message.likes}</span>
+                        <span className="text-sm text-gray-500 ml-0.5">{likes}</span>
                     </div>
                     <PublishIcon fontSize="small" className="chatBubble" />
                 </div>

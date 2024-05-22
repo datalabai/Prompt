@@ -38,28 +38,25 @@ export default function BasicTable() {
   }, []);
 
   const formatTimestamp = (timestamp) => {
-    const dateObj = new Date(timestamp._seconds * 1000);
-    return dateObj.toLocaleString();
+    const date = new Date(timestamp);
+
+// Array to map month numbers to their abbreviations
+const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+// Extract individual components
+const year = date.getFullYear();
+const month = monthNames[date.getMonth()]; // Get the month abbreviation
+const day = String(date.getDate()).padStart(2, '0');
+const hours = String(date.getHours()).padStart(2, '0');
+const minutes = String(date.getMinutes()).padStart(2, '0');
+const seconds = String(date.getSeconds()).padStart(2, '0');
+
+// Format the date as YYYY-MMM-DD HH:MM:SS
+const formattedDate = `${month}-${day}-${year} ${hours}:${minutes}`;
+
+    return formattedDate;
   };
 
-  const formatDate= (dateString) => {
-    const [datePart, timePart] = dateString.split(', '); // Split date and time
-    const [day, month, year] = datePart.split('/').map(Number); // Parse day, month, and year
-    const [hour, minute, second] = timePart.split(':').map(Number); // Parse hour, minute, and second
-  
-    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-    const monthName = months[month - 1];
-  
-    // Determine AM or PM
-    let period = 'AM';
-    let formattedHour = hour;
-    if (hour >= 12) {
-      period = 'PM';
-      if (hour > 12) formattedHour -= 12;
-    }
-  
-    return `${monthName} ${day}, ${year} at ${formattedHour}:${minute.toString().padStart(2, '0')} ${period}`;  
-  }
 
 
   const sliceTransactionId = (transactionId) => {
@@ -102,7 +99,7 @@ export default function BasicTable() {
                 </Link>
               </TableCell>
               <TableCell align="right" sx={{ color: '#333', width: '25%' }}>{row.prompt}</TableCell>
-              <TableCell align="right" sx={{ color: '#333', width: '25%' }}>{formatDate(row.date)}</TableCell>
+              <TableCell align="right" sx={{ color: '#333', width: '25%' }}>{row.date}</TableCell>
               <TableCell align="right" sx={{ color: '#333', width: '25%' }}>0.001 Sol</TableCell>
             </TableRow>
           ))}

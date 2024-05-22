@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { query,where,getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc,setDoc,orderBy,onSnapshot, getCountFromServer} from "firebase/firestore";
+import { query,where,getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc,setDoc,orderBy,onSnapshot, getCountFromServer,serverTimestamp} from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBe7LVB7NZGQ4ih869GmtX2iwYvE0hzbLE",
@@ -157,14 +157,22 @@ export const addMessageToChannel = async (channelId,messageData,prompt) => {
   console.log(user);
   console.log(messageData.text);
   if(prompt){
-    console.log('prompt:',prompt);
-   console.log(user.uid);
-   console.log("Hello Worldddddddddddd");
-   console.log(messageData.text);
-  // const hel=await fetch(`https://wallet-api-vyxx.onrender.com/inprompt?uid=${user.uid}`);
-  // console.log(hel);
-  const image= await fetchImageForMessage(messageData.text);
   try {
+    console.log('prompt:',prompt);
+    console.log(user.uid);
+    console.log("Hello Worldddddddddddd");
+    console.log(messageData.text);
+   const responose=await fetch(`https://wallet-api-vyxx.onrender.com/inprompt?uid=${user.uid}`);
+   const data= await responose.json();
+   if(!data.sig)
+   {
+      return {type:'warning',message:"Not Enough Sol"};
+   }
+   const image= await fetchImageForMessage(messageData.text); 
+   if(image=='Failed to generate image. Please try again later.')
+    {
+      return {type:'error',message:"Failed to load Image,try another"};
+    }
     await addDoc(messagesRef, {
       text: messageData.text,
       userName: user.displayName,
@@ -176,18 +184,21 @@ export const addMessageToChannel = async (channelId,messageData,prompt) => {
       Ulikes: []
       });
     console.log("Message added successfully.");
-  //   const docRef = db.collection('prompt').doc();
-  // const promptData = {
-  //   uid:user.uid,
-  //   prompt:prompt,
-  //   sig:hel.sig,
-  //   type:"receive",
-  //   wallet:hel.wallet,
-  //   time:admin.firestore.FieldValue.serverTimestamp()
-  // };
-  await docRef.set(promptData);
+    //import the collection prompt
+    const promptRef = collection(db, "prompt");
+  const promptData = {
+    uid:user.uid,
+    prompt:messageData.text,
+    sig:data.sig,
+    type:"receive",
+    wallet:data.wallet,
+    time:Date.now()
+  };
+  await addDoc(promptRef, promptData);
+   return {type:'success',message:'0.01 Sol Deduct from wallet'};
   } catch (error) {
     console.error("Error adding message: ", error);
+    return {type:'error',message:error};
   }
   }
   else{
@@ -202,8 +213,10 @@ export const addMessageToChannel = async (channelId,messageData,prompt) => {
       Ulikes:[]
     });
     console.log("Message added successfully.");
+    return {type:'success',message:'0.01 Sol Deduct from wallet'};
   } catch (error) {
     console.error("Error adding message: ", error);
+    return {type:'error',message:error};
   }
 }
 };
@@ -244,6 +257,7 @@ export const listenForMessages = (channelId, callback) => {
 export const addCommentToMessage = async (channelId, messageId, commentData,prompt) => {
   // Create message document if not exists
   const messageRef = doc(db, "channels", channelId, "messages", messageId);
+  const user =auth.currentUser;
 
   try {
     // Get the message document snapshot
@@ -262,6 +276,12 @@ export const addCommentToMessage = async (channelId, messageId, commentData,prom
 
       if(prompt)
       {
+        const responose=await fetch(`https://wallet-api-vyxx.onrender.com/inprompt?uid=${user.uid}`);
+        const data= await responose.json();
+        if(!data.sig)
+        {
+          return "100";
+        }
         const image= await fetchImageForMessage(commentData.text);
         await addDoc(commentsRef, {
           text: commentData.text,
@@ -274,6 +294,25 @@ export const addCommentToMessage = async (channelId, messageId, commentData,prom
           plikes:[],
           pdislikes:[]
         });
+        const promptRef = collection(db, "prompt");
+        const promptData = {
+          uid:user.uid,
+          prompt:commentData.text,
+          sig:data.sig,
+          type:"receive",
+          wallet:data.wallet,
+          time:Date.now()
+        };
+        await addDoc(promptRef, promptData);
+        const currentReplies = messageDoc.data().replies || 0;
+
+      const newRepliesCount = currentReplies + 1;
+
+      await updateDoc(messageRef, {
+        replies: newRepliesCount,
+      });
+      
+      console.log("Comment added successfully.");
       }
       else
       {
@@ -287,24 +326,24 @@ export const addCommentToMessage = async (channelId, messageId, commentData,prom
         plikes:[],
         pdislikes:[]
       });
-    }
-    const currentReplies = messageDoc.data().replies || 0;
+      const currentReplies = messageDoc.data().replies || 0;
 
-      // Increment the replies count by 1
       const newRepliesCount = currentReplies + 1;
 
-      // Update the message document with the new replies count
       await updateDoc(messageRef, {
         replies: newRepliesCount,
       });
-
-
+      
       console.log("Comment added successfully.");
+    }
+      return true;
     } else {
       console.error("Message not found.");
+      return false;
     }
   } catch (error) {
     console.error("Error adding comment: ", error);
+    return false;
   }
 };
 
@@ -422,7 +461,7 @@ export const updateLikesInFirebase = async (channelId, messageId) => {
       await updateDoc(messageRef, {
           Ulikes:tlikes
       });
-        return;
+        return docSnap.data().likes-1;
       } 
       const tlikes=docSnap.data().Ulikes;
       tlikes.push(auth.currentUser.uid);
@@ -431,6 +470,7 @@ export const updateLikesInFirebase = async (channelId, messageId) => {
           Ulikes:tlikes
       });
       console.log('Likes updated successfully in Firebase.');
+      return docSnap.data().likes+1;
   } catch (error) {
       console.error('Error updating likes in Firebase:', error);
   }

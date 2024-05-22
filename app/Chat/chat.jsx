@@ -95,7 +95,7 @@ const Chat = () => {
 
                 setMessages((prevMessages) => [...prevMessages, newMessage]);
                 setInputValue('');
-                toast.success('0.001 Sol deducted from wallet', {
+                toast.success('Transcation in progress', {
                     position: 'top-right',
                     autoClose: 3000,
                     hideProgressBar: false,
@@ -105,7 +105,50 @@ const Chat = () => {
                     progress: undefined,
                 });
 
-                await addMessageToChannel(type,{text:inputValue},true);
+                const response=await addMessageToChannel(type,{text:inputValue},true);
+                if(response.type=='success')
+                {
+                    toast.success('0.01 Sol deducted from wallet', {
+                        position: 'top-right',
+                        autoClose: 2000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                    });
+                }
+                else if(response.type=='error')
+                {
+                    toast.error(response.message, {
+                        position: 'top-right',
+                        autoClose: 2000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                    });
+                    const unsubscribeMessages = listenForMessages(type, (realtimeMessages) => {
+                        setMessages(realtimeMessages);
+                    });
+                }
+                else
+                {
+                    toast.warning('Not Enough Sol', {
+                        position: 'top-right',
+                        autoClose: 10000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                    });  
+                    //remove the message that failed 
+                    const unsubscribeMessages = listenForMessages(type, (realtimeMessages) => {
+                        setMessages(realtimeMessages);
+                    });
+                }
             } else {
                 const userName = auth.currentUser.displayName;
                 const userPhoto = auth.currentUser.photoURL;
@@ -120,7 +163,50 @@ const Chat = () => {
 
                 setMessages((prevMessages) => [...prevMessages, newMessage]);
                 setInputValue('');
-                await addMessageToChannel(type,{text:inputValue},false);
+                const response=await addMessageToChannel(type,{text:inputValue},false);
+                if(response.type=='success')
+                    {
+                        toast.success('0.01 Sol deducted from wallet', {
+                            position: 'top-right',
+                            autoClose: 2000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                        });
+                    }
+                    else if(response.type=='error')
+                    {
+                        toast.error(response.message, {
+                            position: 'top-right',
+                            autoClose: 2000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                        });
+                        const unsubscribeMessages = listenForMessages(type, (realtimeMessages) => {
+                            setMessages(realtimeMessages);
+                        });
+                    }
+                    else
+                    {
+                        toast.warning('Not Enough Sol', {
+                            position: 'top-right',
+                            autoClose: 10000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                        });  
+                        //remove the message that failed 
+                        const unsubscribeMessages = listenForMessages(type, (realtimeMessages) => {
+                            setMessages(realtimeMessages);
+                        });
+                    }
             }
         }
     };
