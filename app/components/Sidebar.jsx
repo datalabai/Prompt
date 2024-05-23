@@ -20,7 +20,7 @@ const Sidebar = () => {
     }, []);
 
     const items = [
-        { label: 'Memes', href: '/Chat?type=Memes', icon: <FlutterDashOutlinedIcon  /> },
+        { label: 'Memes', href: '/Chat?type=Memes', icon: <FlutterDashOutlinedIcon /> },
         { label: 'Logos', href: '/Chat?type=Logos', icon: <BusinessOutlinedIcon  /> },
         { label: 'Images', href: '/Chat?type=Images', icon: <ImageIcon  /> },
         { label: 'Resumes', href: '/Chat?type=Resumes', icon: <AssignmentOutlinedIcon  /> },

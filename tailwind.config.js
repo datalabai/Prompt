@@ -7,6 +7,34 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+      },
+      colors: {
+        primary: {
+          light: '#6D83F2',
+          DEFAULT: '#4B61E1',
+          dark: '#3B50D7',
+        },
+        secondary: {
+          light: '#F29492',
+          DEFAULT: '#E15654',
+          dark: '#C24545',
+        },
+      },
+      typography: (theme) => ({
+        DEFAULT: {
+          css: {
+            color: theme('colors.gray.800'),
+            a: {
+              color: theme('colors.primary.DEFAULT'),
+              '&:hover': {
+                color: theme('colors.primary.dark'),
+              },
+            },
+          },
+        },
+      }),
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
@@ -14,5 +42,7 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/typography'),
+  ],
 };

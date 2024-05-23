@@ -2,14 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import CircularProgress from '@mui/material/CircularProgress';
+import { Box, CircularProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import { transactions } from '../firebase';
 
 function createData(transactionId, type, prompt, date, amount) {
@@ -40,24 +33,15 @@ export default function BasicTable() {
   const formatTimestamp = (timestamp) => {
     const date = new Date(timestamp);
 
-// Array to map month numbers to their abbreviations
-const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const year = date.getFullYear();
+    const month = monthNames[date.getMonth()];
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
 
-// Extract individual components
-const year = date.getFullYear();
-const month = monthNames[date.getMonth()]; // Get the month abbreviation
-const day = String(date.getDate()).padStart(2, '0');
-const hours = String(date.getHours()).padStart(2, '0');
-const minutes = String(date.getMinutes()).padStart(2, '0');
-const seconds = String(date.getSeconds()).padStart(2, '0');
-
-// Format the date as YYYY-MMM-DD HH:MM:SS
-const formattedDate = `${month}-${day}-${year} ${hours}:${minutes}`;
-
-    return formattedDate;
+    return `${month}-${day}-${year} ${hours}:${minutes}`;
   };
-
-
 
   const sliceTransactionId = (transactionId) => {
     return transactionId.slice(0, 5) + '...' + transactionId.slice(-5);
@@ -73,38 +57,44 @@ const formattedDate = `${month}-${day}-${year} ${hours}:${minutes}`;
     )
   );
 
-
   return (
-    <TableContainer component={Paper} sx={{ boxShadow: 'none', position: 'relative' }}>
-      {loading && (
-        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
-          <CircularProgress color="primary" />
-        </div>
-      )}
-      <Table sx={{ minWidth: 650 }}>
-        <TableHead sx={{ backgroundColor: '#f8f9fa' }}>
-          <TableRow>
-            <TableCell variant="head" sx={{ fontWeight: 'bold', color: '#333', width: '25%' }}>Transaction ID</TableCell>
-            <TableCell align="right" variant="head" sx={{ fontWeight: 'bold', color: '#333', width: '25%' }}>Prompt</TableCell>
-            <TableCell align="right" variant="head" sx={{ fontWeight: 'bold', color: '#333', width: '25%' }}>Date</TableCell>
-            <TableCell align="right" variant="head" sx={{ fontWeight: 'bold', color: '#333', width: '25%' }}>Amount</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row, index) => (
-            <TableRow key={index} sx={{ '&:nth-of-type(odd)': { backgroundColor: '#f5f5f5' } }}>
-              <TableCell sx={{ fontWeight: '500', color: '#333', width: '25%' }}>
-              <Link href={`https://solana.fm/tx/${row.transactionId}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                  {sliceTransactionId(row.transactionId)}
-                </Link>
-              </TableCell>
-              <TableCell align="right" sx={{ color: '#333', width: '25%' }}>{row.prompt}</TableCell>
-              <TableCell align="right" sx={{ color: '#333', width: '25%' }}>{row.date}</TableCell>
-              <TableCell align="right" sx={{ color: '#333', width: '25%' }}>0.001 Sol</TableCell>
+    <Box sx={{ padding: '20px' }}>
+      <Typography variant="h4" gutterBottom align="center" sx={{ fontWeight: 'bold', color: '#333' }}>
+        Transaction History
+      </Typography>
+      <TableContainer component={Paper} sx={{ boxShadow: 'none', position: 'relative' }}>
+        {loading && (
+          <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
+            <CircularProgress color="primary" />
+          </Box>
+        )}
+        <Table sx={{ minWidth: 650 }}>
+          <TableHead sx={{ backgroundColor: '#f8f9fa' }}>
+            <TableRow>
+              <TableCell variant="head" sx={{ fontWeight: 'bold', color: '#333' }}>Transaction ID</TableCell>
+              <TableCell align="right" variant="head" sx={{ fontWeight: 'bold', color: '#333' }}>Prompt</TableCell>
+              <TableCell align="right" variant="head" sx={{ fontWeight: 'bold', color: '#333' }}>Date</TableCell>
+              <TableCell align="right" variant="head" sx={{ fontWeight: 'bold', color: '#333' }}>Amount</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableHead>
+          <TableBody>
+            {rows.map((row, index) => (
+              <TableRow key={index} sx={{ '&:nth-of-type(odd)': { backgroundColor: '#f5f5f5' } }}>
+                <TableCell sx={{ fontWeight: '500', color: '#333' }}>
+                  <Link href={`https://solana.fm/tx/${row.transactionId}`} target="_blank" rel="noopener noreferrer">
+                    <Typography sx={{ color: 'blue', textDecoration: 'underline', '&:hover': { color: 'darkblue' } }}>
+                      {sliceTransactionId(row.transactionId)}
+                    </Typography>
+                  </Link>
+                </TableCell>
+                <TableCell align="right" sx={{ color: '#333' }}>{row.prompt}</TableCell>
+                <TableCell align="right" sx={{ color: '#333' }}>{row.date}</TableCell>
+                <TableCell align="right" sx={{ color: '#333' }}>0.001 Sol</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Box>
   );
 }

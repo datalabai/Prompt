@@ -122,7 +122,7 @@ const Chat = () => {
                 {
                     toast.error(response.message, {
                         position: 'top-right',
-                        autoClose: 2000,
+                        autoClose: 5000,
                         hideProgressBar: false,
                         closeOnClick: true,
                         pauseOnHover: true,
@@ -164,49 +164,7 @@ const Chat = () => {
                 setMessages((prevMessages) => [...prevMessages, newMessage]);
                 setInputValue('');
                 const response=await addMessageToChannel(type,{text:inputValue},false);
-                if(response.type=='success')
-                    {
-                        toast.success('0.01 Sol deducted from wallet', {
-                            position: 'top-right',
-                            autoClose: 2000,
-                            hideProgressBar: false,
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            draggable: true,
-                            progress: undefined,
-                        });
-                    }
-                    else if(response.type=='error')
-                    {
-                        toast.error(response.message, {
-                            position: 'top-right',
-                            autoClose: 2000,
-                            hideProgressBar: false,
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            draggable: true,
-                            progress: undefined,
-                        });
-                        const unsubscribeMessages = listenForMessages(type, (realtimeMessages) => {
-                            setMessages(realtimeMessages);
-                        });
-                    }
-                    else
-                    {
-                        toast.warning('Not Enough Sol', {
-                            position: 'top-right',
-                            autoClose: 10000,
-                            hideProgressBar: false,
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            draggable: true,
-                            progress: undefined,
-                        });  
-                        //remove the message that failed 
-                        const unsubscribeMessages = listenForMessages(type, (realtimeMessages) => {
-                            setMessages(realtimeMessages);
-                        });
-                    }
+                console.log(response);
             }
         }
     };
@@ -225,19 +183,13 @@ const Chat = () => {
     };
 
     const handleLike = async (message) => {
-        console.log(message.id);
-        console.log(likedMessages);
-        if(likedMessages.has(message.id)){
-            await updateLikesInFirebase(type, message.id);
-            likedMessages.delete(message.id);
-            return;
-        }
-        else
-        {
-            likedMessages.add(message.id);
-            await updateLikesInFirebase(type, message.id);
-        }
-        console.log(likedMessages);
+        const likes = await updateLikesInFirebase(type, message.id);
+        // console.log(message);
+        // console.log(likes);
+        message.likes = likes;
+        const unsubscribeMessages = listenForMessages(type, (realtimeMessages) => {
+            setMessages(realtimeMessages);
+        });
     };
 
     const handleReply = (message) => {
@@ -277,18 +229,20 @@ const Chat = () => {
                     </div>
 
                     {/* Messages display area */}
-                    <div className="flex-grow overflow-y-auto max-w-36rm">
+                    <div className="flex-grow overflow-y-auto max-w-auto">
                         {messages.map((message, index) => (
                             <div key={message.id} className="flex flex-col border-slate-300 border-b">
                                 <div className={`flex items-start space-x-4`}>
                                     <div className={'flex bg-white rounded-lg p-6 w-full'}>
                                         <img src={message.userPhoto} alt="Profile" className="w-10 h-10 rounded-full" />
                                         <div className="ml-2 bg-white rounded-lg w-full">
-                                            <div className="flex justify-between items-center mb-2">
-                                                <span className="font-semibold text-gray-800">{message.userName}</span>
+                                            <div className="flex justify-between items-center">
+                                            <span className="font-semibold text-gray-800">
+                                                {message.userName.charAt(0).toUpperCase() + message.userName.slice(1)}
+                                            </span>
                                                 <span className="text-sm text-gray-500">{formatTime(new Date(message.timestamp))}</span>
                                             </div>
-                                            <p className="text-gray-800">{message.text}</p>
+                                            <p className="text-gray-800 ">{message.text}</p>
                                             {message.imageUrl && (
                                                 <img className="rounded-lg mt-2" src={message.imageUrl} alt="Message Image" width={450} height={350} onLoad={handleImageLoad} />
                                             )}

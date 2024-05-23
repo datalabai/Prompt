@@ -461,6 +461,8 @@ export const updateLikesInFirebase = async (channelId, messageId) => {
       await updateDoc(messageRef, {
           Ulikes:tlikes
       });
+      const docSnap1 = await getDoc(messageRef);
+      console.log(docSnap1.data());
         return docSnap.data().likes-1;
       } 
       const tlikes=docSnap.data().Ulikes;
@@ -469,8 +471,10 @@ export const updateLikesInFirebase = async (channelId, messageId) => {
           likes: docSnap.data().likes+1,
           Ulikes:tlikes
       });
+      const docSnap1 = await getDoc(messageRef);
+      console.log(docSnap1.data());
       console.log('Likes updated successfully in Firebase.');
-      return docSnap.data().likes+1;
+      return docSnap.data().likes+1; 
   } catch (error) {
       console.error('Error updating likes in Firebase:', error);
   }

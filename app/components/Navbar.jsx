@@ -1,16 +1,21 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { UserAuth } from "../context/AuthContext";
 import { addUserToFirestore } from "../firebase";
-import { BsPersonCircle } from 'react-icons/bs';
 import Image from 'next/image';
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
 
   const { user, googleSignIn, logOut } = UserAuth();
+
+  useEffect(() => {
+    if (user) {
+      addUserToFirestore(user);
+    }
+  }, [user]);
 
   const formatDisplayName = (displayName) => {
     return displayName
@@ -24,7 +29,6 @@ const Navbar = () => {
     try {
       await googleSignIn();
       console.log("User signed in successfully.");
-      addUserToFirestore(user);
     } catch (error) {
       console.log(error);
     }
@@ -57,16 +61,23 @@ const Navbar = () => {
         </Link>
       </div>
 
-      <div className="self-center">
+      <div className="self-center relative">
         {user ? (
           <div className="flex items-center">
-            <span className="text-md no-underline text-dlab-blue ml-2 px-1">
+            <span className="text-lg no-underline text-dlab-blue ml-2 px-1">
               Welcome, {formatDisplayName(user.displayName)}
             </span>
-            <BsPersonCircle onClick={handleOpenNavbar} className='cursor-pointer text-dlab-blue m-0 w-8 h-8' />
+            <Image
+              src={user.photoURL}
+              alt="Profile"
+              width={40}
+              height={40}
+              className="cursor-pointer rounded-full m-0"
+              onClick={handleOpenNavbar}
+            />
             {open && (
-              <div className='absolute top-5 border rounded bg-nav-lab ml-32 mt-6 justify-items-end text-right'>
-                <div className='flex flex-col space '>
+              <div className='absolute top-full mt-2 right-0 border rounded bg-nav-lab shadow-lg'>
+                <div className='flex flex-col'>
                   <Link href="/profile">
                     <span onClick={handleViewProfile} className="text-md no-underline ml-2 px-4 py-2 text-dlab-blue focus:outline-none cursor-pointer">
                       View Profile
