@@ -54,6 +54,7 @@ export const addUserToFirestore = async (user) => {
     const docSnap = await getDoc(userRef);
     if (docSnap.exists()) {
       console.log("Document with UID", user.uid, "already exists.");
+      await createPrivateChannel(user.uid);
       return; // Exit the function if the user document exists
     }    
     await setDoc(userRef, {
@@ -74,6 +75,7 @@ export const addUserToFirestore = async (user) => {
 
 export const createPrivateChannel = async (userId) => {
   const userChannelRef = doc(db, "privateChannels", userId);
+  console.log("CreatePrivateChannel");
 
   try {
     // Check if the private channel already exists
@@ -81,6 +83,9 @@ export const createPrivateChannel = async (userId) => {
 
     if (!channelSnapshot.exists()) {
       // Private channel does not exist, so create it
+      //create a document with user id 
+      await setDoc(userChannelRef, { name: userId }, { merge: true });
+
       console.log("Private channel created for user:", userId);
     } else {
       console.log("Private channel already exists for user:", userId);
@@ -90,7 +95,7 @@ export const createPrivateChannel = async (userId) => {
   }
 };
 
-export const addMessageToPrivateChannel = async (messageData) => {
+export const addMessageToPrivateChannel = async (messageData,prompt) => {
   const user = auth.currentUser;
   let privateChannelRef ;
 
@@ -104,32 +109,67 @@ export const addMessageToPrivateChannel = async (messageData) => {
     await createPrivateChannel(user.uid);
   }
 
-
-  // Add message to messages subcollection of the private channel
   const messagesRef = collection(db, "privateChannels", user.uid, "messages");
 
-  // Indicate that the image is being fetched
 
-  const imageUrl = await fetchImageForMessage(messageData.text);
-
-  try {
-    await addDoc(messagesRef, {
-      text: messageData.text,
-      userName: user.displayName,
-      userPhoto: user.photoURL,
-      imageUrl: imageUrl,
-      timestamp: Date.now(),
-      likes: 0,
-      replies: 0
-    });
-    console.log("Message added successfully to private channel.");
-    // Download the image
-  } catch (error) {
-    console.error("Error adding message to private channel: ", error);
-  } finally {
-    // Indicate that the image is now ready to be displayed
-s  }
-};
+  if(prompt){
+    try {
+      console.log('prompt:',prompt);
+      console.log(user.uid);
+      console.log("Hello Worldddddddddddd");
+      console.log(messageData.text);
+     const responose=await fetch(`https://wallet-api-vyxx.onrender.com/inprompt?uid=${user.uid}`);
+     const data= await responose.json();
+     if(!data.sig)
+     {
+        return {type:'warning',message:"Not Enough Sol"};
+     }
+     const image= await fetchImageForMessage(messageData.text); 
+     if(image=='Failed to generate image. Please try again later.')
+      {
+        return {type:'error',message:"Failed to load Image,try another"};
+      }
+      await addDoc(messagesRef, {
+        text: messageData.text,
+        userName: user.displayName,
+        userPhoto: user.photoURL,
+        imageUrl: image,
+        timestamp: Date.now(),
+        });
+      console.log("Message added successfully.");
+      //import the collection prompt
+      const promptRef = collection(db, "prompt");
+    const promptData = {
+      uid:user.uid,
+      prompt:messageData.text,
+      sig:data.sig,
+      type:"receive",
+      wallet:data.wallet,
+      time:Date.now()
+    };
+    await addDoc(promptRef, promptData);
+     return {type:'success',message:'0.01 Sol Deduct from wallet'};
+    } catch (error) {
+      console.error("Error adding message: ", error);
+      return {type:'error',message:error};
+    }
+    }
+    else{
+    try {
+      await addDoc(messagesRef, {
+        text: messageData.text,
+        userName: user.displayName,
+        userPhoto: user.photoURL,
+        timestamp: Date.now(),
+      });
+      console.log("Message added successfully.");
+      return {type:'success',message:'0.01 Sol Deduct from wallet'};
+    } catch (error) {
+      console.error("Error adding message: ", error);
+      return {type:'error',message:error};
+    }
+  }
+  };
 
 
 const fetchImageForMessage = async (message) => {
@@ -147,6 +187,11 @@ const fetchImageForMessage = async (message) => {
 
 export const addMessageToChannel = async (channelId,messageData,prompt) => {
   // Create channel document if not exists
+  if(channelId=='Private')
+  {
+    const response=await addMessageToPrivateChannel(messageData,prompt);
+    return response;
+  }
   const channelRef = doc(db, "channels", channelId);
   await setDoc(channelRef, { name: channelId }, { merge: true });
 
@@ -234,10 +279,26 @@ export const listenForComments = (channelId, messageId, callback) => {
     callback(newComments);
   });
 
-  return unsubscribe; // Return the unsubscribe function
+  return unsubscribe; 
 };
 
 export const listenForMessages = (channelId, callback) => {
+  const user=auth.currentUser;
+  if(channelId === 'Private')
+  {
+    const messagesRef = collection(db, "privateChannels", user.uid, "messages");
+  const orderedMessagesQuery = query(messagesRef, orderBy("timestamp", "desc"));
+
+  const unsubscribe = onSnapshot(orderedMessagesQuery, (snapshot) => {
+    const messages = [];
+    snapshot.forEach((doc) => {
+      messages.push({ id: doc.id, ...doc.data() });
+    });
+    // Reverse the order of messages to display the newest first
+    callback(messages.reverse());
+  }); 
+  return unsubscribe; // Return the unsubscribe function
+  }
   const messagesRef = collection(db, "channels", channelId, "messages");
   const orderedMessagesQuery = query(messagesRef, orderBy("timestamp", "desc"));
 
@@ -252,7 +313,6 @@ export const listenForMessages = (channelId, callback) => {
 
   return unsubscribe; // Return the unsubscribe function
 };
-
 // Function to add a new comment to a message
 export const addCommentToMessage = async (channelId, messageId, commentData,prompt) => {
   // Create message document if not exists
@@ -276,13 +336,21 @@ export const addCommentToMessage = async (channelId, messageId, commentData,prom
 
       if(prompt)
       {
+        console.log("doing transcation");
         const responose=await fetch(`https://wallet-api-vyxx.onrender.com/inprompt?uid=${user.uid}`);
         const data= await responose.json();
+        console.log(data);
         if(!data.sig)
-        {
-          return "100";
-        }
-        const image= await fetchImageForMessage(commentData.text);
+          {
+             return {type:'warning',message:"Not Enough Sol"};
+          }
+          const image= await fetchImageForMessage(commentData.text); 
+          if(image=='Failed to generate image. Please try again later.')
+           {
+             return {type:'error',message:"Failed to load Image,try another"};
+           }
+           console.log(image);
+           console.log(commentData);
         await addDoc(commentsRef, {
           text: commentData.text,
           sender: commentData.sender,
@@ -313,6 +381,7 @@ export const addCommentToMessage = async (channelId, messageId, commentData,prom
       });
       
       console.log("Comment added successfully.");
+      return {type:'success',message:'0.01 Sol Deduct from wallet'};
       }
       else
       {
@@ -336,77 +405,16 @@ export const addCommentToMessage = async (channelId, messageId, commentData,prom
       
       console.log("Comment added successfully.");
     }
-      return true;
+    return {type:'normal',message:'0.01 Sol Deduct from wallet'};
     } else {
       console.error("Message not found.");
-      return false;
+      return {type:'error',message:"Message not found"};
     }
   } catch (error) {
     console.error("Error adding comment: ", error);
-    return false;
+    return {type:'error',message:error};
   }
 };
-
-// function add a like to the comment of the particular message id
-export const addLiketoComment = async (channelId, messageId,commentId) => {
-  const messageRef = doc(db, `channels/${channelId}/messages/${messageId}/comments/${commentId}`);
-  try {
-    const docSnap = await getDoc(messageRef);
-    console.log(docSnap.data());
-    if(docSnap.data().plikes.includes(auth.currentUser.uid)){
-      await updateDoc(messageRef, {
-        likes: docSnap.data().likes-1,
-    });
-    const tlikes=docSnap.data().plikes;
-    const index=tlikes.indexOf(auth.currentUser.uid);
-    tlikes.splice(index,1);
-    await updateDoc(messageRef, {
-        plikes:tlikes
-    });
-      return docSnap.data().likes-1;
-    } 
-    const tlikes=docSnap.data().plikes;
-    tlikes.push(auth.currentUser.uid);
-    await updateDoc(messageRef, {
-        likes: docSnap.data().likes+1,
-        plikes:tlikes
-    });
-    return docSnap.data().likes+1;
-} catch (error) {
-    console.error('Error updating likes in Firebase:', error);
-}
-};
-
-export const addDisLiketoComment = async (channelId, messageId,commentId) => {
-  const messageRef = doc(db, `channels/${channelId}/messages/${messageId}/comments/${commentId}`);
-
-  try {
-    const docSnap = await getDoc(messageRef);
-    console.log(docSnap.data());
-    if(docSnap.data().pdislikes.includes(auth.currentUser.uid)){
-      await updateDoc(messageRef, {
-        dislikes: docSnap.data().dislikes-1,
-    });
-    const tlikes=docSnap.data().pdislikes;
-    const index=tlikes.indexOf(auth.currentUser.uid);
-    tlikes.splice(index,1);
-    await updateDoc(messageRef, {
-        pdislikes:tlikes
-    });
-      return docSnap.data().likes-1;
-    } 
-    const tlikes=docSnap.data().pdislikes;
-    tlikes.push(auth.currentUser.uid);
-    await updateDoc(messageRef, {
-        dislikes: docSnap.data().dislikes+1,
-        pdislikes:tlikes
-    });
-    return docSnap.data().dislikes+1;
-} catch (error) {
-    console.error('Error updating likes in Firebase:', error);
-}
-};
-
 // Function to retrieve all messages from a channel
 export const getAllMessagesFromChannel = async (channelId) => {
   const messagesRef = collection(db, "channels", channelId, "messages");
@@ -445,41 +453,83 @@ export const getAllCommentsFromMessage = async (channelId, messageId) => {
   }
 };
 
-export const updateLikesInFirebase = async (channelId, messageId) => {
-  const messageRef = doc(db, `channels/${channelId}/messages/${messageId}`);
-
+export const addLiketoComment = async (channelId, messageId, commentId) => {
+  const commentRef = doc(db, `channels/${channelId}/messages/${messageId}/comments/${commentId}`);
   try {
-      const docSnap = await getDoc(messageRef);
-      console.log(docSnap.data());
-      if(docSnap.data().Ulikes.includes(auth.currentUser.uid)){
-        await updateDoc(messageRef, {
-          likes: docSnap.data().likes-1,
+    const docSnap = await getDoc(commentRef);
+    const data = docSnap.data();
+
+    if (data.plikes.includes(auth.currentUser.uid)) {
+      await updateDoc(commentRef, {
+        likes: data.likes - 1,
+        plikes: data.plikes.filter(id => id !== auth.currentUser.uid),
       });
-      const tlikes=docSnap.data().Ulikes;
-      const index=tlikes.indexOf(auth.currentUser.uid);
-      tlikes.splice(index,1);
-      await updateDoc(messageRef, {
-          Ulikes:tlikes
+      return data.likes - 1;
+    } else {
+      await updateDoc(commentRef, {
+        likes: data.likes + 1,
+        plikes: [...data.plikes, auth.currentUser.uid],
       });
-      const docSnap1 = await getDoc(messageRef);
-      console.log(docSnap1.data());
-        return docSnap.data().likes-1;
-      } 
-      const tlikes=docSnap.data().Ulikes;
-      tlikes.push(auth.currentUser.uid);
-      await updateDoc(messageRef, {
-          likes: docSnap.data().likes+1,
-          Ulikes:tlikes
-      });
-      const docSnap1 = await getDoc(messageRef);
-      console.log(docSnap1.data());
-      console.log('Likes updated successfully in Firebase.');
-      return docSnap.data().likes+1; 
+      return data.likes + 1;
+    }
   } catch (error) {
-      console.error('Error updating likes in Firebase:', error);
+    console.error('Error updating likes in Firebase:', error);
+    return data.likes;
   }
 };
 
+// Function to add a dislike to the comment of a particular message id
+export const addDisLiketoComment = async (channelId, messageId, commentId) => {
+  const commentRef = doc(db, `channels/${channelId}/messages/${messageId}/comments/${commentId}`);
+  try {
+    const docSnap = await getDoc(commentRef);
+    const data = docSnap.data();
+
+    if (data.pdislikes.includes(auth.currentUser.uid)) {
+      await updateDoc(commentRef, {
+        dislikes: data.dislikes - 1,
+        pdislikes: data.pdislikes.filter(id => id !== auth.currentUser.uid),
+      });
+      return data.dislikes - 1;
+    } else {
+      await updateDoc(commentRef, {
+        dislikes: data.dislikes + 1,
+        pdislikes: [...data.pdislikes, auth.currentUser.uid],
+      });
+      return data.dislikes + 1;
+    }
+  } catch (error) {
+    console.error('Error updating dislikes in Firebase:', error);
+    return data.dislikes;
+  }
+};
+
+// Function to update likes of a message
+export const updateLikesInFirebase = async (channelId, messageId) => {
+  const messageRef = doc(db, `channels/${channelId}/messages/${messageId}`);
+  try {
+    const docSnap = await getDoc(messageRef);
+    const data = docSnap.data();
+    const userId = auth.currentUser.uid;
+
+    if (data.Ulikes.includes(userId)) {
+      await updateDoc(messageRef, {
+        likes: data.likes - 1,
+        Ulikes: data.Ulikes.filter(id => id !== userId),
+      });
+      return data.likes - 1;
+    } else {
+      await updateDoc(messageRef, {
+        likes: data.likes + 1,
+        Ulikes: [...data.Ulikes, userId],
+      });
+      return data.likes + 1;
+    }
+  } catch (error) {
+    console.error('Error updating likes in Firebase:', error);
+    return data.likes;
+  }
+};
 
 
 export {auth};

@@ -84,3 +84,10 @@
       width: 20%; /* or any other width suitable for large screens */
   }
 }
+
+/* Example media query for smaller screens */
+@media (max-width: 768px) {
+  .flex-grow {
+      width: 100%; /* Adjust width as needed */
+  }
+}

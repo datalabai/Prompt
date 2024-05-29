@@ -37,7 +37,7 @@ export default function EditButton() {
     }, [profileData]);
 
     return (
-        <div className="gradient-custom-2 mt-7 border-l py-5 h-100" style={{ backgroundColor: '#f8f9fa' }}>
+        <div className="gradient-custom-2 border-l h-full overflow-y-auto" style={{ backgroundColor: '#f8f9fa' }}>
             {loading ? (
                 <CircularProgress color='secondary' className='mt-40 ml-[50%] items-center' />
             ) : (

@@ -1,15 +1,12 @@
 "use client";
 
 import React from "react";
-import { useEffect, useState } from "react";
-import Navbar from "./components/Navbar";
-import "./globals.css";
 import { AuthContextProvider } from "./context/AuthContext";
-import { auth } from './firebase';
-import { useRouter } from 'next/navigation';
-import Sidebar from "./components/Sidebar";
 import { ToastContainer } from 'react-toastify';
+import Navbar from "./components/Navbar";
+import Sidebar from "./components/Sidebar";
 import 'react-toastify/dist/ReactToastify.css';
+import "./globals.css";
 
 const RootLayout = ({ children }) => {
   return (
@@ -17,25 +14,24 @@ const RootLayout = ({ children }) => {
       <body>
         <AuthContextProvider>
           <ToastContainer />
-          <section className="relative container">
-
-            <div className="fixed top-0 left-0 h-screen bg-sidebar md:w-72">
+          <section className="flex h-screen">
+          <div className="fixed top-0 left-0 right-0 h-16 bg-white z-10">
+                <Navbar />
+              </div>
+            
+            <div className="flex flex-row w-full h-full fixed ">
+              <div className="h-full bg-sidebar  w-[16rem]">
               <Sidebar />
             </div>
-
-
-            <div className="md:pl-64 md:pr-4">
-              <Navbar />
-              <div className="overflow-y-auto">{children}</div>
+              <div className="mt-16  w-[90%]">
+                {children}
+              </div>
             </div>
-
           </section>
         </AuthContextProvider>
       </body>
     </html>
-
   );
 };
-
 
 export default RootLayout;
