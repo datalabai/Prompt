@@ -209,9 +209,10 @@ export const addMessageToChannel = async (channelId,messageData,prompt) => {
     console.log(messageData.text);
    const responose=await fetch(`https://wallet-api-vyxx.onrender.com/inprompt?uid=${user.uid}`);
    const data= await responose.json();
+   console.log(data);
    if(!data.sig)
    {
-      return {type:'warning',message:"Not Enough Sol"};
+      return {type:'warning',message:"Insfuccient Funds"};
    }
    const image= await fetchImageForMessage(messageData.text); 
    if(image=='Failed to generate image. Please try again later.')
@@ -240,7 +241,7 @@ export const addMessageToChannel = async (channelId,messageData,prompt) => {
     time:Date.now()
   };
   await addDoc(promptRef, promptData);
-   return {type:'success',message:'0.01 Sol Deduct from wallet'};
+   return {type:'success',message:'1.50 USDC Deduct from wallet'};
   } catch (error) {
     console.error("Error adding message: ", error);
     return {type:'error',message:error};

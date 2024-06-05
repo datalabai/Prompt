@@ -6,6 +6,7 @@ import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
 import ImageIcon from '@mui/icons-material/Image';
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import FormatListBulletedOutlinedIcon from '@mui/icons-material/FormatListBulletedOutlined';
+import AssuredWorkloadOutlinedIcon from '@mui/icons-material/AssuredWorkloadOutlined';
 import { useState, useEffect } from 'react';
 import { auth } from '../firebase';
 
@@ -20,6 +21,7 @@ const Sidebar = () => {
     }, []);
 
     const items = [
+        { label: 'Expert', href: '/Chat?type=Expert', icon: <AssuredWorkloadOutlinedIcon />},
         { label: 'Memes', href: '/Chat?type=Memes', icon: <FlutterDashOutlinedIcon /> },
         { label: 'Logos', href: '/Chat?type=Logos', icon: <BusinessOutlinedIcon  /> },
         { label: 'Images', href: '/Chat?type=Images', icon: <ImageIcon  /> },
@@ -33,7 +35,7 @@ const Sidebar = () => {
                 <Link href="/Chat?type=Home">
                     <div className='flex items-center p-3 rounded-lg hover:bg-sky-100 transition duration-300 ease-in-out'>
                         <HomeOutlinedIcon  />
-                        <span className="text-xl text-black-400 ml-4">Public</span>
+                        <span className="text-xl text-black-400 ml-4">General</span>
                     </div>
                 </Link>
                 {user ? (

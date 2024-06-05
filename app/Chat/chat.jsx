@@ -106,7 +106,7 @@ const Chat = () => {
 
                 const response = await addMessageToChannel(type, { text: inputValue }, true);
                 if (response.type === 'success') {
-                    toast.success('0.01 Sol deducted from wallet', {
+                    toast.success('1.50 USDC deducted from wallet', {
                         position: 'top-right',
                         autoClose: 2000,
                         hideProgressBar: false,
@@ -126,7 +126,7 @@ const Chat = () => {
                         progress: undefined,
                     });
                 } else {
-                    toast.warning('Not Enough Sol', {
+                    toast.warning('Insufficient Funds', {
                         position: 'top-right',
                         autoClose: 10000,
                         hideProgressBar: false,

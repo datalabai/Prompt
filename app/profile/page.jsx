@@ -54,7 +54,7 @@ export default function EditButton() {
                                         <MDBCardText className='text-lg'>{profileData.email}</MDBCardText>
                                         <div className="mt-12 text-white">
                                             <div>
-                                                <MDBCardText className="small mb-0">Balance: {profileData.amount}</MDBCardText>
+                                                <MDBCardText className="small mb-0">Balance: {profileData.usdc} USDC</MDBCardText>
                                             </div>
                                             <div>
                                                 <MDBCardText className="small mb-0">Wallet: {profileData.wallet}</MDBCardText>
