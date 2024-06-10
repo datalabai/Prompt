@@ -106,7 +106,16 @@ const Chat = () => {
 
                 const response = await addMessageToChannel(type, { text: inputValue }, true);
                 if (response.type === 'success') {
-                    toast.success('1.50 USDC deducted from wallet', {
+                    toast.success('1.10 USDC deducted from wallet', {
+                        position: 'top-right',
+                        autoClose: 2000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                    });
+                    toast.info('1 For Model Fee & 0.10 for Platform Fee', {
                         position: 'top-right',
                         autoClose: 2000,
                         hideProgressBar: false,

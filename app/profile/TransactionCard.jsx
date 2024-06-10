@@ -89,7 +89,7 @@ export default function BasicTable() {
                 </TableCell>
                 <TableCell align="right" sx={{ color: '#333' }}>{row.prompt}</TableCell>
                 <TableCell align="right" sx={{ color: '#333' }}>{row.date}</TableCell>
-                <TableCell align="right" sx={{ color: '#333' }}>1.50 USDC</TableCell>
+                <TableCell align="right" sx={{ color: '#333' }}>1.10 USDC</TableCell>
               </TableRow>
             ))}
           </TableBody>
