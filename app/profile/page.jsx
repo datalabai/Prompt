@@ -1,14 +1,24 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { MDBCol, MDBContainer, MDBRow, MDBCard, MDBCardText, MDBCardBody, MDBCardImage, MDBTypography, MDBIcon } from 'mdb-react-ui-kit';
+import { BrowserRouter as Router, NavLink } from 'react-router-dom'; // Import BrowserRouter or Router and NavLink
+import { MDBCol, MDBContainer, MDBRow, MDBCard, MDBCardText, MDBCardImage, MDBTypography, MDBIcon } from 'mdb-react-ui-kit';
+import { MDBCardBody, MDBNav, MDBNavItem, MDBNavLink, MDBTabContent, MDBTabPane } from 'mdbreact';
+import classNames from 'classnames';
 import TransactionCard from './TransactionCard';
+import RewardsCard from './RewardsCard';
 import { getProfile } from '../firebase';
 import CircularProgress from '@mui/material/CircularProgress';
 
 export default function EditButton() {
     const [profileData, setProfileData] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [activeTab, setActiveTab] = React.useState("transaction");
+
+
+    const toggleTab = (tab) => {
+        if (activeTab !== tab) setActiveTab(tab);
+    }
 
     useEffect(() => {
         const fetchProfileData = async () => {
@@ -62,11 +72,36 @@ export default function EditButton() {
                                         </div>
                                     </div>
                                 </div>
-                                <MDBCardBody className="text-black">
-                                    <TransactionCard />
-                                </MDBCardBody>
+                                <Router> {/* Wrap your component within a Router */}
+                                    <MDBCardBody className="p-4">
+                                        <MDBNav tabs className="flex bg-gray-100 p-2">
+                                            <MDBNavItem>
+                                                <NavLink to="#" className={classNames('mr-2', 'px-4', 'py-2', 'cursor-pointer', { 'bg-gray-200': activeTab === 'transaction' })} onClick={() => toggleTab("transaction")}>
+                                                    Transactions
+                                                </NavLink>
+                                            </MDBNavItem>
+                                            <MDBNavItem>
+                                                <NavLink to="#" className={classNames('mr-2', 'px-4', 'py-2', 'cursor-pointer', { 'bg-gray-200': activeTab === 'rewards' })} onClick={() => toggleTab("rewards")}>
+                                                    Rewards
+                                                </NavLink>
+                                            </MDBNavItem>
+                                        </MDBNav>
+                                        <MDBTabContent activeItem={activeTab}>
+                                            <MDBTabPane tabId="transaction">
+                                                {activeTab === 'transaction' && (
+                                                    <TransactionCard/>
+                                                )}
+                                            </MDBTabPane>
+                                            <MDBTabPane tabId="rewards">
+                                                {activeTab === 'rewards' && (
+                                                    <RewardsCard/>
+                                                )}
+                                            </MDBTabPane>
+                                        </MDBTabContent>
+                                    </MDBCardBody>
+                                </Router>
                             </MDBCard>
-                            </MDBCol>
+                        </MDBCol>
                     </MDBRow>
                 )
             )}
