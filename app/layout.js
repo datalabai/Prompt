@@ -12,7 +12,6 @@ const RootLayout = ({ children }) => {
   return (
     <html lang="en">
       <body>
-      <link rel="icon" href="/promt-favicon.png" />
         <AuthContextProvider>
           <ToastContainer />
           <section className="flex h-screen">
