@@ -11,6 +11,11 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import PublishIcon from "@mui/icons-material/Publish";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
+import FlutterDashOutlinedIcon from '@mui/icons-material/FlutterDashOutlined';
+import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
+import ImageIcon from '@mui/icons-material/Image';
+import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
+import FormatListBulletedOutlinedIcon from '@mui/icons-material/FormatListBulletedOutlined';
 import { toast } from 'react-toastify';
 import ReplySection from '../components/Reply';
 
@@ -28,7 +33,17 @@ const Chat = () => {
     const [showMenu, setShowMenu] = useState(false);
     const [selectedMenuOption, setSelectedMenuOption] = useState('chat');
 
-    const handleImageLoad = () => {};
+    const iconMapping = {
+        prompt: <AutoFixHighIcon color="primary" />,
+        chat: <ChatBubbleOutlineIcon color="primary" className='items-center mt-1' />,
+        memes: <FlutterDashOutlinedIcon color="primary" className='items-center mt-1' />,
+        logos: <BusinessOutlinedIcon color="primary" className='items-center mt-1' />,
+        images: <ImageIcon color="primary" className='items-center mt-1' />,
+        resumes: <AssignmentOutlinedIcon color="primary" className='items-center mt-1' />,
+        texts: <FormatListBulletedOutlinedIcon color="primary" className='items-center mt-1' />,
+    };
+
+    const handleImageLoad = () => { };
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -248,28 +263,28 @@ const Chat = () => {
                                                     <img className="rounded-lg mt-2" src={message.imageUrl} alt="Message Image" width={450} height={350} onLoad={handleImageLoad} />
                                                 )}
                                                 {type !== 'Private' && (
-                                                    
-                                                    
-                                                <div className="flex items-center space-x-4 mt-2 post__footer">
-                                                    <div>
-                                                        <ChatBubbleOutlineIcon
-                                                            className="cursor-pointer text-gray-500 hover:text-gray-700"
-                                                            size={18}
-                                                            onClick={() => handleReply(message)}
-                                                        />
-                                                        <span className="text-sm text-gray-500 ml-0.5">{message.replies}</span>
+
+
+                                                    <div className="flex items-center space-x-4 mt-2 post__footer">
+                                                        <div>
+                                                            <ChatBubbleOutlineIcon
+                                                                className="cursor-pointer text-gray-500 hover:text-gray-700"
+                                                                size={18}
+                                                                onClick={() => handleReply(message)}
+                                                            />
+                                                            <span className="text-sm text-gray-500 ml-0.5">{message.replies}</span>
+                                                        </div>
+                                                        <RepeatIcon fontSize="small" className="chatBubble" />
+                                                        <div>
+                                                            <FavoriteBorderIcon
+                                                                className="cursor-pointer text-gray-500 hover:text-gray-700"
+                                                                size={18}
+                                                                onClick={() => handleLike(message)}
+                                                            />
+                                                            <span className="text-sm text-gray-500 ml-0.5">{message.likes}</span>
+                                                        </div>
+                                                        <PublishIcon fontSize="small" className="chatBubble" />
                                                     </div>
-                                                    <RepeatIcon fontSize="small" className="chatBubble" />
-                                                    <div>
-                                                        <FavoriteBorderIcon
-                                                            className="cursor-pointer text-gray-500 hover:text-gray-700"
-                                                            size={18}
-                                                            onClick={() => handleLike(message)}
-                                                        />
-                                                        <span className="text-sm text-gray-500 ml-0.5">{message.likes}</span>
-                                                    </div>
-                                                    <PublishIcon fontSize="small" className="chatBubble" />
-                                                </div>
                                                 )}
                                             </div>
                                         </div>
@@ -283,9 +298,33 @@ const Chat = () => {
                             <div className='mr-2 relative'>
                                 {showMenu && (
                                     <div className="absolute bottom-full right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg">
-                                        <button className="block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('prompt')}>
-                                            <AutoFixHighIcon color="primary" />
-                                        </button>
+                                        {type !== 'Expert' && (
+                                            <button className="block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('prompt')}>
+                                                <AutoFixHighIcon color="primary" />
+                                            </button>
+                                        )}
+
+                                        {['Private', 'Home'].includes(type) && (
+                                            <>
+                                                <button className="block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('memes')}>
+                                                    <FlutterDashOutlinedIcon color="primary" />
+                                                </button>
+                                                <button className="block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('logos')}>
+                                                    <BusinessOutlinedIcon color="primary" />
+                                                </button>
+                                                <button className="block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('images')}>
+                                                    <ImageIcon color="primary" />
+                                                </button>
+                                                <button className="block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('resumes')}>
+                                                    <AssignmentOutlinedIcon color="primary" />
+                                                </button>
+                                                <button className="block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('texts')}>
+                                                    <FormatListBulletedOutlinedIcon color="primary" />
+                                                </button>
+                                            </>
+                                        )}
+
+
                                         <button className="block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('chat')}>
                                             <ChatBubbleOutlineIcon color="primary" />
                                         </button>
@@ -302,14 +341,9 @@ const Chat = () => {
 
                             <div className="mr-4 flex-grow relative">
                                 <div className="flex items-center border border-gray-300 rounded-lg p-2 space-x-2">
-                                    {selectedMenuOption === 'prompt' && (
+                                    {selectedMenuOption && (
                                         <div className="flex items-center space-x-2">
-                                            <AutoFixHighIcon color="primary" />
-                                        </div>
-                                    )}
-                                    {selectedMenuOption === 'chat' && (
-                                        <div className="flex items-center space-x-2">
-                                            <ChatBubbleOutlineIcon color="primary" className='items-center mt-1' />
+                                            {iconMapping[selectedMenuOption]}
                                         </div>
                                     )}
                                     <input
@@ -339,8 +373,8 @@ const Chat = () => {
             </div>
             {showReplySection && (
                 <div className={`flex flex-col h-full w-1/2 mt-0 border-r-2 `}>
-                    <ReplySection 
-                        message={selectedMessage} 
+                    <ReplySection
+                        message={selectedMessage}
                         type={type}
                         setShowReplySection={setShowReplySection}
                         setSelectedMessage={setSelectedMessage}
