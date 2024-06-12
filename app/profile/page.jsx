@@ -13,8 +13,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 export default function EditButton() {
     const [profileData, setProfileData] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = React.useState("transaction");
-
+    const [activeTab, setActiveTab] = useState("transaction");
 
     const toggleTab = (tab) => {
         if (activeTab !== tab) setActiveTab(tab);
@@ -24,25 +23,21 @@ export default function EditButton() {
         const fetchProfileData = async () => {
             try {
                 const data = await getProfile();
-                console.log("Profile Data");
-                console.log(data);
                 if (data) {
                     setProfileData(data);
-                    setLoading(false); // Update loading state once data is fetched
+                    setLoading(false);
                 } else {
                     console.error('No profile data found');
+                    setLoading(false);
                 }
             } catch (error) {
                 console.error('Error fetching profile data:', error.message);
+                setLoading(false);
             }
         };
 
         if (!profileData) {
-            const interval = setInterval(() => {
-                fetchProfileData();
-            }, 1000); // Fetch data every second
-
-            return () => clearInterval(interval); // Clear interval on component unmount
+            fetchProfileData();
         }
     }, [profileData]);
 
@@ -72,7 +67,7 @@ export default function EditButton() {
                                         </div>
                                     </div>
                                 </div>
-                                <Router> {/* Wrap your component within a Router */}
+                                <Router>
                                     <MDBCardBody className="p-4">
                                         <MDBNav tabs className="flex bg-gray-100 p-2">
                                             <MDBNavItem>
@@ -89,12 +84,12 @@ export default function EditButton() {
                                         <MDBTabContent activeItem={activeTab}>
                                             <MDBTabPane tabId="transaction">
                                                 {activeTab === 'transaction' && (
-                                                    <TransactionCard/>
+                                                    <TransactionCard />
                                                 )}
                                             </MDBTabPane>
                                             <MDBTabPane tabId="rewards">
                                                 {activeTab === 'rewards' && (
-                                                    <RewardsCard/>
+                                                    <RewardsCard />
                                                 )}
                                             </MDBTabPane>
                                         </MDBTabContent>

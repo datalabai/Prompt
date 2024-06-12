@@ -13,14 +13,13 @@ import RepeatIcon from "@mui/icons-material/Repeat";
 import PublishIcon from "@mui/icons-material/Publish";
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import { toast } from 'react-toastify';
-import { responsiveProperty } from '@mui/material/styles/cssUtils';
+import { Divider } from '@mui/material';
 
 const ReplySection = ({ message, type, setShowReplySection, setSelectedMessage }) => {
     const [comments, setComments] = useState([]);
     const [inputValue, setInputValue] = useState('');
     const [likes, setLikes] = useState(message.likes);
     const commentsEndRef = useRef(null); // Ref for scrolling to end of comments
-    const [likedMessages, setLikedMessages] = useState(new Set());
 
     useEffect(() => {
         const unsubscribeComments = listenForComments(type, message.id, (newComments) => {
@@ -88,10 +87,8 @@ const ReplySection = ({ message, type, setShowReplySection, setSelectedMessage }
             progress: undefined,
         });
         const response = await addCommentToMessage(type, message.id, newComment, true);
-        if(response.type!='normal')
-        {
-            if(response.type=='warning')
-            {
+        if (response.type != 'normal') {
+            if (response.type == 'warning') {
                 toast.warning(response.message, {
                     position: 'top-right',
                     autoClose: 3000,
@@ -102,8 +99,7 @@ const ReplySection = ({ message, type, setShowReplySection, setSelectedMessage }
                     progress: undefined,
                 });
             }
-            if(response.type=='error')
-            {
+            if (response.type == 'error') {
                 toast.error(response.message, {
                     position: 'top-right',
                     autoClose: 3000,
@@ -113,10 +109,9 @@ const ReplySection = ({ message, type, setShowReplySection, setSelectedMessage }
                     draggable: true,
                     progress: undefined,
                 });
-            
+
             }
-            if(response.type=='success')
-            {
+            if (response.type == 'success') {
                 toast.success(response.message, {
                     position: 'top-right',
                     autoClose: 3000,
@@ -155,20 +150,17 @@ const ReplySection = ({ message, type, setShowReplySection, setSelectedMessage }
 
             setComments((prevComments) => [...prevComments, newComment]);
             const response = await addCommentToMessage(type, message.id, newComment, false);
-            if(response.type=='normal')
-            {
-            toast.success('Comment added', {
-                position: 'top-right',
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-            });
-            }
-            else
-            {
+            if (response.type == 'normal') {
+                toast.success('Comment added', {
+                    position: 'top-right',
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
+            } else {
                 toast.error(response.message, {
                     position: 'top-right',
                     autoClose: 3000,
@@ -189,8 +181,8 @@ const ReplySection = ({ message, type, setShowReplySection, setSelectedMessage }
     return (
         <div className="w-full h-full flex flex-col">
             {/* Header with close button */}
-            <div className="flex justify-between items-center border-b-2 p-3">
-                <h3 className="text-lg font-semibold text-gray-800">Replying to:</h3>
+            <div className="flex justify-between items-center border-b-2 p-3 mt-2">
+                <h3 className="text-lg font-semibold text-gray-800"># thread</h3>
                 <button
                     className="text-red-500 hover:text-red-700"
                     onClick={() => {
@@ -210,7 +202,7 @@ const ReplySection = ({ message, type, setShowReplySection, setSelectedMessage }
                             <div className="flex flex-col w-full">
                                 <div className="flex justify-between items-center mb-2">
                                     <span className="font-semibold text-gray-800 mr-4">{message.userName.charAt(0).toUpperCase() + message.userName.slice(1)}
-</span>
+                                    </span>
                                     <span className="text-sm text-gray-500 ml-2">{formatTime(new Date(message.timestamp))}</span>
                                 </div>
                                 <p className="text-gray-800">{message.text}</p>
@@ -231,7 +223,7 @@ const ReplySection = ({ message, type, setShowReplySection, setSelectedMessage }
                                     {/* Like icon */}
                                     <div>
                                         <FavoriteBorderIcon
-                                            className={`cursor-pointer text-gray-500 hover:text-gray-700 ${likedMessages.has(message.id) ? 'text-blue-500' : ''}`}
+                                            className={`cursor-pointer text-gray-500 hover:text-gray-700`}
                                             size={18}
                                             onClick={() => handleLike(message)}
                                         />
@@ -243,23 +235,28 @@ const ReplySection = ({ message, type, setShowReplySection, setSelectedMessage }
                             </div>
                         </div>
                     </div>
+                    <Divider />
                     {/* Comments section with scrollbar */}
-                    <div className="bg-white-100 rounded-lg p-3 mb-4 overflow-y-auto flex-grow">
-                        <h4 className="text-lg font-semibold text-gray-800 mb-2">Suggest a prompt</h4>
-                        <div className="space-y-2">
-                            {comments.map((comment, index) => (
-                                <div key={index} className="flex items-start">
-                                    <img src={comment.userPhoto} alt="Profile" className="w-8 h-8 rounded-full" />
-                                    <div className="rounded-lg ml-2 mb-2 w-full">
-                                        <div className="flex justify-between items-center">
-                                            <span className="font-semibold text-gray-800">{comment.sender.charAt(0).toUpperCase()+comment.sender.slice(1)}</span>
+                    <div className="bg-white-100 rounded-lg  mb-4 overflow-y-auto flex-grow">
+                        <h3 className="text-lg font-semibold text-gray-800 mb-3 p-3">Comments</h3>
+                        {comments.map((comment, index) => (
+                            <div key={index}>
+                                <div className="flex items-start space-x-2 p-3 ">
+                                    <img
+                                        src={comment.userPhoto}
+                                        alt="Profile"
+                                        className="w-8 h-8 rounded-full"
+                                    />
+                                    <div className="flex flex-col flex-grow">
+                                        <div className="flex justify-between items-center mb-1">
+                                            <span className="font-semibold text-gray-800">{comment.sender.charAt(0).toUpperCase() + comment.sender.slice(1)}</span>
                                             <span className="text-sm text-gray-500">{formatTime(new Date(comment.date))}</span>
                                         </div>
                                         <p className="text-gray-800">{comment.text}</p>
                                         {comment.imageUrl && (
                                             <img className="mt-2" src={comment.imageUrl} alt="Message" width={250} height={250} />
                                         )}
-                                        <div className="flex items-center space-x-3 mt-2 post__footer">
+                                          <div className="flex items-center space-x-3 mt-2 post__footer">
                                             <div>
                                                 <ThumbUpIcon
                                                     className="cursor-pointer text-gray-500 hover:text-gray-700"
@@ -276,31 +273,40 @@ const ReplySection = ({ message, type, setShowReplySection, setSelectedMessage }
                                                 />
                                                 <span className="text-sm text-gray-500 ml-0.5 mr-8">{comment.dislikes}</span>
                                             </div>
+                                            {auth.currentUser.displayName === comment.sender ? (
+                                            <AutoFixHighIcon className="cursor-pointer text-gray-400"
+                                                size={16}  />
+                                            ):
                                             <AutoFixHighIcon className="cursor-pointer text-gray-500 hover:text-gray-700"
-                                                size={16} onClick={() => generatePrompt(comment.text)} />
+                                                size={16}  onClick={() => generatePrompt(comment.text)} />
+                                        }
                                         </div>
                                     </div>
                                 </div>
-                            ))}
-                            <div ref={commentsEndRef} /> {/* Ref for scrolling to end */}
-                        </div>
+                                {index < comments.length - 1 && <Divider />} {/* Add a divider between comments */}
+                            </div>
+                        ))}
+                        <div ref={commentsEndRef} /> {/* Ref for scrolling to end of comments */}
                     </div>
                 </div>
-                {/* Comment input */}
-                <div className="flex items-center p-2 mb-2">
-                    <input
-                        type="text"
-                        value={inputValue}
-                        onChange={(e) => setInputValue(e.target.value)}
-                        placeholder="Suggest a prompt..."
-                        className="border border-gray-300 rounded-md p-2 w-full resize-none text-black focus:outline-none"
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                                handleAddComment(e.target.value);
-                            }
-                        }}
-                    />
-                </div>
+            </div>
+            {/* Input field for new comment */}
+            <Divider />
+            <div className="flex items-center p-3 mb-3 ">
+                <input
+                    type="text"
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    className="flex-grow px-3 py-2 rounded-l-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Add a comment..."
+                />
+                <button
+                    onClick={() => handleAddComment(inputValue)}
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-r-lg flex items-center"
+                >
+                    <FiSend className="mr-1" />
+                    Send
+                </button>
             </div>
         </div>
     );

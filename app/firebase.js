@@ -39,6 +39,7 @@ export const getProfile = async () => {
     console.log('uid:', uid); // Logging the UID for debugging purposes
     const response = await fetch(`https://wallet-api-vyxx.onrender.com/profile?uid=${uid}`);
     const data = await response.json();
+    console.log('data:', data);
     console.log(data);
     return data; 
   } catch (error) {
@@ -48,10 +49,12 @@ export const getProfile = async () => {
 
 
 export const addUserToFirestore = async (user) => {
+  console.log("add user to firebase");
   try {
     const userRef = doc(db, "users", user.uid);
     // Check if the user document already exists
     const docSnap = await getDoc(userRef);
+    console.log(docSnap.data());
     if (docSnap.exists()) {
       console.log("Document with UID", user.uid, "already exists.");
       await createPrivateChannel(user.uid);
@@ -343,7 +346,7 @@ export const addCommentToMessage = async (channelId, messageId, commentData,prom
         console.log(data);
         if(!data.sig)
           {
-             return {type:'warning',message:"Not Enough Sol"};
+             return {type:'warning',message:"Not Enough USDC"};
           }
           const image= await fetchImageForMessage(commentData.text); 
           if(image=='Failed to generate image. Please try again later.')
@@ -382,7 +385,7 @@ export const addCommentToMessage = async (channelId, messageId, commentData,prom
       });
       
       console.log("Comment added successfully.");
-      return {type:'success',message:'0.01 Sol Deduct from wallet'};
+      return {type:'success',message:'1.10 USDC Deduct from wallet'};
       }
       else
       {
@@ -406,7 +409,7 @@ export const addCommentToMessage = async (channelId, messageId, commentData,prom
       
       console.log("Comment added successfully.");
     }
-    return {type:'normal',message:'0.01 Sol Deduct from wallet'};
+    return {type:'normal',message:'1.10 Sol Deduct from wallet'};
     } else {
       console.error("Message not found.");
       return {type:'error',message:"Message not found"};

@@ -108,7 +108,6 @@ const Chat = () => {
                 if (response.type === 'success') {
                     toast.success('1.10 USDC deducted from wallet', {
                         position: 'top-right',
-                        autoClose: 2000,
                         hideProgressBar: false,
                         closeOnClick: true,
                         pauseOnHover: true,
@@ -117,7 +116,6 @@ const Chat = () => {
                     });
                     toast.info('1 For Model Fee & 0.10 for Platform Fee', {
                         position: 'top-right',
-                        autoClose: 2000,
                         hideProgressBar: false,
                         closeOnClick: true,
                         pauseOnHover: true,
@@ -226,7 +224,7 @@ const Chat = () => {
             <div className={`flex flex-col h-full w-1/2 border-r-2`}>
                 {user ? (
                     <React.Fragment>
-                        <div className={`flex space-x-4 p-4 bg-white border-b`}>
+                        <div className={`flex space-x-4 p-4 bg-white border-b mt-2`}>
                             <h2 className="text-lg font-semibold text-gray-800"># {type}</h2>
                             <h1 className='items-center mt-1 text-sm text-gray-600'>-</h1>
                             <h1 className='items-center mt-1 text-sm text-gray-600'>This is a {type} channel , users can generate images</h1>
