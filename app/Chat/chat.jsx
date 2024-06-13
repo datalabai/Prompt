@@ -18,6 +18,8 @@ import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import FormatListBulletedOutlinedIcon from '@mui/icons-material/FormatListBulletedOutlined';
 import { toast } from 'react-toastify';
 import ReplySection from '../components/Reply';
+import Resume from '../components/Resume';
+import Texts from '../components/Texts';
 
 const Chat = () => {
     const searchParams = useSearchParams();
@@ -259,8 +261,14 @@ const Chat = () => {
                                                     <span className="text-sm text-gray-500">{formatTime(new Date(message.timestamp))}</span>
                                                 </div>
                                                 <p className="text-gray-800 ">{message.text}</p>
-                                                {message.imageUrl && (
+                                                {message.imageUrl && type !== 'Resumes' && (
                                                     <img className="rounded-lg mt-2" src={message.imageUrl} alt="Message Image" width={450} height={350} onLoad={handleImageLoad} />
+                                                )}
+                                                {type === 'Resumes' && (
+                                                    <Resume />
+                                                )}
+                                                {type === 'Texts' && (
+                                                    <Texts />
                                                 )}
                                                 {type !== 'Private' && (
 
@@ -351,6 +359,7 @@ const Chat = () => {
                                         value={inputValue}
                                         onChange={handleInputChange}
                                         {...(selectedMenuOption === 'prompt' && { placeholder: 'Type your prompt...' })}
+                                        {...(selectedMenuOption === 'prompt' && type === 'Resumes' && { placeholder: 'Build your Resume...' })}
                                         {...(selectedMenuOption === 'chat' && { placeholder: 'Type your message...' })}
                                         className="flex-grow bg-transparent outline-none"
                                         onKeyDown={(e) => {
