@@ -261,13 +261,13 @@ const Chat = () => {
                                                     <span className="text-sm text-gray-500">{formatTime(new Date(message.timestamp))}</span>
                                                 </div>
                                                 <p className="text-gray-800 ">{message.text}</p>
-                                                {message.imageUrl && type !== 'Resumes' && (
+                                                {message.imageUrl && !['Resumes', 'Texts'].includes(type) && (
                                                     <img className="rounded-lg mt-2" src={message.imageUrl} alt="Message Image" width={450} height={350} onLoad={handleImageLoad} />
                                                 )}
-                                                {type === 'Resumes' && (
+                                                {message.imageUrl && type === 'Resumes' && (
                                                     <Resume />
                                                 )}
-                                                {type === 'Texts' && (
+                                                {message.imageUrl && type === 'Texts' && (
                                                     <Texts />
                                                 )}
                                                 {type !== 'Private' && (
