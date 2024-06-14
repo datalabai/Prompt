@@ -346,7 +346,7 @@ const Chat = () => {
                                     </div>
                                 )}
                                 <AddCircleOutlineIcon
-                                    fontSize="large"
+                                  
                                     color="primary"
                                     className="cursor-pointer text-gray-500 hover:text-gray-700"
                                     size={24}
