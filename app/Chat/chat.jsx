@@ -33,7 +33,9 @@ const Chat = () => {
     const [likedMessages, setLikedMessages] = useState(new Set());
     const [imageLoading, setImageLoading] = useState(true);
     const [showMenu, setShowMenu] = useState(false);
-    const [selectedMenuOption, setSelectedMenuOption] = useState('chat');
+    const [selectedMenuOption, setSelectedMenuOption] = useState('');
+    const [isVisible, setIsVisible] = useState(true);
+    
 
     const iconMapping = {
         prompt: <AutoFixHighIcon color="primary" />,
@@ -190,6 +192,7 @@ const Chat = () => {
     const handleMenuOptionClick = (option) => {
         setSelectedMenuOption(option);
         setShowMenu(false);
+        setIsVisible(false);
     };
 
     const handleInputChange = (e) => {
@@ -302,39 +305,43 @@ const Chat = () => {
                             <div ref={messagesEndRef} />
                         </div>
 
-                        <div className="flex items-center p-4 bg-white">
-                            <div className='mr-2 relative'>
+                        <div className=" items-center p-4 bg-white">
+                            
+
+                            <div className="mr flex-grow relative">
+                                <div className="flex items-center border border-gray-300 rounded-lg p-2 space-x-2">
+                                <div className='mr-2 relative' style={{ display: isVisible ? 'block' : 'none' }}>
                                 {showMenu && (
-                                    <div className="absolute bottom-full right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg">
+                                    <div className="absolute bottom-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg">
                                         {type !== 'Expert' && (
-                                            <button className="block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('prompt')}>
-                                                <AutoFixHighIcon color="primary" />
+                                            <button className="flex block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('prompt')}>
+                                                <AutoFixHighIcon color="primary" /> <span className="ml-2">/prompt</span>
                                             </button>
                                         )}
 
                                         {['Private', 'Home'].includes(type) && (
                                             <>
-                                                <button className="block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('memes')}>
-                                                    <FlutterDashOutlinedIcon color="primary" />
+                                                <button className="flex block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('memes')}>
+                                                    <FlutterDashOutlinedIcon color="primary" /> <span className="ml-2">/memes</span>
                                                 </button>
-                                                <button className="block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('logos')}>
-                                                    <BusinessOutlinedIcon color="primary" />
+                                                <button className="flex block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('logos')}>
+                                                    <BusinessOutlinedIcon color="primary" /> <span className="ml-2">/logos</span>
                                                 </button>
-                                                <button className="block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('images')}>
-                                                    <ImageIcon color="primary" />
+                                                <button className="flex block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('images')}>
+                                                    <ImageIcon color="primary" /> <span className="ml-2">/images</span>
                                                 </button>
-                                                <button className="block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('resumes')}>
-                                                    <AssignmentOutlinedIcon color="primary" />
+                                                <button className="flex block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('resumes')}>
+                                                    <AssignmentOutlinedIcon color="primary" /> <span className="ml-2">/resumes</span>
                                                 </button>
-                                                <button className="block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('texts')}>
-                                                    <FormatListBulletedOutlinedIcon color="primary" />
+                                                <button className="flex block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('texts')}>
+                                                    <FormatListBulletedOutlinedIcon color="primary" /> <span className="ml-2">/texts</span>
                                                 </button>
                                             </>
                                         )}
 
 
-                                        <button className="block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('chat')}>
-                                            <ChatBubbleOutlineIcon color="primary" />
+                                        <button className="flex block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('chat')}>
+                                            <ChatBubbleOutlineIcon color="primary" /> <span className="ml-2">/chat</span>
                                         </button>
                                     </div>
                                 )}
@@ -346,9 +353,6 @@ const Chat = () => {
                                     onClick={handleMenuClick}
                                 />
                             </div>
-
-                            <div className="mr-4 flex-grow relative">
-                                <div className="flex items-center border border-gray-300 rounded-lg p-2 space-x-2">
                                     {selectedMenuOption && (
                                         <div className="flex items-center space-x-2">
                                             {iconMapping[selectedMenuOption]}
