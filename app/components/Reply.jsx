@@ -1,7 +1,7 @@
 "use client";
 
 import { auth } from '../firebase';
-import { listenForComments, addCommentToMessage, updateLikesInFirebase, addLiketoComment, addDisLiketoComment } from '../firebase';
+import { listenForComments, addCommentToMessage, updateLikesInFirebase, addLiketoComment, addDisLiketoComment ,updateComment} from '../firebase';
 import { useState, useEffect, useRef } from 'react';
 import { FiSend, FiCornerUpLeft, FiThumbsUp } from 'react-icons/fi';
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
@@ -66,7 +66,7 @@ const ReplySection = ({ message, type, setShowReplySection, setSelectedMessage }
         commentsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
 
-    const generatePrompt = async (text) => {
+    const generatePrompt = async (text,id,uid,CImg) => {
         const newComment = {
             text: text,
             sender: auth.currentUser.displayName,
@@ -74,8 +74,8 @@ const ReplySection = ({ message, type, setShowReplySection, setSelectedMessage }
             imageUrl: './load-32_128.gif',
             date: Date.now(),
             likes: 0,
+            uid: auth.currentUser.uid,
         };
-
         setComments((prevComments) => [...prevComments, newComment]);
         toast.success('Transaction in progress', {
             position: 'top-right',
@@ -86,6 +86,7 @@ const ReplySection = ({ message, type, setShowReplySection, setSelectedMessage }
             draggable: true,
             progress: undefined,
         });
+        await updateComment(type, message.id,id,CImg);
         const response = await addCommentToMessage(type, message.id, newComment, true);
         if (response.type != 'normal') {
             if (response.type == 'warning') {
@@ -146,6 +147,8 @@ const ReplySection = ({ message, type, setShowReplySection, setSelectedMessage }
                 userPhoto: auth.currentUser.photoURL,
                 date: Date.now(),
                 likes: 0,
+                uid: auth.currentUser.uid,
+                CImg:0
             };
 
             setComments((prevComments) => [...prevComments, newComment]);
@@ -278,7 +281,7 @@ const ReplySection = ({ message, type, setShowReplySection, setSelectedMessage }
                                                 size={16}  />
                                             ):
                                             <AutoFixHighIcon className="cursor-pointer text-gray-500 hover:text-gray-700"
-                                                size={16}  onClick={() => generatePrompt(comment.text)} />
+                                                size={16}  onClick={() => generatePrompt(comment.text,comment.id,comment.uid,comment.CImg)} />
                                         }
                                         </div>
                                     </div>

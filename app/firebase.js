@@ -230,7 +230,8 @@ export const addMessageToChannel = async (channelId,messageData,prompt) => {
       timestamp: Date.now(),
       likes: 0,
       replies: 0,
-      Ulikes: []
+      Ulikes: [],
+      activity:false
       });
     console.log("Message added successfully.");
     //import the collection prompt
@@ -259,7 +260,8 @@ export const addMessageToChannel = async (channelId,messageData,prompt) => {
       timestamp: Date.now(),
       likes: 0,
       replies: 0,
-      Ulikes:[]
+      Ulikes:[],
+      activity:false
     });
     console.log("Message added successfully.");
     return {type:'success',message:'0.01 Sol Deduct from wallet'};
@@ -329,6 +331,15 @@ export const addCommentToMessage = async (channelId, messageId, commentData,prom
     if (messageDoc.exists()) {
       // Get the current replies count from the message data
       // Add comment to comments subcollection
+      
+      //update messageRef
+
+      const updateObject = {};
+      updateObject['activity'] = true;
+  
+      // Update the document
+      await updateDoc(messageRef, updateObject);
+    
       const commentsRef = collection(
         db,
         "channels",
@@ -364,7 +375,9 @@ export const addCommentToMessage = async (channelId, messageId, commentData,prom
           likes: commentData.likes || 0,
           dislikes:0,
           plikes:[],
-          pdislikes:[]
+          pdislikes:[],
+          CImg:0,
+          uid:commentData.uid
         });
         const promptRef = collection(db, "prompt");
         const promptData = {
@@ -389,7 +402,7 @@ export const addCommentToMessage = async (channelId, messageId, commentData,prom
       }
       else
       {
-      await addDoc(commentsRef, {
+      const doc=await addDoc(commentsRef, {
         text: commentData.text,
         sender: commentData.sender,
         userPhoto: commentData.userPhoto,
@@ -397,8 +410,12 @@ export const addCommentToMessage = async (channelId, messageId, commentData,prom
         likes: commentData.likes || 0,
         dislikes:0,
         plikes:[],
-        pdislikes:[]
+        pdislikes:[],
+        CImg:0,
+        uid:commentData.uid
       });
+
+      console.log(doc);
       const currentReplies = messageDoc.data().replies || 0;
 
       const newRepliesCount = currentReplies + 1;
@@ -419,6 +436,23 @@ export const addCommentToMessage = async (channelId, messageId, commentData,prom
     return {type:'error',message:error};
   }
 };
+
+//function to update a comment in messagee
+export const updateComment = async (channelId, messageId, commentId, commentData) => {
+  const commentRef = doc(db, `channels/${channelId}/messages/${messageId}/comments/${commentId}`);
+
+  try {
+    await updateDoc(commentRef, {
+      CImg: commentData+1,
+    });
+    console.log("Comment updated successfully.");
+  } catch (error) {
+    console.error("Error updating comment: ", error);
+  }
+}
+
+
+
 // Function to retrieve all messages from a channel
 export const getAllMessagesFromChannel = async (channelId) => {
   const messagesRef = collection(db, "channels", channelId, "messages");
