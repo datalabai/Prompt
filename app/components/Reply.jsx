@@ -312,6 +312,15 @@ const ReplySection = ({ message, type, setShowReplySection, setSelectedMessage }
                                                         size={16} onClick={() => generatePrompt(comment.text, comment.id, comment.uid, comment.CImg)} />
                                                 </IconButton>
                                             }
+                                            {comment.imageUrl ? (
+                                                <IconButton aria-label="Download" title="Download" size="small">
+                                                    <GetAppIcon fontSize="small" />
+                                                </IconButton>
+                                            ) : (
+                                                <IconButton aria-label="Copy" title="Copy" size="small">
+                                                    <FileCopyIcon fontSize="small" />
+                                                </IconButton>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
