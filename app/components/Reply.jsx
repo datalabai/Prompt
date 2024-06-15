@@ -1,9 +1,9 @@
 "use client";
 
 import { auth } from '../firebase';
-import { listenForComments, addCommentToMessage, updateLikesInFirebase, addLiketoComment, addDisLiketoComment ,updateComment} from '../firebase';
+import { listenForComments, addCommentToMessage, updateLikesInFirebase, addLiketoComment, addDisLiketoComment, updateComment } from '../firebase';
 import { useState, useEffect, useRef } from 'react';
-import { FiSend, FiCornerUpLeft, FiThumbsUp } from 'react-icons/fi';
+import { IconButton } from '@mui/material';
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import DisabledByDefaultRoundedIcon from '@mui/icons-material/DisabledByDefaultRounded';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
@@ -12,6 +12,8 @@ import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import RepeatIcon from "@mui/icons-material/Repeat";
 import PublishIcon from "@mui/icons-material/Publish";
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
+import FileCopyIcon from '@mui/icons-material/FileCopy';
+import GetAppIcon from '@mui/icons-material/GetApp';
 import { toast } from 'react-toastify';
 import { Divider } from '@mui/material';
 
@@ -70,7 +72,7 @@ const ReplySection = ({ message, type, setShowReplySection, setSelectedMessage }
         commentsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
 
-    const generatePrompt = async (text,id,uid,CImg) => {
+    const generatePrompt = async (text, id, uid, CImg) => {
         const newComment = {
             text: text,
             sender: auth.currentUser.displayName,
@@ -90,7 +92,7 @@ const ReplySection = ({ message, type, setShowReplySection, setSelectedMessage }
             draggable: true,
             progress: undefined,
         });
-        await updateComment(type, message.id,id,CImg);
+        await updateComment(type, message.id, id, CImg);
         const response = await addCommentToMessage(type, message.id, newComment, true);
         if (response.type != 'normal') {
             if (response.type == 'warning') {
@@ -152,7 +154,7 @@ const ReplySection = ({ message, type, setShowReplySection, setSelectedMessage }
                 date: Date.now(),
                 likes: 0,
                 uid: auth.currentUser.uid,
-                CImg:0
+                CImg: 0
             };
 
             setComments((prevComments) => [...prevComments, newComment]);
@@ -217,27 +219,42 @@ const ReplySection = ({ message, type, setShowReplySection, setSelectedMessage }
                                     <img className="mt-2" src={message.imageUrl} alt="Message" width={250} height={250} />
                                 )}
                                 <div className="flex items-center space-x-4 mt-2 post__footer">
-                                    {/* Reply icon */}
-                                    <div>
-                                        <ChatBubbleOutlineIcon
-                                            className="cursor-pointer text-gray-500 hover:text-gray-700"
-                                            size={18}
-                                        />
-                                        {/* Display the number of replies */}
-                                        <span className="text-sm text-gray-500 ml-0.5">{message.replies}</span>
-                                    </div>
-                                    <RepeatIcon fontSize="small" className="chatBubble" />
-                                    {/* Like icon */}
-                                    <div>
-                                        <FavoriteBorderIcon
-                                            className={`cursor-pointer text-gray-500 hover:text-gray-700`}
-                                            size={18}
-                                            onClick={() => handleLike(message)}
-                                        />
-                                        {/* Display the number of likes */}
-                                        <span className="text-sm text-gray-500 ml-0.5">{likes}</span>
-                                    </div>
-                                    <PublishIcon fontSize="small" className="chatBubble" />
+                                    <IconButton aria-label="Replay message" title="Replay" size="small">
+                                        <div>
+                                            <ChatBubbleOutlineIcon
+                                                className="cursor-pointer text-gray-500 hover:text-gray-700"
+                                                size={18}
+                                            />
+                                            {/* Display the number of replies */}
+                                            <span className="text-sm text-gray-500 ml-0.5">{message.replies}</span>
+                                        </div>
+                                    </IconButton>
+                                    <IconButton aria-label="Repeat message" title="Repeat message" size="small">
+                                        <RepeatIcon fontSize="small" className="chatBubble" />
+                                    </IconButton>
+                                    <IconButton aria-label="Favorite" title="Favorite" size="small">
+                                        <div>
+                                            <FavoriteBorderIcon
+                                                className={`cursor-pointer text-gray-500 hover:text-gray-700`}
+                                                size={18}
+                                                onClick={() => handleLike(message)}
+                                            />
+                                            {/* Display the number of likes */}
+                                            <span className="text-sm text-gray-500 ml-0.5">{likes}</span>
+                                        </div>
+                                    </IconButton>
+                                    {message.imageUrl ? (
+                                        <IconButton aria-label="Download" title="Download" size="small">
+                                            <GetAppIcon fontSize="small" />
+                                        </IconButton>
+                                    ) : (
+                                        <IconButton aria-label="Copy" title="Copy" size="small">
+                                            <FileCopyIcon fontSize="small" />
+                                        </IconButton>
+                                    )}
+                                    <IconButton aria-label="Share" title="Share" size="small">
+                                        <PublishIcon fontSize="small" className="chatBubble" />
+                                    </IconButton>
                                 </div>
                             </div>
                         </div>
@@ -263,30 +280,38 @@ const ReplySection = ({ message, type, setShowReplySection, setSelectedMessage }
                                         {comment.imageUrl && (
                                             <img className="mt-2" src={comment.imageUrl} alt="Message" width={250} height={250} />
                                         )}
-                                          <div className="flex items-center space-x-3 mt-2 post__footer">
-                                            <div>
-                                                <ThumbUpIcon
-                                                    className="cursor-pointer text-gray-500 hover:text-gray-700"
-                                                    size={16}
-                                                    onClick={() => addLike(comment)}
-                                                />
-                                                <span className="text-sm text-gray-500 ml-0.5 mr-8">{comment.likes}</span>
-                                            </div>
-                                            <div>
-                                                <ThumbDownIcon
-                                                    className="cursor-pointer text-gray-500 hover:text-gray-700"
-                                                    size={16}
-                                                    onClick={() => addDislike(comment)}
-                                                />
-                                                <span className="text-sm text-gray-500 ml-0.5 mr-8">{comment.dislikes}</span>
-                                            </div>
+                                        <div className="flex items-center space-x-3 mt-2 post__footer">
+                                            <IconButton aria-label="Like" title="Like" size="small">
+                                                <div>
+                                                    <ThumbUpIcon
+                                                        className="cursor-pointer text-gray-500 hover:text-gray-700"
+                                                        size={16}
+                                                        onClick={() => addLike(comment)}
+                                                    />
+                                                    <span className="text-sm text-gray-500 ml-0.5 mr-8">{comment.likes}</span>
+                                                </div>
+                                            </IconButton>
+                                            <IconButton aria-label="DisLike" title="DisLike" size="small">
+                                                <div>
+                                                    <ThumbDownIcon
+                                                        className="cursor-pointer text-gray-500 hover:text-gray-700"
+                                                        size={16}
+                                                        onClick={() => addDislike(comment)}
+                                                    />
+                                                    <span className="text-sm text-gray-500 ml-0.5 mr-8">{comment.dislikes}</span>
+                                                </div>
+                                            </IconButton>
+
                                             {auth.currentUser.displayName === comment.sender ? (
-                                            <AutoFixHighIcon className="cursor-pointer text-gray-400"
-                                                size={16}  />
-                                            ):
-                                            <AutoFixHighIcon className="cursor-pointer text-gray-500 hover:text-gray-700"
-                                                size={16}  onClick={() => generatePrompt(comment.text,comment.id,comment.uid,comment.CImg)} />
-                                        }
+                                                <IconButton aria-label="Prompt" title="Generate Promt" size="small">
+                                                    <AutoFixHighIcon className="cursor-pointer text-gray-400"
+                                                        size={16} /></IconButton>
+                                            ) :
+                                                <IconButton aria-label="Prompt" title="Generate Promt" size="small">
+                                                    <AutoFixHighIcon className="cursor-pointer text-gray-500 hover:text-gray-700"
+                                                        size={16} onClick={() => generatePrompt(comment.text, comment.id, comment.uid, comment.CImg)} />
+                                                </IconButton>
+                                            }
                                         </div>
                                     </div>
                                 </div>
@@ -300,37 +325,37 @@ const ReplySection = ({ message, type, setShowReplySection, setSelectedMessage }
             {/* Input field for new comment */}
             <Divider />
             {payment ? (
-    <div className="flex items-center p-3 mb-3 ">
-        <input
-            type="text"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                    handleAddComment(inputValue);
-                }
-            }}
-            className="flex-grow px-3 py-2 rounded-l-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Add a comment..."
-            disabled
-        />
-    </div>
-) : (
-    <div className="flex items-center p-3 mb-3 ">
-        <input
-            type="text"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                    handleAddComment(inputValue);
-                }
-            }}
-            className="flex-grow px-3 py-2 rounded-l-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Add a comment..."
-        />
-    </div>
-)}
+                <div className="flex items-center p-3 mb-3 ">
+                    <input
+                        type="text"
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                handleAddComment(inputValue);
+                            }
+                        }}
+                        className="flex-grow px-3 py-2 rounded-l-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Add a comment..."
+                        disabled
+                    />
+                </div>
+            ) : (
+                <div className="flex items-center p-3 mb-3 ">
+                    <input
+                        type="text"
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                handleAddComment(inputValue);
+                            }
+                        }}
+                        className="flex-grow px-3 py-2 rounded-l-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Add a comment..."
+                    />
+                </div>
+            )}
 
         </div>
     );
