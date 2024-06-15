@@ -19,11 +19,15 @@ const ReplySection = ({ message, type, setShowReplySection, setSelectedMessage }
     const [comments, setComments] = useState([]);
     const [inputValue, setInputValue] = useState('');
     const [likes, setLikes] = useState(message.likes);
+    const [payment, setPayment] = useState(message.payment);
     const commentsEndRef = useRef(null); // Ref for scrolling to end of comments
 
     useEffect(() => {
+        console.log(message);
+        console.log(payment);
         const unsubscribeComments = listenForComments(type, message.id, (newComments) => {
             setComments(newComments);
+            setPayment(message.payment);
         });
 
         return () => unsubscribeComments();
@@ -295,22 +299,39 @@ const ReplySection = ({ message, type, setShowReplySection, setSelectedMessage }
             </div>
             {/* Input field for new comment */}
             <Divider />
-            <div className="flex items-center p-3 mb-3 ">
-                <input
-                    type="text"
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    className="flex-grow px-3 py-2 rounded-l-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Add a comment..."
-                />
-                <button
-                    onClick={() => handleAddComment(inputValue)}
-                    className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-r-lg flex items-center"
-                >
-                    <FiSend className="mr-1" />
-                    Send
-                </button>
-            </div>
+            {payment ? (
+    <div className="flex items-center p-3 mb-3 ">
+        <input
+            type="text"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                    handleAddComment(inputValue);
+                }
+            }}
+            className="flex-grow px-3 py-2 rounded-l-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Add a comment..."
+            disabled
+        />
+    </div>
+) : (
+    <div className="flex items-center p-3 mb-3 ">
+        <input
+            type="text"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                    handleAddComment(inputValue);
+                }
+            }}
+            className="flex-grow px-3 py-2 rounded-l-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Add a comment..."
+        />
+    </div>
+)}
+
         </div>
     );
 };

@@ -3,23 +3,23 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Box, CircularProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
-import { transactions } from '../firebase';
+import { rewards, transactions } from '../firebase';
 
-function createData(transactionId, type, prompt, date, amount) {
-  return { transactionId, type, prompt, date, amount };
+function createData(transactionId,prompt,type,To,Amount) {
+  return { transactionId, prompt, type, To, Amount};
 }
 
 export default function BasicTable() {
   const [loading, setLoading] = useState(true);
-  const [transactionData, setTransactionData] = useState([]);
+  const [rewardsData, setRewardsData] = useState([]);
 
   useEffect(() => {
-    const fetchTransactions = async () => {
+    const fetchRewards = async () => {
       try {
-        const data = await transactions();
-        console.log("Transaction Data");
+        const data = await rewards();
+        console.log("Rewards Data");
         console.log(data);
-        setTransactionData(data);
+        setRewardsData(data);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching transaction data:', error.message);
@@ -27,7 +27,7 @@ export default function BasicTable() {
       }
     };
 
-    fetchTransactions();
+    fetchRewards();
   }, []);
 
   const formatTimestamp = (timestamp) => {
@@ -47,15 +47,17 @@ export default function BasicTable() {
     return transactionId.slice(0, 5) + '...' + transactionId.slice(-5);
   };
 
-  const rows = transactionData.map((transaction, index) =>
+
+  const rows=rewardsData.map((reward, index) =>
     createData(
-      transaction.sig,
-      transaction.type,
-      transaction.prompt,
-      formatTimestamp(transaction.time),
-      transaction.amount
+      reward.sig,
+      reward.prompt,
+      reward.type,
+      reward.to,
+      1.10
     )
   );
+
 
   return (
     <Box sx={{ padding: '20px' }}>
@@ -73,7 +75,8 @@ export default function BasicTable() {
             <TableRow>
               <TableCell variant="head" sx={{ fontWeight: 'bold', color: '#333' }}>Transaction ID</TableCell>
               <TableCell align="right" variant="head" sx={{ fontWeight: 'bold', color: '#333' }}>Prompt</TableCell>
-              <TableCell align="right" variant="head" sx={{ fontWeight: 'bold', color: '#333' }}>Date</TableCell>
+              <TableCell align="right" variant="head" sx={{ fontWeight: 'bold', color: '#333' }}>type</TableCell>
+              <TableCell align="right" variant="head" sx={{ fontWeight: 'bold', color: '#333' }}>Suggested To</TableCell>
               <TableCell align="right" variant="head" sx={{ fontWeight: 'bold', color: '#333' }}>Amount</TableCell>
             </TableRow>
           </TableHead>
@@ -88,8 +91,9 @@ export default function BasicTable() {
                   </Link>
                 </TableCell>
                 <TableCell align="right" sx={{ color: '#333' }}>{row.prompt}</TableCell>
-                <TableCell align="right" sx={{ color: '#333' }}>{row.date}</TableCell>
-                <TableCell align="right" sx={{ color: '#333' }}>1.10 USDC</TableCell>
+                <TableCell align="right" sx={{ color: '#333' }}>{row.type}</TableCell>
+                <TableCell align="right" sx={{ color: '#333' }}>{row.To}</TableCell>
+                <TableCell align="right" sx={{ color: '#333' }}>1.30 USDC</TableCell>
               </TableRow>
             ))}
           </TableBody>

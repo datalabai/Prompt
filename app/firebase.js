@@ -32,6 +32,21 @@ export const transactions = async () => {
   }
 };
 
+export const rewards = async () => {
+  try {
+
+    const uid = auth.currentUser.uid;
+    console.log('uid:', uid);
+    const response = await fetch(`https://wallet-api-vyxx.onrender.com/rewards?uid=${uid}`);
+    const data = await response.json();
+    console.log('data:', data);
+    return data;
+  }
+  catch (error) {
+    console.error('Error fetching rewards data:', error.message); // Handling any errors that occur during the fetch
+  }
+};
+
 export const getProfile = async () => {
   try {
     const uid = auth.currentUser.uid; 
@@ -231,7 +246,8 @@ export const addMessageToChannel = async (channelId,messageData,prompt) => {
       likes: 0,
       replies: 0,
       Ulikes: [],
-      activity:false
+      activity:false,
+      payment:false
       });
     console.log("Message added successfully.");
     //import the collection prompt
@@ -261,7 +277,8 @@ export const addMessageToChannel = async (channelId,messageData,prompt) => {
       likes: 0,
       replies: 0,
       Ulikes:[],
-      activity:false
+      activity:false,
+      payment:false
     });
     console.log("Message added successfully.");
     return {type:'success',message:'0.01 Sol Deduct from wallet'};
