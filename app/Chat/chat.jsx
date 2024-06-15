@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
-import { FiSend, FiCornerUpLeft, FiThumbsUp } from 'react-icons/fi';
+import { IconButton } from '@mui/material';
 import { useSearchParams } from 'next/navigation';
 import { auth } from '../firebase';
 import { updateLikesInFirebase, listenForMessages, addMessageToChannel, addCommentToMessage, getAllMessagesFromChannel } from '../firebase';
@@ -16,6 +16,8 @@ import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
 import ImageIcon from '@mui/icons-material/Image';
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import FormatListBulletedOutlinedIcon from '@mui/icons-material/FormatListBulletedOutlined';
+import FileCopyIcon from '@mui/icons-material/FileCopy';
+import GetAppIcon from '@mui/icons-material/GetApp';
 import { toast } from 'react-toastify';
 import ReplySection from '../components/Reply';
 import Resume from '../components/Resume';
@@ -35,7 +37,7 @@ const Chat = () => {
     const [showMenu, setShowMenu] = useState(false);
     const [selectedMenuOption, setSelectedMenuOption] = useState('');
     const [isVisible, setIsVisible] = useState(true);
-    
+
 
     const iconMapping = {
         prompt: <AutoFixHighIcon color="primary" />,
@@ -277,24 +279,43 @@ const Chat = () => {
 
 
                                                     <div className="flex items-center space-x-4 mt-2 post__footer">
-                                                        <div>
-                                                            <ChatBubbleOutlineIcon
-                                                                className="cursor-pointer text-gray-500 hover:text-gray-700"
-                                                                size={18}
-                                                                onClick={() => handleReply(message)}
-                                                            />
-                                                            <span className="text-sm text-gray-500 ml-0.5">{message.replies}</span>
-                                                        </div>
-                                                        <RepeatIcon fontSize="small" className="chatBubble" />
-                                                        <div>
-                                                            <FavoriteBorderIcon
-                                                                className="cursor-pointer text-gray-500 hover:text-gray-700"
-                                                                size={18}
-                                                                onClick={() => handleLike(message)}
-                                                            />
-                                                            <span className="text-sm text-gray-500 ml-0.5">{message.likes}</span>
-                                                        </div>
-                                                        <PublishIcon fontSize="small" className="chatBubble" />
+                                                        <IconButton aria-label="Replay message" title="Replay" size="small">
+                                                            <div>
+                                                                <ChatBubbleOutlineIcon
+                                                                    className="cursor-pointer text-gray-500 hover:text-gray-700"
+                                                                    size={18}
+                                                                    onClick={() => handleReply(message)}
+                                                                />
+                                                                <span className="text-sm text-gray-500 ml-0.5">{message.replies}</span>
+                                                            </div>
+                                                        </IconButton>
+
+                                                        <IconButton aria-label="Repeat message" title="Repeat message" size="small">
+                                                            <RepeatIcon fontSize="small" className="chatBubble" />
+                                                        </IconButton>
+                                                        <IconButton aria-label="Favorite" title="Favorite" size="small">
+                                                            <div>
+                                                                <FavoriteBorderIcon
+                                                                    className="cursor-pointer text-gray-500 hover:text-gray-700"
+                                                                    size={18}
+                                                                    onClick={() => handleLike(message)}
+                                                                />
+                                                                <span className="text-sm text-gray-500 ml-0.5">{message.likes}</span>
+                                                            </div>
+                                                        </IconButton>
+                                                        {message.imageUrl ? (
+                                                            <IconButton aria-label="Download" title="Download" size="small">
+                                                            <GetAppIcon fontSize="small" />
+                                                            </IconButton>
+                                                        ) : (
+                                                            <IconButton aria-label="Copy" title="Copy" size="small">
+                                                            <FileCopyIcon fontSize="small" />
+                                                            </IconButton>
+                                                        )}
+                                                        <IconButton aria-label="Share" title="Share" size="small">
+                                                            <PublishIcon fontSize="small" className="chatBubble" />
+                                                        </IconButton>
+
                                                     </div>
                                                 )}
                                             </div>
@@ -306,53 +327,53 @@ const Chat = () => {
                         </div>
 
                         <div className=" items-center p-4 bg-white">
-                            
+
 
                             <div className="mr flex-grow relative">
                                 <div className="flex items-center border border-gray-300 rounded-lg p-2 space-x-2">
-                                <div className='mr-2 relative' style={{ display: isVisible ? 'block' : 'none' }}>
-                                {showMenu && (
-                                    <div className="absolute bottom-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg">
-                                        {type !== 'Expert' && (
-                                            <button className="flex block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('prompt')}>
-                                                <AutoFixHighIcon color="primary" /> <span className="ml-2">/prompt</span>
-                                            </button>
+                                    <div className='mr-2 relative' style={{ display: isVisible ? 'block' : 'none' }}>
+                                        {showMenu && (
+                                            <div className="absolute bottom-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg">
+                                                {type !== 'Expert' && (
+                                                    <button className="flex block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('prompt')}>
+                                                        <AutoFixHighIcon color="primary" /> <span className="ml-2">/prompt</span>
+                                                    </button>
+                                                )}
+
+                                                {['Private', 'Home'].includes(type) && (
+                                                    <>
+                                                        <button className="flex block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('memes')}>
+                                                            <FlutterDashOutlinedIcon color="primary" /> <span className="ml-2">/memes</span>
+                                                        </button>
+                                                        <button className="flex block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('logos')}>
+                                                            <BusinessOutlinedIcon color="primary" /> <span className="ml-2">/logos</span>
+                                                        </button>
+                                                        <button className="flex block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('images')}>
+                                                            <ImageIcon color="primary" /> <span className="ml-2">/images</span>
+                                                        </button>
+                                                        <button className="flex block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('resumes')}>
+                                                            <AssignmentOutlinedIcon color="primary" /> <span className="ml-2">/resumes</span>
+                                                        </button>
+                                                        <button className="flex block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('texts')}>
+                                                            <FormatListBulletedOutlinedIcon color="primary" /> <span className="ml-2">/texts</span>
+                                                        </button>
+                                                    </>
+                                                )}
+
+
+                                                <button className="flex block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('chat')}>
+                                                    <ChatBubbleOutlineIcon color="primary" /> <span className="ml-2">/chat</span>
+                                                </button>
+                                            </div>
                                         )}
+                                        <AddCircleOutlineIcon
 
-                                        {['Private', 'Home'].includes(type) && (
-                                            <>
-                                                <button className="flex block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('memes')}>
-                                                    <FlutterDashOutlinedIcon color="primary" /> <span className="ml-2">/memes</span>
-                                                </button>
-                                                <button className="flex block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('logos')}>
-                                                    <BusinessOutlinedIcon color="primary" /> <span className="ml-2">/logos</span>
-                                                </button>
-                                                <button className="flex block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('images')}>
-                                                    <ImageIcon color="primary" /> <span className="ml-2">/images</span>
-                                                </button>
-                                                <button className="flex block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('resumes')}>
-                                                    <AssignmentOutlinedIcon color="primary" /> <span className="ml-2">/resumes</span>
-                                                </button>
-                                                <button className="flex block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('texts')}>
-                                                    <FormatListBulletedOutlinedIcon color="primary" /> <span className="ml-2">/texts</span>
-                                                </button>
-                                            </>
-                                        )}
-
-
-                                        <button className="flex block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('chat')}>
-                                            <ChatBubbleOutlineIcon color="primary" /> <span className="ml-2">/chat</span>
-                                        </button>
+                                            color="primary"
+                                            className="cursor-pointer text-gray-500 hover:text-gray-700"
+                                            size={24}
+                                            onClick={handleMenuClick}
+                                        />
                                     </div>
-                                )}
-                                <AddCircleOutlineIcon
-                                  
-                                    color="primary"
-                                    className="cursor-pointer text-gray-500 hover:text-gray-700"
-                                    size={24}
-                                    onClick={handleMenuClick}
-                                />
-                            </div>
                                     {selectedMenuOption && (
                                         <div className="flex items-center space-x-2">
                                             {iconMapping[selectedMenuOption]}
