@@ -33,7 +33,7 @@ const Dashboard = () => {
 
 
   return (
-    <div className="flex mt-4 overflow-y-scroll ">
+    <div className="flex mt-4 overflow-y-scroll bg-stone-50		">
       
 
       {/* Main content area */}

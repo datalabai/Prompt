@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import DashboardIcon from '@mui/icons-material/Dashboard';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import FlutterDashOutlinedIcon from '@mui/icons-material/FlutterDashOutlined';
@@ -32,6 +33,12 @@ const Sidebar = () => {
     return (
         <div className="mt-16 bg-white h-full border-r-2 w-[16rem]" style={{ fontFamily: 'Arial, sans-serif' }}>
             <div className="flex flex-col p-4 space-y-2">
+            <Link href="/Dashboard">
+                    <div className='flex items-center p-3 rounded-lg hover:bg-sky-100 transition duration-300 ease-in-out'>
+                        <DashboardIcon  />
+                        <span className="text-xl text-black-400 ml-4">Dashboard</span>
+                    </div>
+                </Link>
                 <Link href="/Chat?type=Home">
                     <div className='flex items-center p-3 rounded-lg hover:bg-sky-100 transition duration-300 ease-in-out'>
                         <HomeOutlinedIcon  />

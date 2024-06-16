@@ -1,9 +1,9 @@
-// components/Home.js
 import Link from 'next/link';
 import Dhashboard from './components/Dashboard';
+import WelcomeSlides from './components/WelcomeSlides';
 const Home = () => {
     return (
-        <><Dhashboard /><div className="flex flex-col items-center justify-center min-h-screen">
+        <><WelcomeSlides /><div className="flex flex-col items-center justify-center min-h-screen">
             {/* <div className="flex flex-col  w-fit p-2 absolute top-[45%]">
                 <h1 className="text-3xl font-bold mb-4 ml-12">Welcome to   <font color="#FF2626">P</font>
                     <font color="#252A34">R</font>
