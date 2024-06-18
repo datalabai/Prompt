@@ -14,6 +14,7 @@ import PublishIcon from "@mui/icons-material/Publish";
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import GetAppIcon from '@mui/icons-material/GetApp';
+import ShareIcon from '@mui/icons-material/Share';
 import { toast } from 'react-toastify';
 import { Divider } from '@mui/material';
 
@@ -229,9 +230,7 @@ const ReplySection = ({ message, type, setShowReplySection, setSelectedMessage }
                                             <span className="text-sm text-gray-500 ml-0.5">{message.replies}</span>
                                         </div>
                                     </IconButton>
-                                    <IconButton aria-label="Repeat message" title="Repeat message" size="small">
-                                        <RepeatIcon fontSize="small" className="chatBubble" />
-                                    </IconButton>
+                                    
                                     <IconButton aria-label="Favorite" title="Favorite" size="small">
                                         <div>
                                             <FavoriteBorderIcon
@@ -243,6 +242,9 @@ const ReplySection = ({ message, type, setShowReplySection, setSelectedMessage }
                                             <span className="text-sm text-gray-500 ml-0.5">{likes}</span>
                                         </div>
                                     </IconButton>
+                                    <IconButton aria-label="Share" title="Share" size="small">
+                                        <ShareIcon fontSize="small" className="chatBubble" />
+                                    </IconButton>
                                     {message.imageUrl ? (
                                         <IconButton aria-label="Download" title="Download" size="small">
                                             <GetAppIcon fontSize="small" />
@@ -252,9 +254,7 @@ const ReplySection = ({ message, type, setShowReplySection, setSelectedMessage }
                                             <FileCopyIcon fontSize="small" />
                                         </IconButton>
                                     )}
-                                    <IconButton aria-label="Share" title="Share" size="small">
-                                        <PublishIcon fontSize="small" className="chatBubble" />
-                                    </IconButton>
+
                                 </div>
                             </div>
                         </div>
@@ -302,7 +302,7 @@ const ReplySection = ({ message, type, setShowReplySection, setSelectedMessage }
                                                 </div>
                                             </IconButton>
 
-                                            {auth.currentUser.displayName === comment.sender ? (
+                                            {/* {auth.currentUser.displayName === comment.sender ? (
                                                 <IconButton aria-label="Prompt" title="Generate Promt" size="small">
                                                     <AutoFixHighIcon className="cursor-pointer text-gray-400"
                                                         size={16} /></IconButton>
@@ -311,7 +311,7 @@ const ReplySection = ({ message, type, setShowReplySection, setSelectedMessage }
                                                     <AutoFixHighIcon className="cursor-pointer text-gray-500 hover:text-gray-700"
                                                         size={16} onClick={() => generatePrompt(comment.text, comment.id, comment.uid, comment.CImg)} />
                                                 </IconButton>
-                                            }
+                                            } */}
                                             {comment.imageUrl ? (
                                                 <IconButton aria-label="Download" title="Download" size="small">
                                                     <GetAppIcon fontSize="small" />
