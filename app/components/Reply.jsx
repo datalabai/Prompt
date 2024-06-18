@@ -230,7 +230,7 @@ const ReplySection = ({ message, type, setShowReplySection, setSelectedMessage }
                                             <span className="text-sm text-gray-500 ml-0.5">{message.replies}</span>
                                         </div>
                                     </IconButton>
-                                    
+
                                     <IconButton aria-label="Favorite" title="Favorite" size="small">
                                         <div>
                                             <FavoriteBorderIcon
@@ -301,26 +301,33 @@ const ReplySection = ({ message, type, setShowReplySection, setSelectedMessage }
                                                     <span className="text-sm text-gray-500 ml-0.5 mr-8">{comment.dislikes}</span>
                                                 </div>
                                             </IconButton>
-
-                                            {/* {auth.currentUser.displayName === comment.sender ? (
-                                                <IconButton aria-label="Prompt" title="Generate Promt" size="small">
-                                                    <AutoFixHighIcon className="cursor-pointer text-gray-400"
-                                                        size={16} /></IconButton>
-                                            ) :
-                                                <IconButton aria-label="Prompt" title="Generate Promt" size="small">
-                                                    <AutoFixHighIcon className="cursor-pointer text-gray-500 hover:text-gray-700"
-                                                        size={16} onClick={() => generatePrompt(comment.text, comment.id, comment.uid, comment.CImg)} />
-                                                </IconButton>
-                                            } */}
-                                            {comment.imageUrl ? (
+                                            {!comment.imageUrl && (
+                                                <>
+                                                    {auth.currentUser.displayName === comment.sender ? (
+                                                        <IconButton aria-label="Prompt" title="Generate Promt" size="small">
+                                                            <AutoFixHighIcon className="cursor-pointer text-gray-400"
+                                                                size={16} /></IconButton>
+                                                    ) :
+                                                        <IconButton aria-label="Prompt" title="Generate Promt" size="small">
+                                                            <AutoFixHighIcon className="cursor-pointer text-gray-500 hover:text-gray-700"
+                                                                size={16} onClick={() => generatePrompt(comment.text, comment.id, comment.uid, comment.CImg)} />
+                                                        </IconButton>
+                                                    }
+                                                </>
+                                            )}
+                                            {comment.imageUrl && (
                                                 <IconButton aria-label="Download" title="Download" size="small">
                                                     <GetAppIcon fontSize="small" />
                                                 </IconButton>
-                                            ) : (
+                                            )}
+
+                                            {!comment.imageUrl && !comment.text && (
                                                 <IconButton aria-label="Copy" title="Copy" size="small">
                                                     <FileCopyIcon fontSize="small" />
                                                 </IconButton>
                                             )}
+
+
                                         </div>
                                     </div>
                                 </div>
