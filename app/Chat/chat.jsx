@@ -18,6 +18,7 @@ import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import FormatListBulletedOutlinedIcon from '@mui/icons-material/FormatListBulletedOutlined';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import GetAppIcon from '@mui/icons-material/GetApp';
+import ShareIcon from '@mui/icons-material/Share';
 import { toast } from 'react-toastify';
 import ReplySection from '../components/Reply';
 import Resume from '../components/Resume';
@@ -290,9 +291,7 @@ const Chat = () => {
                                                             </div>
                                                         </IconButton>
 
-                                                        <IconButton aria-label="Repeat message" title="Repeat message" size="small">
-                                                            <RepeatIcon fontSize="small" className="chatBubble" />
-                                                        </IconButton>
+                                                       
                                                         <IconButton aria-label="Favorite" title="Favorite" size="small">
                                                             <div>
                                                                 <FavoriteBorderIcon
@@ -303,6 +302,11 @@ const Chat = () => {
                                                                 <span className="text-sm text-gray-500 ml-0.5">{message.likes}</span>
                                                             </div>
                                                         </IconButton>
+                                                        
+                                                        <IconButton aria-label="Share" title="Share" size="small">
+                                                            <ShareIcon fontSize="small" className="chatBubble" />
+                                                        </IconButton>
+
                                                         {message.imageUrl ? (
                                                             <IconButton aria-label="Download" title="Download" size="small">
                                                             <GetAppIcon fontSize="small" />
@@ -311,10 +315,7 @@ const Chat = () => {
                                                             <IconButton aria-label="Copy" title="Copy" size="small">
                                                             <FileCopyIcon fontSize="small" />
                                                             </IconButton>
-                                                        )}
-                                                        <IconButton aria-label="Share" title="Share" size="small">
-                                                            <PublishIcon fontSize="small" className="chatBubble" />
-                                                        </IconButton>
+                                                        )}  
 
                                                     </div>
                                                 )}
@@ -334,9 +335,29 @@ const Chat = () => {
                                     <div className='mr-2 relative' style={{ display: isVisible ? 'block' : 'none' }}>
                                         {showMenu && (
                                             <div className="absolute bottom-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg">
-                                                {type !== 'Expert' && (
+                                                {type === 'Memes' && (
                                                     <button className="flex block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('prompt')}>
-                                                        <AutoFixHighIcon color="primary" /> <span className="ml-2">/prompt</span>
+                                                        <FlutterDashOutlinedIcon color="primary" /> <span className="ml-2">/memes</span>
+                                                    </button>
+                                                )}
+                                                 {type === 'Logos' && (
+                                                    <button className="flex block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('prompt')}>
+                                                        <BusinessOutlinedIcon color="primary" /> <span className="ml-2">/logos</span>
+                                                    </button>
+                                                )}
+                                                 {type === 'Images' && (
+                                                    <button className="flex block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('prompt')}>
+                                                        <ImageIcon color="primary" /> <span className="ml-2">/images</span>
+                                                    </button>
+                                                )}
+                                                 {type === 'Resumes' && (
+                                                    <button className="flex block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('prompt')}>
+                                                        <AssignmentOutlinedIcon color="primary" /> <span className="ml-2">/resumes</span>
+                                                    </button>
+                                                )}
+                                                 {type === 'Texts' && (
+                                                    <button className="flex block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('prompt')}>
+                                                        <FormatListBulletedOutlinedIcon color="primary" /> <span className="ml-2">/texts</span>
                                                     </button>
                                                 )}
 
