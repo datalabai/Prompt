@@ -378,6 +378,9 @@ const Chat = () => {
                                                         <button className="flex block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('texts')}>
                                                             <FormatListBulletedOutlinedIcon color="primary" /> <span className="ml-2">/texts</span>
                                                         </button>
+                                                        <button className="flex block px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left" onClick={() => handleMenuOptionClick('prompt')}>
+                                                            <AutoFixHighIcon color="primary" /> <span className="ml-2">/prompt</span>
+                                                        </button>
                                                     </>
                                                 )}
 
