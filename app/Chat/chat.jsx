@@ -40,14 +40,21 @@ const Chat = () => {
     const [isVisible, setIsVisible] = useState(true);
 
 
+    const handleMenuClick = () => {
+        setShowMenu(!showMenu);
+        if(!isVisible){
+            setIsVisible(true);
+        }   
+    };
+
     const iconMapping = {
-        prompt: <AutoFixHighIcon color="primary" />,
-        chat: <ChatBubbleOutlineIcon color="primary" className='items-center mt-1' />,
-        memes: <FlutterDashOutlinedIcon color="primary" className='items-center mt-1' />,
-        logos: <BusinessOutlinedIcon color="primary" className='items-center mt-1' />,
-        images: <ImageIcon color="primary" className='items-center mt-1' />,
-        resumes: <AssignmentOutlinedIcon color="primary" className='items-center mt-1' />,
-        texts: <FormatListBulletedOutlinedIcon color="primary" className='items-center mt-1' />,
+        prompt: <AutoFixHighIcon color="primary" className='cursor-pointer items-center mt-1' onClick={handleMenuClick}/>,
+        chat: <ChatBubbleOutlineIcon color="primary" className='cursor-pointer items-center mt-1' onClick={handleMenuClick}/>,
+        memes: <FlutterDashOutlinedIcon color="primary" className='cursor-pointer items-center mt-1' onClick={handleMenuClick}/>,
+        logos: <BusinessOutlinedIcon color="primary" className='cursor-pointer items-center mt-1' onClick={handleMenuClick}/>,
+        images: <ImageIcon color="primary" className='cursor-pointer items-center mt-1' onClick={handleMenuClick}/>,
+        resumes: <AssignmentOutlinedIcon color="primary" className='cursor-pointer items-center mt-1' onClick={handleMenuClick}/>,
+        texts: <FormatListBulletedOutlinedIcon color="primary" className='cursor-pointer items-center mt-1' onClick={handleMenuClick}/>,
     };
 
     const handleImageLoad = () => { };
@@ -56,9 +63,6 @@ const Chat = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
 
-    const handleMenuClick = () => {
-        setShowMenu(!showMenu);
-    };
 
     useEffect(() => {
         const unsubscribeAuth = auth.onAuthStateChanged((user) => {
