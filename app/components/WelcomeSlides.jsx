@@ -28,7 +28,7 @@ const LandingPage = () => {
             </div>
             <div>
               <h2 className="text-lg font-semibold mb-2">Less work for you</h2>
-              <p className="text-gray-700">Prompt offers simplicity and direct user input handling, it's best suited for basic and immediate user interactions in scenarios where these limitations and considerations are acceptable. </p>
+              <p className="text-gray-700">Prompt offers simplicity and direct user input handling, its best suited for basic and immediate user interactions in scenarios where these limitations and considerations are acceptable. </p>
             </div>
           </div>
 
