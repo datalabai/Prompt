@@ -303,7 +303,7 @@ const ReplySection = ({ message, type, setShowReplySection, setSelectedMessage }
                                             </IconButton>
                                             {!comment.imageUrl && (
                                                 <>
-                                                    {auth.currentUser.displayName === comment.sender ? (
+                                                    {/* {auth.currentUser.displayName === comment.sender ? (
                                                         <IconButton aria-label="Prompt" title="Generate Promt" size="small">
                                                             <AutoFixHighIcon className="cursor-pointer text-gray-400"
                                                                 size={16} /></IconButton>
@@ -312,7 +312,11 @@ const ReplySection = ({ message, type, setShowReplySection, setSelectedMessage }
                                                             <AutoFixHighIcon className="cursor-pointer text-gray-500 hover:text-gray-700"
                                                                 size={16} onClick={() => generatePrompt(comment.text, comment.id, comment.uid, comment.CImg)} />
                                                         </IconButton>
-                                                    }
+                                                    } */}
+                                                     <IconButton aria-label="Prompt" title="Generate Promt" size="small">
+                                                            <AutoFixHighIcon className="cursor-pointer text-gray-500 hover:text-gray-700"
+                                                                size={16} onClick={() => generatePrompt(comment.text, comment.id, comment.uid, comment.CImg)} />
+                                                        </IconButton>
                                                 </>
                                             )}
                                             {comment.imageUrl && (
