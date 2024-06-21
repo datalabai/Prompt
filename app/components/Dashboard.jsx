@@ -7,6 +7,7 @@ import ContentPieChart from './ContentPieChart';
 import TransactionsBarChart from './TransactionsBarChart';
 import LikesCard from './LikesCard';
 import CardComponent from './CardComponent';
+import BalenceCard from './BalenceCard';
 
 const Dashboard = () => {
   // Sample data
@@ -38,13 +39,15 @@ const Dashboard = () => {
 
       {/* Main content area */}
       <div className="flex-1 p-4">
-        <h2 className="text-2xl text-center font-semibold mb-12 text-orange-600	">Prompt Dashboard</h2>
-        <div className="grid grid-cols-4 gap-4 mb-8">
-         
-          <PromptCard totalPrompts={totalPrompts} />
-          <RewardCard totalRewards={totalRewards} />
-          <LikesCard />
+       
+        <div className="grid grid-cols-5 gap-4 mb-8">
           <CardComponent/>
+          <PromptCard totalPrompts={totalPrompts} />
+          <LikesCard />
+          <RewardCard totalRewards={totalRewards} />
+          <BalenceCard totalRewards={totalRewards} />
+          
+          
           
         </div>
         <div className="grid grid-cols-2 gap-4">

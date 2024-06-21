@@ -1,6 +1,7 @@
 import React from 'react';
 import { Grid, Paper, Typography, Box, Divider } from '@mui/material';
-import LightbulbCircle from '@mui/icons-material/LightbulbCircle';
+import EmojiEvents from '@mui/icons-material/EmojiEvents';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 
 const CustomCard = () => {
     return (
@@ -10,14 +11,14 @@ const CustomCard = () => {
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 2 }}>
                     {/* Left side (icon) */}
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <LightbulbCircle sx={{ fontSize: '4.5rem', marginRight: 1 }} />
+                        <MonetizationOnIcon sx={{ fontSize: '4.5rem', marginRight: 1 }} />
                     </Box>
                     <Box>
                     <Typography variant="button">
-                            Prompts
+                        Balence
                         </Typography>
                     <Typography variant="h4">
-                        281
+                        $ 1000 
                     </Typography>
                     </Box>  
                 </Box>
@@ -26,7 +27,7 @@ const CustomCard = () => {
                 {/* Bottom row */}
                 <Box sx={{ p: 2 , textAlign: 'center'}}>
                     <Typography variant="button">
-                        <span> Prompts Generated</span> 
+                        <span> Balence</span> 
                     </Typography>
                 </Box>
             </Paper>

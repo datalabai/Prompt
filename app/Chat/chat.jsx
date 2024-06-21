@@ -394,13 +394,15 @@ const Chat = () => {
                                                 </button>
                                             </div>
                                         )}
-                                        <AddCircleOutlineIcon
+                                        {!selectedMenuOption && (
+                                        <AddCircleOutlineIcon 
 
                                             color="primary"
                                             className="cursor-pointer text-gray-500 hover:text-gray-700"
                                             size={24}
                                             onClick={handleMenuClick}
                                         />
+                                    )}
                                     </div>
                                     {selectedMenuOption && (
                                         <div className="flex items-center space-x-2">

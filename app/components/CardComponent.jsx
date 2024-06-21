@@ -24,9 +24,9 @@ const CustomCard = () => {
                 {/* Divider */}
                 <Divider />
                 {/* Bottom row */}
-                <Box sx={{ p: 2 }}>
+                <Box sx={{ p: 2 , textAlign: 'center'}}>
                     <Typography variant="button">
-                        <span>Total Prompts Suggested</span> 
+                        <span> Prompts Suggested</span> 
                     </Typography>
                 </Box>
             </Paper>
