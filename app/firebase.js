@@ -228,10 +228,6 @@ export const addMessageToChannel = async (channelId,messageData,prompt) => {
    const responose=await fetch(`https://wallet-api-vyxx.onrender.com/inprompt?uid=${user.uid}`);
    const data= await responose.json();
    console.log(data);
-   if(!data.sig)
-   {
-      return {type:'warning',message:"Insfuccient Funds"};
-   }
    const image= await fetchImageForMessage(messageData.text); 
    if(image=='Failed to generate image. Please try again later.')
     {
@@ -250,6 +246,10 @@ export const addMessageToChannel = async (channelId,messageData,prompt) => {
       payment:false
       });
     console.log("Message added successfully.");
+    if(data.message)
+    {
+      return {type:'trail',message:data.message}; 
+    }
     //import the collection prompt
     const promptRef = collection(db, "prompt");
   const promptData = {

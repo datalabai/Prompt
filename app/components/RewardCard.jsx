@@ -17,7 +17,7 @@ const CustomCard = () => {
                             Rewards
                         </Typography>
                     <Typography variant="h4">
-                        $ 150 
+                        $150 
                     </Typography>
                     </Box>  
                 </Box>

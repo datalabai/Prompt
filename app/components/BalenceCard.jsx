@@ -15,10 +15,10 @@ const CustomCard = () => {
                     </Box>
                     <Box>
                     <Typography variant="button">
-                        Balence
+                        Balance
                         </Typography>
                     <Typography variant="h4">
-                        $ 1000 
+                        $1000 
                     </Typography>
                     </Box>  
                 </Box>
@@ -27,7 +27,7 @@ const CustomCard = () => {
                 {/* Bottom row */}
                 <Box sx={{ p: 2 , textAlign: 'center'}}>
                     <Typography variant="button">
-                        <span> Balence</span> 
+                        <span> Balance</span> 
                     </Typography>
                 </Box>
             </Paper>

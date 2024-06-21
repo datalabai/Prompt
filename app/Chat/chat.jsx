@@ -148,7 +148,19 @@ const Chat = () => {
                         draggable: true,
                         progress: undefined,
                     });
-                } else if (response.type === 'error') {
+                }
+                else if(response.type== 'trail')
+                {
+                    toast.success(response.message, {
+                        position: 'top-right',
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                    });
+                } 
+                else if (response.type === 'error') {
                     toast.error(response.message, {
                         position: 'top-right',
                         autoClose: 5000,
