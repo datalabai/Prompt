@@ -6,11 +6,14 @@ import { ToastContainer } from 'react-toastify';
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import 'react-toastify/dist/ReactToastify.css';
+import GoogleAnalytics from "./components/GoogleAnalytics";
+
 import "./globals.css";
 
 const RootLayout = ({ children }) => {
   return (
     <html lang="en">
+      <GoogleAnalytics />
       <body>
         <AuthContextProvider>
           <ToastContainer />
