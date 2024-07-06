@@ -372,10 +372,6 @@ export const addCommentToMessage = async (channelId, messageId, commentData,prom
         const responose=await fetch(`https://wallet-api-vyxx.onrender.com/inprompt?uid=${user.uid}`);
         const data= await responose.json();
         console.log(data);
-        if(!data.sig)
-          {
-             return {type:'warning',message:"Not Enough USDC"};
-          }
           const image= await fetchImageForMessage(commentData.text); 
           if(image=='Failed to generate image. Please try again later.')
            {
@@ -415,6 +411,10 @@ export const addCommentToMessage = async (channelId, messageId, commentData,prom
       });
       
       console.log("Comment added successfully.");
+      if(data.message)
+        {
+          return {type:'trail',message:data.message}; 
+        }
       return {type:'success',message:'1.10 USDC Deduct from wallet'};
       }
       else
