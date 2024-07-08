@@ -1,93 +1,64 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+  @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
 
-.post__headerSpecial {
-  font-weight: 600;
-  font-size: 12px;
-  color: gray;
-}
-
-/* @layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-} */
-
-/* .sidebar-icon {
-  font-size: 1.25rem; /* Adjust as needed */
-
-  .bg-nav-lab{
-    background-color:#fff ;
-  }
-  .text-dlab-blue{
-    color:#618cb7 ;
-  }
-  .post__footer {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-  }
-  .min-w-36rm {
-    min-width: 35rem;
-  }
-  .max-w-36rm {
-    max-width: 39rem;
-  }
-
-  .gradient-custom {
-    /* fallback for old browsers */
-    background: #f6d365;
+  @layer base {
+    :root {
+      --background: 0 0% 100%;
+      --foreground: 20 14.3% 4.1%;
+      --card: 0 0% 100%;
+      --card-foreground: 20 14.3% 4.1%;
+      --popover: 0 0% 100%;
+      --popover-foreground: 20 14.3% 4.1%;
+      --primary: 24.6 95% 53.1%;
+      --primary-foreground: 60 9.1% 97.8%;
+      --secondary: 60 4.8% 95.9%;
+      --secondary-foreground: 24 9.8% 10%;
+      --muted: 60 4.8% 95.9%;
+      --muted-foreground: 25 5.3% 44.7%;
+      --accent: 60 4.8% 95.9%;
+      --accent-foreground: 24 9.8% 10%;
+      --destructive: 0 84.2% 60.2%;
+      --destructive-foreground: 60 9.1% 97.8%;
+      --border: 20 5.9% 90%;
+      --input: 20 5.9% 90%;
+      --ring: 24.6 95% 53.1%;
+      --radius: 0.5rem;
+    }
   
-    /* Chrome 10-25, Safari 5.1-6 */
-    background: -webkit-linear-gradient(to right bottom, rgba(246, 211, 101, 1), rgba(253, 160, 133, 1));
+    .dark {
+      --background: 20 14.3% 4.1%;
+      --foreground: 60 9.1% 97.8%;
+      --card: 20 14.3% 4.1%;
+      --card-foreground: 60 9.1% 97.8%;
+      --popover: 20 14.3% 4.1%;
+      --popover-foreground: 60 9.1% 97.8%;
+      --primary: 20.5 90.2% 48.2%;
+      --primary-foreground: 60 9.1% 97.8%;
+      --secondary: 12 6.5% 15.1%;
+      --secondary-foreground: 60 9.1% 97.8%;
+      --muted: 12 6.5% 15.1%;
+      --muted-foreground: 24 5.4% 63.9%;
+      --accent: 12 6.5% 15.1%;
+      --accent-foreground: 60 9.1% 97.8%;
+      --destructive: 0 72.2% 50.6%;
+      --destructive-foreground: 60 9.1% 97.8%;
+      --border: 12 6.5% 15.1%;
+      --input: 12 6.5% 15.1%;
+      --ring: 20.5 90.2% 48.2%;
+    }
+  }
   
-    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-    background: linear-gradient(to right bottom, rgba(246, 211, 101, 1), rgba(253, 160, 133, 1))
+
+
+  @layer base {
+    * {
+      @apply border-border;
+    }
+    body {
+      @apply bg-background text-foreground;
+    }
   }
 
-  /* For small devices (phones) */
-@media only screen and (max-width: 600px) {
-  .container {
-      width: 90%; /* adjust as needed */
-  }
-
-  .box {
-      width: 100%; /* or any other width suitable for small screens */
-  }
-}
-
-/* For medium devices (tablets) */
-@media only screen and (min-width: 601px) and (max-width: 1024px) {
-  .container {
-      width: 80%; /* adjust as needed */
-  }
-
-  .box {
-      width: 50%; /* or any other width suitable for medium screens */
-  }
-}
-
-/* For large devices (desktops) */
-@media only screen and (min-width: 1025px) {
-  .container {
-      width: 80%; /* adjust as needed */
-  }
-
-  .box {
-      width: 20%; /* or any other width suitable for large screens */
-  }
-}
-
-/* Example media query for smaller screens */
-@media (max-width: 768px) {
-  .flex-grow {
-      width: 100%; /* Adjust width as needed */
-  }
-}
+  
