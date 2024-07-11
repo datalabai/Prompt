@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import { AuthContextProvider } from "../app/context/AuthContext";
 import Navbar from "@/components/navbar";
 import Sidebar from "@/components/sidebar";
 
@@ -28,6 +29,7 @@ export default function RootLayout({
       <html lang="en" suppressHydrationWarning>
         <head />
         <body>
+        <AuthContextProvider>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
@@ -46,6 +48,7 @@ export default function RootLayout({
             </div>
           </section>
           </ThemeProvider>
+        </AuthContextProvider>
         </body>
       </html>
     </>

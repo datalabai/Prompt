@@ -41,7 +41,7 @@ const Home: React.FC = () => {
   };
 
   return (
-    <div className="flex ">
+    <div className="flex mt-20">
       <Card x-chunk="dashboard-01-chunk-5 border-0">
         <ScrollArea className="min-h-[555px] max-h-[555px] rounded-md p-4 overflow-y-auto">
           {[1, 2, 3, 4, 5, 6, 7, 8].map((postId) => (

@@ -11,7 +11,7 @@ const Sidebar: React.FC = () => {
 
   return (
     <div className="border-r h-screen w-56 flex-shrink-0">
-      <div className="pl-8">
+      <div className="pl-8 mt-20">
         <ul>
           <li className={`flex my-2 py-2 ${activeItem === 'Dashboard' ? 'bg-gray-200' : ''}`}>
             <LayoutDashboard />
