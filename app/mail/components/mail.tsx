@@ -57,8 +57,13 @@ export function Mail({
   navCollapsedSize,
 }: MailProps) {
   const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed)
+  const [activeCategory, setActiveCategory] = React.useState("General");
   const [mail] = useMail()
-
+  const handleCategoryChange = (category: string) => {
+    setActiveCategory(category); // Update active category based on link click
+    // Perform data fetching or manipulation based on category change
+    // For example, update 'mails' state or fetch new data from API
+  };
   return (
     <TooltipProvider delayDuration={0}>
       <ResizablePanelGroup
@@ -146,43 +151,9 @@ export function Mail({
                 variant: "ghost",
               },
             ]}
+            onLinkClick={handleCategoryChange} 
           />
-          {/* <Separator />
-          <Nav
-            isCollapsed={isCollapsed}
-            links={[
-              {
-                title: "Social",
-                label: "972",
-                icon: Users2,
-                variant: "ghost",
-              },
-              {
-                title: "Updates",
-                label: "342",
-                icon: AlertCircle,
-                variant: "ghost",
-              },
-              {
-                title: "Forums",
-                label: "128",
-                icon: MessagesSquare,
-                variant: "ghost",
-              },
-              {
-                title: "Shopping",
-                label: "8",
-                icon: ShoppingCart,
-                variant: "ghost",
-              },
-              {
-                title: "Promotions",
-                label: "21",
-                icon: Archive,
-                variant: "ghost",
-              },
-            ]}
-          /> */}
+         
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
@@ -207,9 +178,9 @@ export function Mail({
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={defaultLayout[2]}>
-          <MailDisplay
+        {activeCategory === "Expert" &&  <MailDisplay
             mail={mails.find((item) => item.id === mail.selected) || null}
-          />
+          />}
         </ResizablePanel>
       </ResizablePanelGroup>
     </TooltipProvider>

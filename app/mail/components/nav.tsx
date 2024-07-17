@@ -1,27 +1,46 @@
 "use client"
 
-import Link from "next/link"
-import { LucideIcon } from "lucide-react"
+import * as React from "react";
+import Link from "next/link";
+import { LucideIcon } from "lucide-react";
 
-import { cn } from "@/lib/utils"
-import { buttonVariants } from "@/components/ui/button"
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip"
+} from "@/components/ui/tooltip";
 
 interface NavProps {
-  isCollapsed: boolean
+  isCollapsed: boolean;
   links: {
-    title: string
-    label?: string
-    icon: LucideIcon
-    variant: "default" | "ghost"
-  }[]
+    title: string;
+    label?: string;
+    icon: LucideIcon;
+    variant: "default" | "ghost";
+  }[];
+  onLinkClick: (title: string) => void;
 }
 
-export function Nav({ links, isCollapsed }: NavProps) {
+export function Nav({ links: initialLinks, isCollapsed, onLinkClick }: NavProps) {
+  const [activeLink, setActiveLink] = React.useState(initialLinks[0].title); // Initialize active link state
+  const [links, setLinks] = React.useState(initialLinks); // State to manage links
+
+  const handleLinkClick = (title: string) => {
+    setActiveLink(title); // Update active link state
+    onLinkClick(title); // Trigger callback to update data in parent component
+
+    // Update links state to set the clicked link as default and others as ghost
+    const updatedLinks = links.map(link => ({
+      ...link,
+      variant: link.title === title ? "default" : "ghost"
+    }));
+
+    // Update the links state
+    setLinks(updatedLinks);
+  };
+
   return (
     <div
       data-collapsed={isCollapsed}
@@ -32,7 +51,7 @@ export function Nav({ links, isCollapsed }: NavProps) {
           isCollapsed ? (
             <Tooltip key={index} delayDuration={0}>
               <TooltipTrigger asChild>
-                <Link
+                <a
                   href="#"
                   className={cn(
                     buttonVariants({ variant: link.variant, size: "icon" }),
@@ -40,10 +59,11 @@ export function Nav({ links, isCollapsed }: NavProps) {
                     link.variant === "default" &&
                       "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white"
                   )}
+                  onClick={() => handleLinkClick(link.title)}
                 >
                   <link.icon className="h-4 w-4" />
                   <span className="sr-only">{link.title}</span>
-                </Link>
+                </a>
               </TooltipTrigger>
               <TooltipContent side="right" className="flex items-center gap-4">
                 {link.title}
@@ -55,15 +75,17 @@ export function Nav({ links, isCollapsed }: NavProps) {
               </TooltipContent>
             </Tooltip>
           ) : (
-            <Link
+            <a
               key={index}
               href="#"
               className={cn(
                 buttonVariants({ variant: link.variant, size: "sm" }),
-                link.variant === "default" &&
-                  "dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white",
+                link.variant === "default"
+                  ? "dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white"
+                  : "dark:bg-white dark:text-black dark:hover:bg-white dark:hover:text-black",
                 "justify-start"
               )}
+              onClick={() => handleLinkClick(link.title)}
             >
               <link.icon className="mr-2 h-4 w-4" />
               {link.title}
@@ -78,10 +100,10 @@ export function Nav({ links, isCollapsed }: NavProps) {
                   {link.label}
                 </span>
               )}
-            </Link>
+            </a>
           )
         )}
       </nav>
     </div>
-  )
+  );
 }
