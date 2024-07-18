@@ -66,21 +66,20 @@ export const addUserToFirestore = async (user) => {
     }
   };
 
-  export const addPost = async (post) => {
+  export const addPost = async (post, category) => {
+    console.log("Adding post:", post);
     try {
-      const docRef = await addDoc(collection(db, "general"), {
-        ...post,
-        createdAt: serverTimestamp(),
-      });
+      const docRef = await addDoc(collection(db, category), post);
       console.log("Document written with ID: ", docRef.id);
     } catch (e) {
       console.error("Error adding document: ", e);
     }
   };
   
-  export const getPosts = async () => {
+  
+  export const getPosts = async (category) => {
     // Create a query that orders documents by the 'createdAt' field
-    const postsQuery = query(collection(db, "general"), orderBy("createdAt"));
+    const postsQuery = query(collection(db, category), orderBy("date", "desc"));
   
     // Get the documents matching the query
     const querySnapshot = await getDocs(postsQuery);

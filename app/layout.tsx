@@ -9,6 +9,7 @@ import { TailwindIndicator } from "@/components/tailwind-indicator"
 import { ThemeSwitcher } from "@/components/theme-switcher"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
+import { AuthContextProvider } from "./context/AuthContext"
 
 
 export const metadata: Metadata = {
@@ -85,6 +86,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             fontSans.variable
           )}
         >
+          <AuthContextProvider>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
@@ -102,6 +104,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             <TailwindIndicator />
             <ThemeSwitcher />
           </ThemeProvider>
+          </AuthContextProvider>
         </body>
       </html>
     </>

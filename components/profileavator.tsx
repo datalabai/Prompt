@@ -10,10 +10,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { auth } from "@/app/firebase"
+import { UserAuth } from "../app/context/AuthContext"
 
 export function ProfileAvator() {
   const { setTheme } = useTheme()
-
+  const { user, logOut } = UserAuth(); // Added 'user' to destructuring
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -24,12 +26,9 @@ export function ProfileAvator() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => setTheme("light")}>
-          Shiva Sankara Rao
+        {user?.displayName || "User"}
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>
-          Logout
-        </DropdownMenuItem>
-       
+        <DropdownMenuItem onClick={logOut}>Logout</DropdownMenuItem>       
       </DropdownMenuContent>
     </DropdownMenu>
   )
