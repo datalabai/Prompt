@@ -1,4 +1,4 @@
-import { ComponentProps } from "react";
+import { ComponentProps, useEffect, useState } from "react";
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
@@ -9,37 +9,62 @@ import { Mail } from "../data";
 import { useMail } from "../use-mail";
 import { MessageSquare } from "lucide-react";
 import React from "react";
+import { addReply, getReplies, auth } from "@/app/firebase";
 
 interface MailListProps {
   items: Mail[];
+  category: string;
 }
 
-export function MailList({ items }: MailListProps) {
+export function MailList({ items, category }: MailListProps) {
   const [mail, setMail] = useMail();
-  const [openTextAreaId, setOpenTextAreaId] = React.useState<string | null>(null); // State to manage which textarea is open
-  const [showInputItemId, setShowInputItemId] = React.useState<string | null>(null); // State to manage which input is shown
-  const [postText, setPostText] = React.useState<string>(""); // State to manage the text entered in the input
+  const [openTextAreaId, setOpenTextAreaId] = useState<string | null>(null);
+  const [showInputItemId, setShowInputItemId] = useState<string | null>(null);
+  const [postText, setPostText] = useState<string>("");
+  const [replies, setReplies] = useState<{ [key: string]: any[] }>({});
 
   const toggleTextArea = (itemId: string) => {
-    setOpenTextAreaId(openTextAreaId === itemId ? null : itemId); // Toggle open/close state of textarea
+    setOpenTextAreaId(openTextAreaId === itemId ? null : itemId);
   };
 
   const toggleInput = (itemId: string) => {
-    setShowInputItemId(showInputItemId === itemId ? null : itemId); // Toggle open/close state of input
+    setShowInputItemId(showInputItemId === itemId ? null : itemId);
   };
 
-  const handlePostSubmit = () => {
-    // Handle post submission logic, e.g., send to server, update state, etc.
-    // For demonstration, let's update the state with the posted text and clear input
-    // You can extend this logic based on your application's needs
-    console.log("Posted:", postText);
-    setPostText(""); // Clear the input field after posting
-  };
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && postText.trim() !== "") {
-      handlePostSubmit();
+  const handlePostSubmit = async (itemId: any) => {
+    if (postText.trim() !== "") {
+      const reply = {
+        name: auth.currentUser?.displayName,
+        email: auth.currentUser?.email,
+        text: postText,
+        date: new Date().getTime(),
+      };
+      await addReply(itemId, category, reply);
+      setPostText("");
+      setShowInputItemId(null);
+      fetchReplies(itemId);
     }
   };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, itemId: string) => {
+    if (e.key === "Enter" && postText.trim() !== "") {
+      handlePostSubmit(itemId);
+    }
+  };
+
+  const fetchReplies = async (itemId: string) => {
+    const fetchedReplies = await getReplies(itemId, category);
+    setReplies((prevReplies) => ({
+      ...prevReplies,
+      [itemId]: fetchedReplies,
+    }));
+  };
+
+  useEffect(() => {
+    items.forEach((item) => {
+      fetchReplies(item.id);
+    });
+  }, [items]);
 
   return (
     <ScrollArea className="h-screen">
@@ -74,27 +99,44 @@ export function MailList({ items }: MailListProps) {
                   {formatDistanceToNow(new Date(item.date), { addSuffix: true })}
                 </div>
               </div>
-              {/* <div className="text-xs font-medium">{item.subject}</div> */}
-              <div className="flex justify-between line-clamp-2 text-xs text-muted-foreground">{item.text.substring(0, 300)} <MessageSquare size="16"  onClick={() => toggleInput(item.id)}/> </div>
-             {/* Render input field if showInputItemId matches current item id */}
-             {showInputItemId === item.id && (
-              <><div className="flex items-center gap-2 mb-2">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src={`/avatars/01.png`} alt="Avatar" />
-                    <AvatarFallback></AvatarFallback>
-                  </Avatar>
-                  <div className="font-semibold">{item.name}</div>
-                  <div className="flex justify-between line-clamp-2 text-xs text-muted-foreground">{item.text.substring(0, 300)}</div>
-                </div><input
+              <div className="flex justify-between line-clamp-2 text-xs text-muted-foreground">
+                {item.text.substring(0, 300)} <MessageSquare size="16" onClick={() => toggleInput(item.id)} />
+              </div>
+              {showInputItemId === item.id && (
+                <>
+                  <div className="gap-2 mb-2">
+                    {replies[item.id] && replies[item.id].length > 0 && (
+
+                      <>
+                      {replies[item.id].map((reply, index) => (
+                        <div key={index} className="flex mt-2">
+                          <Avatar className="h-8 w-8">
+                      <AvatarImage src={`/avatars/01.png`} alt="Avatar" />
+                      <AvatarFallback></AvatarFallback>
+                    </Avatar>
+                         <div className="flex flex-col">
+                           <div className="font-semibold">{reply.name}</div><div className="flex justify-between line-clamp-2 text-xs text-muted-foreground">
+                        {reply.text}
+                      </div> 
+                      </div>
+                        </div>
+                      ))  
+                      }
+                     </>
+                      
+                    )}  
+                    
+                  </div>
+                  <input
                     type="text"
                     className="w-full border rounded-lg p-2 mt-2"
                     placeholder="Type your message here..."
                     value={postText}
-                    onChange={(e) => setPostText(e.target.value)} 
-                    onKeyDown={handleKeyDown} 
-                    /></>
-                  
-                )}
+                    onChange={(e) => setPostText(e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(e, item.id)}
+                  />
+                </>
+              )}
             </div>
           </button>
         ))}

@@ -92,9 +92,9 @@ export const addUserToFirestore = async (user) => {
   
     return posts;
   };
-  export const addReply = async (postId, reply) => {
+  export const addReply = async (postId,category,reply) => {
     try {
-      const postRef = doc(db, "general", postId);
+      const postRef = doc(db, category, postId);
       await addDoc(collection(postRef, "replies"), {
         ...reply,
         createdAt: serverTimestamp(),
@@ -105,8 +105,8 @@ export const addUserToFirestore = async (user) => {
     }
   };
   
-  export const getReplies = async (postId) => {
-    const postRef = doc(db, "general", postId);
+  export const getReplies = async (postId,category) => {
+    const postRef = doc(db, category, postId);
     const repliesSnapshot = await getDocs(collection(postRef, "replies"));
     const replies = [];
     repliesSnapshot.forEach((doc) => {

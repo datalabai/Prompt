@@ -205,10 +205,10 @@ export function Mail({
               </form>
             </div>
             <TabsContent value="all" className="m-0">
-              <MailList items={mails} />
+              <MailList items={mails} category={activeCategory} />
             </TabsContent>
             <TabsContent value="unread" className="m-0">
-              <MailList items={mails.filter((item) => !item.read)} />
+              <MailList items={mails.filter((item) => !item.read)} category={activeCategory} />
             </TabsContent>
           </Tabs>
         </ResizablePanel>
