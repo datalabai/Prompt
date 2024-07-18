@@ -107,11 +107,12 @@ export const addUserToFirestore = async (user) => {
   
   export const getReplies = async (postId,category) => {
     const postRef = doc(db, category, postId);
-    const repliesSnapshot = await getDocs(collection(postRef, "replies"));
+    const repliesSnapshot = await getDocs(collection(postRef, "replies"),orderBy("createdAt", "desc"));
     const replies = [];
     repliesSnapshot.forEach((doc) => {
       replies.push({ id: doc.id, ...doc.data() });
     });
+    console.log("Replies:", replies);
     return replies;
   };
 

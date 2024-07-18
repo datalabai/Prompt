@@ -41,8 +41,7 @@ export function MailList({ items, category }: MailListProps) {
       };
       await addReply(itemId, category, reply);
       setPostText("");
-      setShowInputItemId(null);
-      fetchReplies(itemId);
+      fetchReplies(itemId); // Fetch the replies after adding a new one
     }
   };
 
@@ -54,6 +53,7 @@ export function MailList({ items, category }: MailListProps) {
 
   const fetchReplies = async (itemId: string) => {
     const fetchedReplies = await getReplies(itemId, category);
+    fetchedReplies.sort((a, b) => a.date - b.date); // Sort replies from latest to earliest
     setReplies((prevReplies) => ({
       ...prevReplies,
       [itemId]: fetchedReplies,
@@ -106,26 +106,23 @@ export function MailList({ items, category }: MailListProps) {
                 <>
                   <div className="gap-2 mb-2">
                     {replies[item.id] && replies[item.id].length > 0 && (
-
                       <>
-                      {replies[item.id].map((reply, index) => (
-                        <div key={index} className="flex mt-2">
-                          <Avatar className="h-8 w-8">
-                      <AvatarImage src={`/avatars/01.png`} alt="Avatar" />
-                      <AvatarFallback></AvatarFallback>
-                    </Avatar>
-                         <div className="flex flex-col">
-                           <div className="font-semibold">{reply.name}</div><div className="flex justify-between line-clamp-2 text-xs text-muted-foreground">
-                        {reply.text}
-                      </div> 
-                      </div>
-                        </div>
-                      ))  
-                      }
-                     </>
-                      
-                    )}  
-                    
+                        {replies[item.id].map((reply, index) => (
+                          <div key={index} className="flex mt-2">
+                            <Avatar className="h-8 w-8">
+                              <AvatarImage src={`/avatars/01.png`} alt="Avatar" />
+                              <AvatarFallback></AvatarFallback>
+                            </Avatar>
+                            <div className="flex flex-col">
+                              <div className="font-semibold">{reply.name}</div>
+                              <div className="flex justify-between line-clamp-2 text-xs text-muted-foreground">
+                                {reply.text}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </>
+                    )}
                   </div>
                   <input
                     type="text"
