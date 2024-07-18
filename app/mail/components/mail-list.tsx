@@ -9,7 +9,7 @@ import { Mail } from "../data";
 import { useMail } from "../use-mail";
 import { MessageSquare } from "lucide-react";
 import React from "react";
-import { addReply, getReplies, auth } from "@/app/firebase";
+import { addReply, listenForReplies, auth } from "@/app/firebase";
 
 interface MailListProps {
   items: Mail[];
@@ -41,7 +41,6 @@ export function MailList({ items, category }: MailListProps) {
       };
       await addReply(itemId, category, reply);
       setPostText("");
-      fetchReplies(itemId); // Fetch the replies after adding a new one
     }
   };
 
@@ -51,20 +50,20 @@ export function MailList({ items, category }: MailListProps) {
     }
   };
 
-  const fetchReplies = async (itemId: string) => {
-    const fetchedReplies = await getReplies(itemId, category);
-    fetchedReplies.sort((a, b) => a.date - b.date); // Sort replies from latest to earliest
-    setReplies((prevReplies) => ({
-      ...prevReplies,
-      [itemId]: fetchedReplies,
-    }));
-  };
-
   useEffect(() => {
-    items.forEach((item) => {
-      fetchReplies(item.id);
+    const unsubscribes = items.map((item) => {
+      return listenForReplies(item.id, category, (newReplies: any) => {
+        setReplies((prevReplies) => ({
+          ...prevReplies,
+          [item.id]: newReplies,
+        }));
+      });
     });
-  }, [items]);
+
+    return () => {
+      unsubscribes.forEach((unsubscribe) => unsubscribe());
+    };
+  }, [items, category]);
 
   return (
     <ScrollArea className="h-screen">
@@ -100,7 +99,11 @@ export function MailList({ items, category }: MailListProps) {
                 </div>
               </div>
               <div className="flex justify-between line-clamp-2 text-xs text-muted-foreground">
-                {item.text.substring(0, 300)} <MessageSquare size="16" onClick={() => toggleInput(item.id)} />
+                {item.text.substring(0, 300)}
+                <div className="flex items-center gap-1">
+                  <MessageSquare size="20" onClick={() => toggleInput(item.id)} color="blue" />
+                  {replies[item.id] ? replies[item.id].length : 0} replies
+                </div>
               </div>
               {showInputItemId === item.id && (
                 <>
@@ -140,14 +143,4 @@ export function MailList({ items, category }: MailListProps) {
       </div>
     </ScrollArea>
   );
-}
-
-function getBadgeVariantFromLabel(label: string): ComponentProps<typeof Badge>["variant"] {
-  if (["work"].includes(label.toLowerCase())) {
-    return "default";
-  }
-  if (["personal"].includes(label.toLowerCase())) {
-    return "outline";
-  }
-  return "secondary";
 }

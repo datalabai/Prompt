@@ -53,17 +53,14 @@ export function Mail({
   const [mails, setMails] = useState<Mail[]>([]);
 
   useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const posts = await getPosts(activeCategory);
-        setMails(posts);
-      } catch (error) {
-        console.error("Error fetching posts:", error);
-      }
-    };
+    const unsubscribe = getPosts(activeCategory, (posts:any) => {
+      setMails(posts);
+    });
 
-    fetchPosts();
-  }, [activeCategory]); // <-- Trigger fetchPosts whenever activeCategory changes
+    // Cleanup the listener on component unmount or when activeCategory changes
+    return () => unsubscribe();
+  }, [activeCategory]); // <-- Trigger useEffect whenever activeCategory changes
+// <-- Trigger fetchPosts whenever activeCategory changes
 
   const handleCategoryChange = (category: string) => {
     setActiveCategory(category);
@@ -83,8 +80,6 @@ export function Mail({
         await addPost(newPost, activeCategory);
         setInputValue("");
         // After adding the post, you may optionally refetch the posts for the active category
-        const updatedPosts = await getPosts(activeCategory);
-        setMails(updatedPosts);
       } catch (error) {
         console.error("Error adding post:", error);
       }
@@ -195,7 +190,7 @@ export function Mail({
               <form>
                 <div className="relative">
                   <Input
-                    placeholder="I would like to"
+                    placeholder="I would like to Prompt..."
                     className="pl-8"
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}

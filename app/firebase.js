@@ -76,22 +76,23 @@ export const addUserToFirestore = async (user) => {
     }
   };
   
-  
-  export const getPosts = async (category) => {
+  export const getPosts = (category, callback) => {
     // Create a query that orders documents by the 'createdAt' field
     const postsQuery = query(collection(db, category), orderBy("date", "desc"));
   
-    // Get the documents matching the query
-    const querySnapshot = await getDocs(postsQuery);
-    
-    // Extract the data from each document
-    const posts = [];
-    querySnapshot.forEach((doc) => {
-      posts.push({ id: doc.id, ...doc.data() });
+    // Set up the real-time listener
+    const unsubscribe = onSnapshot(postsQuery, (querySnapshot) => {
+      const posts = [];
+      querySnapshot.forEach((doc) => {
+        posts.push({ id: doc.id, ...doc.data() });
+      });
+      callback(posts);
     });
   
-    return posts;
+    // Return the unsubscribe function to allow for cleanup
+    return unsubscribe;
   };
+
   export const addReply = async (postId,category,reply) => {
     try {
       const postRef = doc(db, category, postId);
@@ -105,15 +106,18 @@ export const addUserToFirestore = async (user) => {
     }
   };
   
-  export const getReplies = async (postId,category) => {
+  export const listenForReplies = (postId, category, callback) => {
     const postRef = doc(db, category, postId);
-    const repliesSnapshot = await getDocs(collection(postRef, "replies"),orderBy("createdAt", "desc"));
-    const replies = [];
-    repliesSnapshot.forEach((doc) => {
-      replies.push({ id: doc.id, ...doc.data() });
+    const repliesQuery = query(collection(postRef, "replies"), orderBy("createdAt", "asc"));
+  
+    return onSnapshot(repliesQuery, (snapshot) => {
+      const replies = [];
+      snapshot.forEach((doc) => {
+        replies.push({ id: doc.id, ...doc.data() });
+      });
+      console.log("Replies updated:", replies);
+      callback(replies);
     });
-    console.log("Replies:", replies);
-    return replies;
   };
 
 export { auth, db, query,where, collection, addDoc, getDocs, getDoc, doc, updateDoc,setDoc,orderBy,onSnapshot, getCountFromServer,serverTimestamp};
