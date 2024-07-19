@@ -142,8 +142,10 @@ export function MailList({ items, category }: MailListProps) {
               <div className="flex justify-between line-clamp-2 text-xs text-muted-foreground">
                 {item.text.substring(0, 300)}
                 <div className="flex items-center gap-1">
-                  <MessageSquare size="20" onClick={() => toggleInput(item.id)} color="gray" />
-                  {replies[item.id] ? replies[item.id].length : 0} replies
+                  <MessageSquare strokeWidth="1.5" size="30" onClick={() => toggleInput(item.id)}  />
+                  <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
+                  {replies[item.id] ? replies[item.id].length : 0} 
+                </Badge>
                 </div>
               </div>
               {showInputItemId === item.id && (
