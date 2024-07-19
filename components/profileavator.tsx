@@ -15,12 +15,13 @@ import { UserAuth } from "../app/context/AuthContext"
 
 export function ProfileAvator() {
   const { setTheme } = useTheme()
-  const { user, logOut } = UserAuth(); // Added 'user' to destructuring
+  const { user, logOut } = UserAuth();
+  const image=auth.currentUser?.photoURL;
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
       <Avatar >
-                        <AvatarImage src="/avatars/02.png" />
+                        <AvatarImage src={image || "KS"} />
                         <AvatarFallback>SR</AvatarFallback>
                     </Avatar>
       </DropdownMenuTrigger>

@@ -67,7 +67,8 @@ export function Mail({
   };
 
   const handleSendMessage = async (message: string) => {
-    alert("Message sent: " + activeCategory + " " + message);
+    alert(auth.currentUser?.photoURL);
+    console.log(auth.currentUser?.photoURL);
     if (message.trim() !== "") {
       const newPost = {
         name: auth.currentUser?.displayName,
@@ -75,6 +76,7 @@ export function Mail({
         text: "I would like to, " + message,
         date: new Date().getTime(),
         read: true,
+        photo: auth.currentUser?.photoURL,
       };
       try {
         await addPost(newPost, activeCategory);

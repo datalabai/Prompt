@@ -93,13 +93,44 @@ export const addUserToFirestore = async (user) => {
     return unsubscribe;
   };
 
-  export const addReply = async (postId,category,reply) => {
+  const fetchImageForMessage = async (message) => {
+    console.log('fetching image for:', message);
     try {
+        const response = await fetch(`https://sandbox-410710.el.r.appspot.com/?prompt=${message}`);
+        const data=await response.text();
+        console.log('data:', data);
+        return data;
+    } catch (error) {
+        console.error('Error fetching image:', error);
+        return null;
+    }
+  };
+  
+  export const addReply = async (postId,category,reply,option) => {
+    try {
+      if(option === "prompt"){
+        console.log(reply);
+        const image= await fetchImageForMessage(reply.text); 
+        alert(image);
+        const postRef = doc(db, category, postId);
+        await addDoc(collection(postRef, "replies"), {
+          name:reply.name,
+          text:reply.text,
+          email:reply.email,
+          date:reply.date,
+          createdAt: serverTimestamp(),
+          image:image,
+          photo:reply.photo
+        });
+      }
+      if(option === "chat")
+      {
       const postRef = doc(db, category, postId);
       await addDoc(collection(postRef, "replies"), {
         ...reply,
         createdAt: serverTimestamp(),
       });
+    }
       console.log("Reply added to post ID: ", postId);
     } catch (e) {
       console.error("Error adding reply: ", e);
