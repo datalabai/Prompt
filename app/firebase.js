@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { query,where,getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc,setDoc,orderBy,onSnapshot, getCountFromServer,serverTimestamp} from "firebase/firestore";
+import { query,where,getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc,setDoc,orderBy,onSnapshot, getCountFromServer,serverTimestamp,Firestore,arrayUnion, arrayRemove} from "firebase/firestore";
+import { get } from "http";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBe7LVB7NZGQ4ih869GmtX2iwYvE0hzbLE",
@@ -93,6 +94,7 @@ export const addUserToFirestore = async (user) => {
     return unsubscribe;
   };
 
+
   const fetchImageForMessage = async (message) => {
     console.log('fetching image for:', message);
     try {
@@ -122,6 +124,7 @@ export const addUserToFirestore = async (user) => {
           image:image,
           photo:reply.photo
         });
+        return;
       }
       if(option === "chat")
       {
@@ -130,12 +133,51 @@ export const addUserToFirestore = async (user) => {
         ...reply,
         createdAt: serverTimestamp(),
       });
+      return;
     }
+    const postRef = doc(db, category, postId);
+      await addDoc(collection(postRef, "replies"), {
+        ...reply,
+        createdAt: serverTimestamp(),
+      });
       console.log("Reply added to post ID: ", postId);
     } catch (e) {
       console.error("Error adding reply: ", e);
     }
   };
+
+  export const likeReply = async (postId, category, replyId) => {
+    const userId = auth.currentUser?.uid;
+    const replyRef = doc(db, category, postId, 'replies', replyId);
+  
+    try {
+      await updateDoc(replyRef, {
+        likes: arrayUnion(userId),
+        dislikes: arrayRemove(userId) // Remove from dislikes if previously disliked
+      });
+    } catch (e) {
+      console.error('Error liking reply: ', e);
+    }
+  };
+  
+  // Function to dislike a reply
+  export const dislikeReply = async (postId, category, replyId) => {
+    const userId = auth.currentUser?.uid;
+    const replyRef = doc(db, category, postId, 'replies', replyId);
+  
+    try {
+      await updateDoc(replyRef, {
+        dislikes: arrayUnion(userId),
+        likes: arrayRemove(userId) // Remove from likes if previously liked
+      });
+    } catch (e) {
+      console.error('Error disliking reply: ', e);
+    }
+  };
+
+  // Add this to your firebase file
+
+// Function to upvote a reply
   
   export const listenForReplies = (postId, category, callback) => {
     const postRef = doc(db, category, postId);

@@ -10,7 +10,9 @@ import {
   List,
   Palette,
   ClipboardList,
+  CirclePlus,
 } from "lucide-react";
+import { PlusCircledIcon } from '@radix-ui/react-icons';
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import {
@@ -28,6 +30,7 @@ import { Nav } from "./nav";
 import { useMail } from "../use-mail";
 import { useEffect, useState } from "react";
 import { addPost, auth, getPosts } from "@/app/firebase";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
 interface MailProps {
   accounts: {
@@ -53,22 +56,18 @@ export function Mail({
   const [mails, setMails] = useState<Mail[]>([]);
 
   useEffect(() => {
-    const unsubscribe = getPosts(activeCategory, (posts:any) => {
+    const unsubscribe = getPosts(activeCategory, (posts: any) => {
       setMails(posts);
     });
 
-    // Cleanup the listener on component unmount or when activeCategory changes
     return () => unsubscribe();
-  }, [activeCategory]); // <-- Trigger useEffect whenever activeCategory changes
-// <-- Trigger fetchPosts whenever activeCategory changes
+  }, [activeCategory]);
 
   const handleCategoryChange = (category: string) => {
     setActiveCategory(category);
   };
 
   const handleSendMessage = async (message: string) => {
-    alert(auth.currentUser?.photoURL);
-    console.log(auth.currentUser?.photoURL);
     if (message.trim() !== "") {
       const newPost = {
         name: auth.currentUser?.displayName,
@@ -81,7 +80,6 @@ export function Mail({
       try {
         await addPost(newPost, activeCategory);
         setInputValue("");
-        // After adding the post, you may optionally refetch the posts for the active category
       } catch (error) {
         console.error("Error adding post:", error);
       }
@@ -100,9 +98,7 @@ export function Mail({
       <ResizablePanelGroup
         direction="horizontal"
         onLayout={(sizes: number[]) => {
-          document.cookie = `react-resizable-panels:layout=${JSON.stringify(
-            sizes
-          )}`;
+          document.cookie = `react-resizable-panels:layout=${JSON.stringify(sizes)}`;
         }}
         className="h-full max-h-[800px] items-stretch"
       >
@@ -114,73 +110,26 @@ export function Mail({
           maxSize={20}
           onCollapse={() => {
             setIsCollapsed(true);
-            document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(
-              true
-            )}`;
+            document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(true)}`;
           }}
           onExpand={() => {
             setIsCollapsed(false);
-            document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(
-              false
-            )}`;
+            document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(false)}`;
           }}
-          className={cn(
-            isCollapsed &&
-              "min-w-[50px] md:min-w-[70px] transition-all duration-300 ease-in-out"
-          )}
+          className={cn(isCollapsed && "min-w-[50px] md:min-w-[70px] transition-all duration-300 ease-in-out")}
         >
           <Separator />
           <Nav
             isCollapsed={isCollapsed}
             links={[
-              {
-                title: "General",
-                label: "",
-                icon: House,
-                variant: "default",
-              },
-              {
-                title: "Private",
-                label: "",
-                icon: GlobeLock,
-                variant: "ghost",
-              },
-              {
-                title: "Expert",
-                label: "",
-                icon: BookOpenText,
-                variant: "ghost",
-              },
-              {
-                title: "Memes",
-                label: "",
-                icon: Palette,
-                variant: "ghost",
-              },
-              {
-                title: "Logos",
-                label: "",
-                icon: Biohazard,
-                variant: "ghost",
-              },
-              {
-                title: "Images",
-                label: "",
-                icon: Images,
-                variant: "ghost",
-              },
-              {
-                title: "Resumes",
-                label: "",
-                icon: ClipboardList,
-                variant: "ghost",
-              },
-              {
-                title: "Texts",
-                label: "",
-                icon: List,
-                variant: "ghost",
-              },
+              { title: "General", label: "", icon: House, variant: "default" },
+              { title: "Private", label: "", icon: GlobeLock, variant: "ghost" },
+              { title: "Expert", label: "", icon: BookOpenText, variant: "ghost" },
+              { title: "Memes", label: "", icon: Palette, variant: "ghost" },
+              { title: "Logos", label: "", icon: Biohazard, variant: "ghost" },
+              { title: "Images", label: "", icon: Images, variant: "ghost" },
+              { title: "Resumes", label: "", icon: ClipboardList, variant: "ghost" },
+              { title: "Texts", label: "", icon: List, variant: "ghost" },
             ]}
             onLinkClick={handleCategoryChange}
           />
@@ -190,15 +139,55 @@ export function Mail({
           <Tabs defaultValue="all">
             <div className="bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60">
               <form>
-                <div className="relative">
-                  <Input
-                    placeholder="I would like to Prompt..."
-                    className="pl-8"
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                  />
-                </div>
+              <div className="relative w-full">
+  <input
+    type="text"
+    className="w-full border rounded-lg pl-12 p-2 mt-2"
+    placeholder="I would like to..."
+    value={inputValue}
+    onChange={(e) => setInputValue(e.target.value)}
+    onKeyDown={handleKeyDown}
+  />
+  <DropdownMenu>
+    <DropdownMenuTrigger>
+      <div className="absolute top-4 left-2"> {/* Adjust positioning */}
+        <PlusCircledIcon className="h-6 w-6 text-muted-foreground cursor-pointer" />
+      </div>
+    </DropdownMenuTrigger>
+    <DropdownMenuContent align="start" className="absolute top-4 right-2">
+      {/* Adjust positioning of the dropdown menu */}
+      <DropdownMenuItem>
+        <House className="mr-2 h-4 w-4" />
+        Chat
+      </DropdownMenuItem>
+      <DropdownMenuItem>
+        <BookOpenText className="mr-2 h-4 w-4" />
+        Prompt
+      </DropdownMenuItem>
+      <DropdownMenuItem>
+        <Palette className="mr-2 h-4 w-4" />
+        Memes
+      </DropdownMenuItem>
+      <DropdownMenuItem>
+        <Biohazard className="mr-2 h-4 w-4" />
+        Logos
+      </DropdownMenuItem>
+      <DropdownMenuItem>
+        <Images className="mr-2 h-4 w-4" />
+        Images
+      </DropdownMenuItem>
+      <DropdownMenuItem>
+        <ClipboardList className="mr-2 h-4 w-4" />
+        Resumes
+      </DropdownMenuItem>
+      <DropdownMenuItem>
+        <List className="mr-2 h-4 w-4" />
+        Texts
+      </DropdownMenuItem>
+    </DropdownMenuContent>
+  </DropdownMenu>
+</div>
+
               </form>
             </div>
             <TabsContent value="all" className="m-0">

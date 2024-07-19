@@ -9,9 +9,9 @@ import { Mail } from "../data";
 import { useMail } from "../use-mail";
 import { MessageSquare } from "lucide-react";
 import React from "react";
-import { addReply, listenForReplies, auth } from "@/app/firebase";
+import { addReply, listenForReplies, auth,likeReply,dislikeReply } from "@/app/firebase";
 import { ChatBubbleIcon, MagicWandIcon, PlusCircledIcon } from '@radix-ui/react-icons';
-import { ThumbsUp, ThumbsDown} from "lucide-react";
+import { ThumbsUp, ThumbsDown,ArrowDownToLine} from "lucide-react";
 
 
 
@@ -45,10 +45,43 @@ export function MailList({ items, category }: MailListProps) {
         text: message,
         date: new Date().getTime(),
         image: `./load-32_128.gif`,
+        photo:auth.currentUser?.photoURL
       };
       setPostText("");
+      setReplies((prevReplies) => ({
+        ...prevReplies,
+        [itemId]: [...(prevReplies[itemId] || []), reply],
+      }));
       await addReply(itemId, category, reply, 'prompt');
   }
+  
+  const Download = async (url: string) => {
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/octet-stream', // Set appropriate MIME type
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Network response was not ok: ${response.statusText}`);
+      }
+  
+      const blob = await response.blob();
+      const a = document.createElement('a');
+      const urlObject = URL.createObjectURL(blob);
+      a.href = urlObject;
+      a.download = url.split('/').pop() || 'downloaded-image.jpg';
+      document.body.appendChild(a); // Append the element to the DOM
+      a.click();
+      document.body.removeChild(a); // Remove the element from the DOM
+      URL.revokeObjectURL(urlObject); // Release the object URL
+    } catch (error) {
+      console.error('There was an error with the download:', error);
+    }
+  };
+  
 
   const handlePostSubmit = async (itemId: any) => {
     if (postText.trim() !== "") {
@@ -61,8 +94,20 @@ export function MailList({ items, category }: MailListProps) {
         photo:auth.currentUser?.photoURL
       };
       setPostText("");
+      setReplies((prevReplies) => ({
+        ...prevReplies,
+        [itemId]: [...(prevReplies[itemId] || []), reply],
+      }));
       await addReply(itemId, category, reply, selectedOption);
     }
+  };
+
+  const handleLike = async (postId: string, replyId: string) => {
+    await likeReply(postId, category, replyId);
+  };
+
+  const handleDislike = async (postId: string, replyId: string) => {
+    await dislikeReply(postId, category, replyId);
   };
 
   const handleIconClick = () => {
@@ -107,7 +152,7 @@ export function MailList({ items, category }: MailListProps) {
   };
 
   return (
-    <ScrollArea className="h-screen">
+    <ScrollArea  className="h-[600px]">
       <div className="flex flex-col gap-2 p-4 pt-0">
         {items.map((item) => (
           <button
@@ -157,7 +202,7 @@ export function MailList({ items, category }: MailListProps) {
                           <div key={index} className="flex mt-2">
                             <Avatar className="h-8 w-8">
                               <AvatarImage src={reply.photo} alt="Avatar" />
-                              <AvatarFallback></AvatarFallback>
+                              <AvatarFallback>N R</AvatarFallback>
                             </Avatar>
                             <div className="flex flex-col ml-2">
                               <div className="font-semibold">{reply.name}</div>
@@ -167,11 +212,20 @@ export function MailList({ items, category }: MailListProps) {
                               {reply.image && (
                                 <img src={reply.image} alt="Image" width={300} height={550} className="mt-2 mb-2 rounded lg"/>
                               )}
-                              <div className="flex gap-9 mt-1">
-                                <ThumbsUp strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-blue-500" />
-                                <ThumbsDown strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-red-500" />
-                                {item.name !== reply.name && reply.name !== auth.currentUser?.displayName && (
+                              <div className="flex gap-9 mt-2">
+                                  <button onClick={() => handleLike(item.id, reply.id)}>
+                                  <ThumbsUp strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-blue-500" />
+                                  </button>
+                                  <span>{reply.likes?.length || 0}</span>
+                                  <button onClick={() => handleDislike(item.id, reply.id)}>
+                                  <ThumbsDown strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-red-500" />
+                                  </button>
+                                  <span>{reply.dislikes?.length || 0}</span>
+                                  {item.name !== reply.name && reply.name !== auth.currentUser?.displayName && (
                                   <MagicWandIcon className="h-4 w-4 cursor-pointer hover:text-purple-500" onClick={()=>handleMagicPrompt(reply.text,item.id)}/>
+                                )}
+                                {reply.image && (
+                                  <ArrowDownToLine strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-purple-500" onClick={()=>Download(reply.image)}/>
                                 )}
                               </div>
                             </div>
