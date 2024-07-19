@@ -48,7 +48,7 @@ export function SiteHeader() {
               <button
                 onClick={handleSignIn}
                 className={cn(
-                  buttonVariants({ variant: "primary", size: "sm" }),
+                  buttonVariants({ variant: "ghost", size: "sm" }),
                   "h-9"
                 )}
               >
