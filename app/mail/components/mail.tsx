@@ -31,6 +31,7 @@ import { useMail } from "../use-mail";
 import { useEffect, useState } from "react";
 import { addPost, auth, getPosts } from "@/app/firebase";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { PromptModeToggle } from "@/components/prompt-dropmenu";
 
 interface MailProps {
   accounts: {
@@ -148,44 +149,8 @@ export function Mail({
     onChange={(e) => setInputValue(e.target.value)}
     onKeyDown={handleKeyDown}
   />
-  <DropdownMenu>
-    <DropdownMenuTrigger>
-      <div className="absolute top-4 left-2"> {/* Adjust positioning */}
-        <PlusCircledIcon className="h-6 w-6 text-muted-foreground cursor-pointer" />
-      </div>
-    </DropdownMenuTrigger>
-    <DropdownMenuContent align="start" className="absolute top-4 right-2">
-      {/* Adjust positioning of the dropdown menu */}
-      <DropdownMenuItem>
-        <House className="mr-2 h-4 w-4" />
-        Chat
-      </DropdownMenuItem>
-      <DropdownMenuItem>
-        <BookOpenText className="mr-2 h-4 w-4" />
-        Prompt
-      </DropdownMenuItem>
-      <DropdownMenuItem>
-        <Palette className="mr-2 h-4 w-4" />
-        Memes
-      </DropdownMenuItem>
-      <DropdownMenuItem>
-        <Biohazard className="mr-2 h-4 w-4" />
-        Logos
-      </DropdownMenuItem>
-      <DropdownMenuItem>
-        <Images className="mr-2 h-4 w-4" />
-        Images
-      </DropdownMenuItem>
-      <DropdownMenuItem>
-        <ClipboardList className="mr-2 h-4 w-4" />
-        Resumes
-      </DropdownMenuItem>
-      <DropdownMenuItem>
-        <List className="mr-2 h-4 w-4" />
-        Texts
-      </DropdownMenuItem>
-    </DropdownMenuContent>
-  </DropdownMenu>
+  <PromptModeToggle />
+  
 </div>
 
               </form>
