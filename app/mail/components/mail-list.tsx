@@ -196,9 +196,6 @@ export function MailList({ items, category,selectedIconName }: MailListProps) {
               </div>
               <div className="flex justify-between line-clamp-2 text-xs text-muted-foreground">
                 {item.text.substring(0, 300)}
-                {item.image && (
-                                <img src={item.image} alt="Image" width={300} height={550} className="mt-4  mb-2 rounded lg"/>
-                )}
                 <div className="flex items-center gap-1">
                   <MessageSquare strokeWidth="1.5" size="30" onClick={() => toggleInput(item.id)}  />
                   <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
@@ -206,6 +203,40 @@ export function MailList({ items, category,selectedIconName }: MailListProps) {
                 </Badge>
                 </div>
               </div>
+              <div className="space-x-4 pb-4">
+              {item.image && (
+                                <><img src={item.image} alt="Image" width={300} height={550} className="mt-4  mb-2 rounded lg" />
+                                <div className="flex gap-9 mt-2" style={{ marginLeft: "0px" }}>
+                    <Badge variant="stone">
+                      <button onClick={() => handleLike(item.id, item.id)}>
+                        <ThumbsUp strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-blue-500 mr-2" />
+                      </button>
+                      <span>0</span>
+                    </Badge>
+                    <Badge variant="stone">
+                      <button onClick={() => handleDislike(item.id, item.id)}>
+                        <ThumbsDown strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-red-500 mr-2" />
+                      </button>
+                      <span>0</span>
+                    </Badge>
+
+                    {item.name !== item.name && item.name !== auth.currentUser?.displayName && (
+                      <Badge variant="stone">
+                        <MagicWandIcon className="h-4 w-4 cursor-pointer hover:text-purple-500" onClick={() => handleMagicPrompt(item.text, item.id)} />
+                      </Badge>
+                    )}
+                    {item.image && (
+                      <Badge variant="stone">
+                        <ArrowDownToLine strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-purple-500" onClick={() => Download(item.image)} />
+                      </Badge>
+                    )}
+                  </div></>
+                             
+                                
+                )}
+                           
+                          </div>
+              
               {showInputItemId === item.id && (
                 <>
                   <div className="gap-2 mb-2">
