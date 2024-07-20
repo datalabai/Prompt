@@ -33,6 +33,7 @@ import { addPost, auth, getPosts } from "@/app/firebase";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { PromptModeToggle } from "@/components/prompt-dropmenu";
 import { set } from "date-fns";
+import Profile from "./profile";
 
 
 interface MailProps {
@@ -170,7 +171,10 @@ export function Mail({
           />
         </ResizablePanel>
         <ResizableHandle withHandle />
-        <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
+        <ResizablePanel>
+        <Tabs defaultValue="all">          <Profile/></Tabs>
+        </ResizablePanel>
+        {/* <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
           <Tabs defaultValue="all">
             <div className="bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60">
               <form>
@@ -190,13 +194,13 @@ export function Mail({
               </form>
             </div>
             <TabsContent value="all" className="m-0">
-              <MailList items={mails} category={activeCategory} />
+              <MailList items={mails} category={activeCategory} selectedIconName={""} />
             </TabsContent>
             <TabsContent value="unread" className="m-0">
-              <MailList items={mails.filter((item) => !item.read)} category={activeCategory} />
+              <MailList items={mails.filter((item) => !item.read)} category={activeCategory} selectedIconName={""} />
             </TabsContent>
           </Tabs>
-        </ResizablePanel>
+        </ResizablePanel> */}
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={defaultLayout[2]}>
           {activeCategory === "Expert" && (
