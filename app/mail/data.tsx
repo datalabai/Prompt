@@ -8,6 +8,7 @@ export const mails = [
     date: "2022-07-28T17:30:00",
     read: false,
     photo: "./load-32_128.gif",
+    image: "./load-32_128.gif",
     labels: ["personal"],
   },
 ]

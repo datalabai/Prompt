@@ -18,9 +18,10 @@ import { ThumbsUp, ThumbsDown,ArrowDownToLine} from "lucide-react";
 interface MailListProps {
   items: Mail[];
   category: string;
+  selectedIconName: string; // Add this line to accept the new prop
 }
 
-export function MailList({ items, category }: MailListProps) {
+export function MailList({ items, category,selectedIconName }: MailListProps) {
   const [mail, setMail] = useMail();
   const [openTextAreaId, setOpenTextAreaId] = useState<string | null>(null);
   const [showInputItemId, setShowInputItemId] = useState<string | null>(null);
@@ -126,6 +127,14 @@ export function MailList({ items, category }: MailListProps) {
   };
 
   useEffect(() => {
+    // If items are empty, return early and clean up any existing listeners
+    if (items.length === 0) {
+      // Clear replies state when items are empty
+      setReplies({});
+      return () => {};
+    }
+
+    // Set up listeners
     const unsubscribes = items.map((item) => {
       return listenForReplies(item.id, category, (newReplies: any) => {
         setReplies((prevReplies) => ({
@@ -135,6 +144,7 @@ export function MailList({ items, category }: MailListProps) {
       });
     });
 
+    // Clean up listeners on component unmount or items/category change
     return () => {
       unsubscribes.forEach((unsubscribe) => unsubscribe());
     };
@@ -186,6 +196,9 @@ export function MailList({ items, category }: MailListProps) {
               </div>
               <div className="flex justify-between line-clamp-2 text-xs text-muted-foreground">
                 {item.text.substring(0, 300)}
+                {item.image && (
+                                <img src={item.image} alt="Image" width={300} height={550} className="mt-4  mb-2 rounded lg"/>
+                )}
                 <div className="flex items-center gap-1">
                   <MessageSquare strokeWidth="1.5" size="30" onClick={() => toggleInput(item.id)}  />
                   <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">

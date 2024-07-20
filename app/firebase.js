@@ -67,14 +67,30 @@ export const addUserToFirestore = async (user) => {
     }
   };
 
-  export const addPost = async (post, category) => {
+  export const addPost = async (post, category,option) => {
     console.log("Adding post:", post);
-    try {
-      const docRef = await addDoc(collection(db, category), post);
-      console.log("Document written with ID: ", docRef.id);
-    } catch (e) {
-      console.error("Error adding document: ", e);
+    if(option==="chat" || option===""){
+      try {
+        const docRef = await addDoc(collection(db, category), post);
+        console.log("Document written with ID: ", docRef.id);
+      } catch (e) {
+        console.error("Error adding document: ", e);
+      }
+      return;
     }
+    const image= await fetchImageForMessage(post.text); 
+      alert(image);
+      try {
+        const docRef = await addDoc(collection(db, category), {
+          ...post,
+          image:image,
+          createdAt: serverTimestamp(),
+        });
+        console.log("Document written with ID: ", docRef.id);
+      } catch (e) {
+        console.error("Error adding document: ", e);
+      }
+      return;
   };
   
   export const getPosts = (category, callback) => {
@@ -179,18 +195,31 @@ export const addUserToFirestore = async (user) => {
 
 // Function to upvote a reply
   
-  export const listenForReplies = (postId, category, callback) => {
-    const postRef = doc(db, category, postId);
-    const repliesQuery = query(collection(postRef, "replies"), orderBy("createdAt", "asc"));
-  
-    return onSnapshot(repliesQuery, (snapshot) => {
-      const replies = [];
-      snapshot.forEach((doc) => {
-        replies.push({ id: doc.id, ...doc.data() });
-      });
-      console.log("Replies updated:", replies);
-      callback(replies);
+export const listenForReplies = (postId, category, callback) => {
+  if (!postId || !category) {
+    console.warn("postId or category is empty. Exiting listenForReplies function.");
+    return () => {}; // Return a no-op function
+  }
+
+  const postRef = doc(db, category, postId);
+  const repliesQuery = query(collection(postRef, "replies"), orderBy("createdAt", "asc"));
+
+  return onSnapshot(repliesQuery, (snapshot) => {
+    const replies = [];
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      if (data) {
+        replies.push({ id: doc.id, ...data });
+      } else {
+        console.warn("Document with no data found:", doc.id);
+      }
     });
-  };
+    callback(replies);
+  }, (error) => {
+    console.error("Error listening for replies:", error);
+  });
+};
+
+ 
 
 export { auth, db, query,where, collection, addDoc, getDocs, getDoc, doc, updateDoc,setDoc,orderBy,onSnapshot, getCountFromServer,serverTimestamp};

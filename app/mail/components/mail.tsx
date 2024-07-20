@@ -32,6 +32,8 @@ import { useEffect, useState } from "react";
 import { addPost, auth, getPosts } from "@/app/firebase";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { PromptModeToggle } from "@/components/prompt-dropmenu";
+import { set } from "date-fns";
+
 
 interface MailProps {
   accounts: {
@@ -55,6 +57,8 @@ export function Mail({
   const [mail] = useMail();
   const [inputValue, setInputValue] = useState("");
   const [mails, setMails] = useState<Mail[]>([]);
+  const [selectedIcon, setSelectedIcon] = useState<React.ComponentType | null>(null);
+  const [selectedIconName, setSelectedIconName] = useState<string>("");
 
   useEffect(() => {
     const unsubscribe = getPosts(activeCategory, (posts: any) => {
@@ -69,6 +73,8 @@ export function Mail({
   };
 
   const handleSendMessage = async (message: string) => {
+    if(selectedIconName === "chat" || selectedIconName === "") 
+      { 
     if (message.trim() !== "") {
       const newPost = {
         name: auth.currentUser?.displayName,
@@ -79,12 +85,35 @@ export function Mail({
         photo: auth.currentUser?.photoURL,
       };
       try {
-        await addPost(newPost, activeCategory);
         setInputValue("");
+        setMails([...mails, newPost]);
+        await addPost(newPost, activeCategory,selectedIconName);
       } catch (error) {
         console.error("Error adding post:", error);
       }
     }
+  }
+  else
+  {
+    if (message.trim() !== "") {
+      const newPost = {
+        name: auth.currentUser?.displayName,
+        email: auth.currentUser?.email,
+        text: "I would like to, " + message,
+        date: new Date().getTime(),
+        read: true,
+        photo: auth.currentUser?.photoURL,
+        image: './load-32_128.gif',
+      };
+      try {
+        setInputValue("");
+        setMails([...mails, newPost]);
+        await addPost(newPost, activeCategory,'prompt');
+      } catch (error) {
+        console.error("Error adding post:", error);
+      }
+    }
+  }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -92,6 +121,11 @@ export function Mail({
       e.preventDefault();
       handleSendMessage(inputValue);
     }
+  };
+
+  const handleIconSelect = (icon: React.ComponentType, name: string) => {
+    setSelectedIcon(icon);
+    setSelectedIconName(name);
   };
 
   return (
@@ -149,7 +183,7 @@ export function Mail({
     onChange={(e) => setInputValue(e.target.value)}
     onKeyDown={handleKeyDown}
   />
-  <PromptModeToggle />
+  <PromptModeToggle onIconSelect={handleIconSelect}  />
   
 </div>
 
