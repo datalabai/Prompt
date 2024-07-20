@@ -34,6 +34,7 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import { PromptModeToggle } from "@/components/prompt-dropmenu";
 import { set } from "date-fns";
 import Profile from "./profile";
+import { Notifications } from "./notifications";
 
 
 interface MailProps {
@@ -171,10 +172,10 @@ export function Mail({
           />
         </ResizablePanel>
         <ResizableHandle withHandle />
-        <ResizablePanel>
+        {/* <ResizablePanel>
         <Tabs defaultValue="all">          <Profile/></Tabs>
-        </ResizablePanel>
-        {/* <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
+        </ResizablePanel> */}
+        <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
           <Tabs defaultValue="all">
             <div className="bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60">
               <form>
@@ -200,7 +201,7 @@ export function Mail({
               <MailList items={mails.filter((item) => !item.read)} category={activeCategory} selectedIconName={""} />
             </TabsContent>
           </Tabs>
-        </ResizablePanel> */}
+        </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={defaultLayout[2]}>
           {activeCategory === "Expert" && (
@@ -208,6 +209,7 @@ export function Mail({
               mail={mails.find((item) => item.id === mail.selected) || null}
             />
           )}
+          <Notifications />
         </ResizablePanel>
       </ResizablePanelGroup>
     </TooltipProvider>
