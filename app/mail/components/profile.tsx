@@ -171,24 +171,22 @@ export default function Profile() {
                       {rows.map((transaction, index) => (
                 <TableRow key={index}>
                   <TableCell>
-                    <div className="font-medium">{transaction.prompt}</div>
+                    <div className="font-medium">{sliceTransactionId(transaction.transactionId)}</div>
                   </TableCell>
                   <TableCell>
                     <div className="font-medium">{transaction.prompt}</div>
                   </TableCell>
-                  <TableCell className="hidden xl:table-column">
+                  <TableCell className=" font-medium">
                     {transaction.type}
                   </TableCell>
-                  <TableCell className="hidden xl:table-column">
-                    <Badge className="text-xs" variant="outline">
+                  <TableCell className="font-medium">
                       {transaction.date}
-                    </Badge>
                   </TableCell>
-                  <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
+                  <TableCell className=" font-medium">
                     {transaction.prompt}
                   </TableCell>
-                  <TableCell className="text-right">
-                    ${transaction.amount}
+                  <TableCell className=" font-medium">
+                     1.10 USDC
                   </TableCell>
                 </TableRow>
               ))}
