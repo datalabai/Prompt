@@ -179,9 +179,12 @@ export function Mail({
           />
         </ResizablePanel>
         <ResizableHandle withHandle />
-        {/* <ResizablePanel>
+        {activeCategory === "Profile" && (
+        <ResizablePanel defaultSize={defaultLayout[1]} minSize={40}>
         <Tabs defaultValue="all">          <Profile/></Tabs>
-        </ResizablePanel> */}
+        </ResizablePanel>
+        )}
+        {activeCategory !== "Profile" && (
         <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
           <Tabs defaultValue="all">
             <div className="bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -208,6 +211,7 @@ export function Mail({
             </TabsContent>
           </Tabs>
         </ResizablePanel>
+         )}
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={defaultLayout[2]}>
           {activeCategory === "Expert" && (

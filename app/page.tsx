@@ -12,14 +12,14 @@ export default function IndexPage() {
      
       <section className="overflow-hidden rounded-lg border bg-background shadow-md md:hidden md:shadow-xl">
         <Image
-          src="/examples/mail-dark.png"
+          src="/mobileview.png"
           width={1280}
           height={727}
           alt="Mail"
           className="hidden dark:block"
         />
         <Image
-          src="/examples/mail-light.png"
+          src="/mobileview.png"
           width={1280}
           height={727}
           alt="Mail"
