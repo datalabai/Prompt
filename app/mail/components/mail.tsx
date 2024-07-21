@@ -113,7 +113,7 @@ export function Mail({
         photo: auth.currentUser?.photoURL,
         image: './loading.gif',
       };
-      alert("Your request has been sent to the expert. Please wait for the response.");
+      //alert("Your request has been sent to the expert. Please wait for the response.");
       try {
         setInputValue("");
         setMails([newPost,...mails]);
@@ -215,7 +215,9 @@ export function Mail({
               mail={mails.find((item) => item.id === mail.selected) || null}
             />
           )}
+          {activeCategory !== "Expert" && (
           <Notifications />
+          )}
         </ResizablePanel>
       </ResizablePanelGroup>
     </TooltipProvider>

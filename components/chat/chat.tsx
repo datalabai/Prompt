@@ -16,7 +16,7 @@ export function Chat({ messages, selectedUser, isMobile }: ChatProps) {
 
   useEffect(() => {
     console.log(messages);
-    alert(selectedUser);
+    //alert(selectedUser);
     setMessages(messages ?? []);
   }
   , [messages]);

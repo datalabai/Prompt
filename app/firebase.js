@@ -126,7 +126,7 @@ export const addUserToFirestore = async (user) => {
       return;
     }
     const image= await fetchImageForMessage(post.text); 
-      alert(image);
+      //alert(image);
       if(image=='Failed to generate image. Please try again later.')
         {
           return;
@@ -345,7 +345,7 @@ export const sendMessage = async (receiverEmail, message) => {
   const uid2 = auth.currentUser?.uid;
   let uid1=await getUid(receiverEmail);
   const chatId = await getOrCreateChatRoom(uid2, uid1);
-  alert(chatId);
+  //alert(chatId);
   try {
     await addDoc(collection(db, 'chats', chatId, 'messages'), {
       text: message.message,

@@ -116,7 +116,7 @@ export function MailDisplay({ mail }: MailDisplayProps) {
                     onKeyDown={handleKeyDown}
                   />
                 </div>
-                <div className="flex items-center mt-2">
+                {/* <div className="flex items-center mt-2">
                   <Label
                     htmlFor="mute"
                     className="flex items-center gap-2 text-xs font-normal"
@@ -124,7 +124,7 @@ export function MailDisplay({ mail }: MailDisplayProps) {
                     <Switch id="mute" aria-label="Mute thread" /> Mute this
                     thread
                   </Label>
-                </div>
+                </div> */}
               </form>
             </div>
           </div>

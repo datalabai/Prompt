@@ -38,7 +38,7 @@ export function MailList({ items, category}: MailListProps) {
   };
 
   const handleMagicPrompt = async (message:string,itemId:any) => {
-    alert(message);
+    //alert(message);
       const reply = {
         name: auth.currentUser?.displayName,
         email: auth.currentUser?.email,
@@ -107,7 +107,7 @@ export function MailList({ items, category}: MailListProps) {
   };
 
   const handlePostLike = async (postId: string) => {
-    alert(postId);
+    //alert(postId);
     await likePost(postId,category);
   }
 

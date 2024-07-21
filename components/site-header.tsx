@@ -43,7 +43,9 @@ export function SiteHeader() {
           <nav className="flex items-center">
             <ModeToggle />
             {user ? (
-              <ProfileAvator/>
+              <ProfileAvator enableProfile={function (): void {
+                throw new Error("Function not implemented.");
+              } }/>
             ) : (
               <button
                 onClick={handleSignIn}
