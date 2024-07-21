@@ -111,14 +111,36 @@ export default function Profile() {
                 </CardFooter>
               </Card>
             </div>
-            <Tabs defaultValue="week">
+            <Tabs defaultValue="Transactions">
               <div className="flex items-center">
                 <TabsList>
-                  <TabsTrigger value="week">Transactions</TabsTrigger>
-                  <TabsTrigger value="month">Rewards</TabsTrigger>
+                  <TabsTrigger value="Transactions">Transactions</TabsTrigger>
+                  <TabsTrigger value="Rewards">Rewards</TabsTrigger>
                 </TabsList>
               </div>
-              <TabsContent value="week">
+              <TabsContent value="Transactions">
+                <Card>
+                  <CardHeader className="px-7"></CardHeader>
+                  <CardContent>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Transaction ID</TableHead>
+                          <TableHead className="hidden sm:table-cell">Prompt</TableHead>
+                          <TableHead className="hidden sm:table-cell">Type</TableHead>
+                          <TableHead className="hidden md:table-cell">Date</TableHead>
+                          <TableHead className="hidden md:table-cell">Suggested To</TableHead>
+                          <TableHead className="text-right">Amount</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {/* Add table rows with transaction data here */}
+                      </TableBody>
+                    </Table>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              <TabsContent value="Rewards">
                 <Card>
                   <CardHeader className="px-7"></CardHeader>
                   <CardContent>
