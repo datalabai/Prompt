@@ -9,6 +9,8 @@ export const mails = [
     read: false,
     photo: "./load-32_128.gif",
     image: "./load-32_128.gif",
+    likes: [],
+    dislikes:[],
     labels: ["personal"],
   },
 ]

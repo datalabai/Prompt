@@ -1,3 +1,4 @@
+import { Avatar } from "@radix-ui/react-avatar";
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { query,where,getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc,setDoc,orderBy,onSnapshot, getCountFromServer,serverTimestamp,Firestore,arrayUnion, arrayRemove} from "firebase/firestore";
@@ -16,6 +17,52 @@ const app = initializeApp(firebaseConfig);
 
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+export const transactions = async () => {
+  try {
+    const uid = auth.currentUser.uid; 
+    console.log('uid:', uid); 
+    const response = await fetch(`https://wallet-api-vyxx.onrender.com/trans?uid=${uid}`);
+    const data = await response.json();
+    console.log('data:', data);
+    return data; 
+  }
+  catch (error) {
+    console.error('Error fetching transactions data:', error.message); // Handling any errors that occur during the fetch
+  }
+};
+
+export const rewards = async () => {
+  try {
+
+    const uid = auth.currentUser.uid;
+    console.log('uid:', uid);
+    const response = await fetch(`https://wallet-api-vyxx.onrender.com/rewards?uid=${uid}`);
+    const data = await response.json();
+    console.log('data:', data);
+    return data;
+  }
+  catch (error) {
+    console.error('Error fetching rewards data:', error.message); // Handling any errors that occur during the fetch
+  }
+};
+
+export const getProfile = async () => {
+  const user = auth.currentUser;
+  if (user) {
+    const userDocRef = doc(db, "users", user.uid); // assuming your user data is in a 'users' collection
+    const userDoc = await getDoc(userDocRef);
+    if (userDoc.exists()) {
+      return userDoc.data();
+    } else {
+      console.log("No such document!");
+      return null;
+    }
+  } else {
+    console.log("No user is signed in.");
+    return null;
+  }
+};
 
 export const addUserToFirestore = async (user) => {
     console.log("add user to firebase");
@@ -94,7 +141,25 @@ export const addUserToFirestore = async (user) => {
   };
   
   export const getPosts = (category, callback) => {
+    const user=auth.currentUser?.displayName;
     // Create a query that orders documents by the 'createdAt' field
+    if(category === "Expert"){
+      const postsQuery = query(collection(db, "General"), orderBy("date", "desc"));
+      // Set up the real-time listener
+      const unsubscribe = onSnapshot(postsQuery, (querySnapshot) => {
+        const posts = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          if (!data.image && data.name !== user) {
+            console.log('Data inside:', data);
+            posts.push({ id: doc.id, ...data });
+          }
+        });
+        callback(posts);
+      });
+      // Return the unsubscribe function to allow for cleanup
+      return unsubscribe;
+    }
     const postsQuery = query(collection(db, category), orderBy("date", "desc"));
   
     // Set up the real-time listener
@@ -175,6 +240,34 @@ export const addUserToFirestore = async (user) => {
       console.error('Error liking reply: ', e);
     }
   };
+
+  export const likePost = async (postId, category) => {
+    const userId = auth.currentUser?.uid;
+    const postRef = doc(db, category, postId);
+  
+    try {
+      await updateDoc(postRef, {
+        likes: arrayUnion(userId),
+        dislikes: arrayRemove(userId) // Remove from dislikes if previously disliked
+      });
+    } catch (e) {
+      console.error('Error liking post: ', e);
+    }
+  }
+
+  export const dislikePost = async (postId, category) => {
+    const userId = auth.currentUser?.uid;
+    const postRef = doc(db, category, postId);
+  
+    try {
+      await updateDoc(postRef, {
+        dislikes: arrayUnion(userId),
+        likes: arrayRemove(userId) // Remove from likes if previously liked
+      });
+    } catch (e) {
+      console.error('Error disliking post: ', e);
+    }
+  };
   
   // Function to dislike a reply
   export const dislikeReply = async (postId, category, replyId) => {
@@ -190,10 +283,6 @@ export const addUserToFirestore = async (user) => {
       console.error('Error disliking reply: ', e);
     }
   };
-
-  // Add this to your firebase file
-
-// Function to upvote a reply
   
 export const listenForReplies = (postId, category, callback) => {
   if (!postId || !category) {
@@ -220,6 +309,55 @@ export const listenForReplies = (postId, category, callback) => {
   });
 };
 
- 
+export const generateChatId = (uid1, uid2) => [uid1, uid2].sort().join('_');
+
+// Get or create a chat room
+export const getOrCreateChatRoom = async (uid1, uid2) => {
+  const chatId = generateChatId(uid1, uid2);
+  const chatRef = doc(db, 'chats', chatId);
+  const chatDoc = await getDoc(chatRef);
+  if (!chatDoc.exists) {
+    await chatRef.set({ createdAt: new Date() });
+  }
+  return chatId;
+};
+
+export const getUid = async (email) => {
+  const userRef = collection(db, 'users');
+  const q = query(userRef, where('email', '==', email));
+  const querySnapshot = await getDocs(q);
+  let uid = '';
+  querySnapshot.forEach((doc) => {
+    uid = doc.data().uid;
+  });
+  return uid;
+};
+
+// Send a message
+export const sendMessage = async (receiverEmail, message) => {
+  const uid2 = auth.currentUser?.uid;
+  let uid1=await getUid(receiverEmail);
+  const chatId = await getOrCreateChatRoom(uid2, uid1);
+  alert(chatId);
+  try {
+    await addDoc(collection(db, 'chats', chatId, 'messages'), {
+      text: message.message,
+      createdAt: serverTimestamp(),
+      avatar: message.avatar,
+    });
+  } catch (error) {
+    console.error("Error sending message: ", error);
+  }
+};
+export const listenForMessages = (chatId, callback) => {
+  const messagesQuery = query(collection(db, "chats", chatId, "messages"), orderBy("createdAt", "asc"));
+  const unsubscribe = onSnapshot(messagesQuery, (querySnapshot) => {
+    const messages = [];
+    querySnapshot.forEach((doc) => messages.push(doc.data()));
+    callback(messages);
+  });
+  return unsubscribe;
+};
+
 
 export { auth, db, query,where, collection, addDoc, getDocs, getDoc, doc, updateDoc,setDoc,orderBy,onSnapshot, getCountFromServer,serverTimestamp};

@@ -1,7 +1,7 @@
 import { Message, UserData } from "@/app/data";
 import ChatTopbar from "./chat-topbar";
 import { ChatList } from "./chat-list";
-import React from "react";
+import React, { use, useEffect } from "react";
 
 interface ChatProps {
   messages?: Message[];
@@ -13,6 +13,12 @@ export function Chat({ messages, selectedUser, isMobile }: ChatProps) {
   const [messagesState, setMessages] = React.useState<Message[]>(
     messages ?? []
   );
+
+  useEffect(() => {
+    console.log(messages);
+    setMessages(messages ?? []);
+  }
+  , [messages]);
 
   const sendMessage = (newMessage: Message) => {
     setMessages([...messagesState, newMessage]);

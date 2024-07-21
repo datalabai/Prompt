@@ -70,7 +70,7 @@ export function ChatList({
                   </Avatar>
                 )}
                 <span className=" bg-accent p-3 rounded-md max-w-xs">
-                  {message.message}
+                  {message.text}
                 </span>
                 {message.name !== selectedUser.name && (
                   <Avatar className="flex justify-center items-center">

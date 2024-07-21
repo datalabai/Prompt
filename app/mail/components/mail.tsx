@@ -81,7 +81,7 @@ export function Mail({
       const newPost = {
         name: auth.currentUser?.displayName,
         email: auth.currentUser?.email,
-        text: "I would like to, " + message,
+        text: message,
         date: new Date().getTime(),
         read: true,
         photo: auth.currentUser?.photoURL,
@@ -172,10 +172,10 @@ export function Mail({
           />
         </ResizablePanel>
         <ResizableHandle withHandle />
-        {/* <ResizablePanel>
+        <ResizablePanel>
         <Tabs defaultValue="all">          <Profile/></Tabs>
-        </ResizablePanel> */}
-        <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
+        </ResizablePanel>
+        {/* <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
           <Tabs defaultValue="all">
             <div className="bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60">
               <form>
@@ -188,20 +188,20 @@ export function Mail({
     onChange={(e) => setInputValue(e.target.value)}
     onKeyDown={handleKeyDown}
   />
-  <PromptModeToggle onIconSelect={handleIconSelect}  />
-  
+                  <PromptModeToggle onIconSelect={handleIconSelect} category={activeCategory} />
 </div>
 
               </form>
             </div>
             <TabsContent value="all" className="m-0">
-              <MailList items={mails} category={activeCategory} selectedIconName={""} />
+              <MailList items={mails} category={activeCategory} />
+              <MailList items={mails} category={activeCategory}/>
             </TabsContent>
             <TabsContent value="unread" className="m-0">
-              <MailList items={mails.filter((item) => !item.read)} category={activeCategory} selectedIconName={""} />
+              <MailList items={mails.filter((item) => !item.read)} category={activeCategory} />
             </TabsContent>
           </Tabs>
-        </ResizablePanel>
+        </ResizablePanel> */}
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={defaultLayout[2]}>
           {activeCategory === "Expert" && (

@@ -9,7 +9,7 @@ import { Mail } from "../data";
 import { useMail } from "../use-mail";
 import { MessageSquare } from "lucide-react";
 import React from "react";
-import { addReply, listenForReplies, auth,likeReply,dislikeReply } from "@/app/firebase";
+import { addReply, listenForReplies, auth,likeReply,dislikeReply,likePost,dislikePost } from "@/app/firebase";
 import { ChatBubbleIcon, MagicWandIcon, PlusCircledIcon } from '@radix-ui/react-icons';
 import { ThumbsUp, ThumbsDown,ArrowDownToLine} from "lucide-react";
 
@@ -18,10 +18,9 @@ import { ThumbsUp, ThumbsDown,ArrowDownToLine} from "lucide-react";
 interface MailListProps {
   items: Mail[];
   category: string;
-  selectedIconName: string; // Add this line to accept the new prop
 }
 
-export function MailList({ items, category,selectedIconName }: MailListProps) {
+export function MailList({ items, category}: MailListProps) {
   const [mail, setMail] = useMail();
   const [openTextAreaId, setOpenTextAreaId] = useState<string | null>(null);
   const [showInputItemId, setShowInputItemId] = useState<string | null>(null);
@@ -106,6 +105,15 @@ export function MailList({ items, category,selectedIconName }: MailListProps) {
   const handleLike = async (postId: string, replyId: string) => {
     await likeReply(postId, category, replyId);
   };
+
+  const handlePostLike = async (postId: string) => {
+    alert(postId);
+    await likePost(postId,category);
+  }
+
+  const handlePostDislike = async (postId: string) => {
+    await dislikePost(postId,category);
+  }
 
   const handleDislike = async (postId: string, replyId: string) => {
     await dislikeReply(postId, category, replyId);
@@ -208,16 +216,16 @@ export function MailList({ items, category,selectedIconName }: MailListProps) {
                                 <><img src={item.image} alt="Image" width={300} height={550} className="mt-4  mb-2 rounded lg" />
                                 <div className="flex gap-9 mt-2" style={{ marginLeft: "0px" }}>
                     <Badge variant="stone">
-                      <button onClick={() => handleLike(item.id, item.id)}>
+                      <button onClick={() => handlePostLike(item.id)}>
                         <ThumbsUp strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-blue-500 mr-2" />
                       </button>
-                      <span>0</span>
+                      <span>{item.likes?.length || 0}</span>
                     </Badge>
                     <Badge variant="stone">
-                      <button onClick={() => handleDislike(item.id, item.id)}>
+                      <button onClick={() => handlePostDislike(item.id)}>
                         <ThumbsDown strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-red-500 mr-2" />
                       </button>
-                      <span>0</span>
+                      <span>{item.dislikes?.length || 0}</span>
                     </Badge>
 
                     {item.name !== item.name && item.name !== auth.currentUser?.displayName && (
