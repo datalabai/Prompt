@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { auth, getProfile,transactions } from "@/app/firebase";
@@ -13,6 +14,8 @@ import { Progress } from "@/components/ui/progress";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
+
 
 type ProfileData = {
   address: string;
@@ -24,6 +27,10 @@ type ProfileData = {
   photo: string;
   uid: string;
 };
+
+function createData(transactionId: any, type: any, prompt: any, date: string, amount: any) {
+    return { transactionId, type, prompt, date, amount };
+  }
 
 export default function Profile() {
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
@@ -37,12 +44,39 @@ export default function Profile() {
         console.log(data);
         setTransactionData(data);
       } catch (error) {
-        console.error('Error fetching transaction data:', error.message);
+        console.error('Error fetching transaction data:', error);
       }
     };
 
     fetchTransactions();
   }, []);
+
+  const formatTimestamp = (timestamp: string | number | Date) => {
+    const date = new Date(timestamp);
+
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const year = date.getFullYear();
+    const month = monthNames[date.getMonth()];
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+
+    return `${month}-${day}-${year} ${hours}:${minutes}`;
+  };
+
+  const sliceTransactionId = (transactionId: string) => {
+    return transactionId.slice(0, 5) + '...' + transactionId.slice(-5);
+  };
+
+  const rows = transactionData.map((transaction, index) =>
+    createData(
+      transaction.sig,
+      transaction.type,
+      transaction.prompt,
+      formatTimestamp(transaction.time),
+      transaction.amount
+    )
+  );
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -54,7 +88,7 @@ export default function Profile() {
           console.error('No profile data found');
         }
       } catch (error) {
-        console.error('Error fetching profile data:', error.message);
+        console.error('Error fetching profile data:', error);
       }
     };
 
@@ -129,12 +163,35 @@ export default function Profile() {
                           <TableHead className="hidden sm:table-cell">Prompt</TableHead>
                           <TableHead className="hidden sm:table-cell">Type</TableHead>
                           <TableHead className="hidden md:table-cell">Date</TableHead>
-                          <TableHead className="hidden md:table-cell">Suggested To</TableHead>
+                          <TableHead className="hidden md:table-cell">Suggested</TableHead>
                           <TableHead className="text-right">Amount</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {/* Add table rows with transaction data here */}
+                      {rows.map((transaction, index) => (
+                <TableRow key={index}>
+                  <TableCell>
+                    <div className="font-medium">{transaction.prompt}</div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="font-medium">{transaction.prompt}</div>
+                  </TableCell>
+                  <TableCell className="hidden xl:table-column">
+                    {transaction.type}
+                  </TableCell>
+                  <TableCell className="hidden xl:table-column">
+                    <Badge className="text-xs" variant="outline">
+                      {transaction.date}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
+                    {transaction.prompt}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    ${transaction.amount}
+                  </TableCell>
+                </TableRow>
+              ))}
                       </TableBody>
                     </Table>
                   </CardContent>

@@ -179,12 +179,12 @@ export function Mail({
           />
         </ResizablePanel>
         <ResizableHandle withHandle />
-        {activeCategory === "Profile" && (
+        {activeCategory !== "Profile" && (
         <ResizablePanel defaultSize={defaultLayout[1]} minSize={40}>
         <Tabs defaultValue="all">          <Profile/></Tabs>
         </ResizablePanel>
         )}
-        {activeCategory !== "Profile" && (
+        {activeCategory == "Profile" && (
         <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
           <Tabs defaultValue="all">
             <div className="bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60">
