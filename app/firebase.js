@@ -127,6 +127,10 @@ export const addUserToFirestore = async (user) => {
     }
     const image= await fetchImageForMessage(post.text); 
       alert(image);
+      if(image=='Failed to generate image. Please try again later.')
+        {
+          return;
+        }
       try {
         const docRef = await addDoc(collection(db, category), {
           ...post,
@@ -194,7 +198,10 @@ export const addUserToFirestore = async (user) => {
       if(option === "prompt"){
         console.log(reply);
         const image= await fetchImageForMessage(reply.text); 
-        alert(image);
+        if(image=='Failed to generate image. Please try again later.')
+          {
+            return;
+          }
         const postRef = doc(db, category, postId);
         await addDoc(collection(postRef, "replies"), {
           name:reply.name,
@@ -344,6 +351,7 @@ export const sendMessage = async (receiverEmail, message) => {
       text: message.message,
       createdAt: serverTimestamp(),
       avatar: message.avatar,
+      name: message.name,
     });
   } catch (error) {
     console.error("Error sending message: ", error);

@@ -49,10 +49,11 @@ export function MailDisplay({ mail }: MailDisplayProps) {
       setSelectedUser(prevState => ({
         ...prevState,
         id: uid,
-        avatar: mail.photo || "",
+        avatar: mail?.photo,
         msgs: messages,
-        name: mail.name || ""
+        name: mail?.name 
       }));
+      console.log("Selected user: ", selectedUser); 
     });
     return unsubscribe;
   }, [mail]);

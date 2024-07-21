@@ -61,6 +61,7 @@ export function Mail({
   const [mails, setMails] = useState<Mail[]>([]);
   const [selectedIcon, setSelectedIcon] = useState<React.ComponentType | null>(null);
   const [selectedIconName, setSelectedIconName] = useState<string>("");
+  const [showProfile, setShowProfile] = useState(false);
 
   useEffect(() => {
     const unsubscribe = getPosts(activeCategory, (posts: any) => {
@@ -70,6 +71,11 @@ export function Mail({
     return () => unsubscribe();
   }, [activeCategory]);
 
+  const enableProfile = () => {
+    setShowProfile(true);
+  };
+
+  
   const handleCategoryChange = (category: string) => {
     setActiveCategory(category);
   };
@@ -105,11 +111,12 @@ export function Mail({
         date: new Date().getTime(),
         read: true,
         photo: auth.currentUser?.photoURL,
-        image: './load-32_128.gif',
+        image: './loading.gif',
       };
+      alert("Your request has been sent to the expert. Please wait for the response.");
       try {
         setInputValue("");
-        setMails([...mails, newPost]);
+        setMails([newPost,...mails]);
         await addPost(newPost, activeCategory,'prompt');
       } catch (error) {
         console.error("Error adding post:", error);
