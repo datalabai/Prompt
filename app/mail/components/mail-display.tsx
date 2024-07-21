@@ -69,7 +69,7 @@ export function MailDisplay({ mail }: MailDisplayProps) {
   }, [fetchMessages]);
 
   return (
-    <ScrollArea className="h-screen">
+    
       <div className="flex h-full flex-col">
         <Separator />
         {mail ? (
@@ -97,6 +97,7 @@ export function MailDisplay({ mail }: MailDisplayProps) {
               )}
             </div>
             <Separator />
+            <ScrollArea className="h-screen max-h-[500px]">
             <div className="flex-1 whitespace-pre-wrap p-4 text-sm">
               <Chat
                 messages={selectedUser.msgs}
@@ -104,12 +105,13 @@ export function MailDisplay({ mail }: MailDisplayProps) {
                 isMobile={isMobile}
               />
             </div>
+            </ScrollArea>
             <Separator className="mt-auto" />
-            <div className="p-4">
+            <div className="p-4 pb-6">
               <form>
                 <div className="grid gap-4">
                   <Textarea
-                    className="p-2 h-2"
+                    className="p-2 h-2 min-h-[40px]"
                     placeholder={`Reply ${mail.name}...`}
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
@@ -127,6 +129,7 @@ export function MailDisplay({ mail }: MailDisplayProps) {
                 </div> */}
               </form>
             </div>
+          
           </div>
         ) : (
           <div className="p-8 text-center text-muted-foreground">
@@ -134,6 +137,6 @@ export function MailDisplay({ mail }: MailDisplayProps) {
           </div>
         )}
       </div>
-    </ScrollArea>
+   
   );
 }
