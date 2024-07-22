@@ -249,34 +249,39 @@ export function MailList({ items, category }: MailListProps) {
                                 <div className="font-semibold">{reply.name}</div>
                                 <div className="flex justify-between line-clamp-2 text-xs text-muted-foreground">
                                   {reply.text}
+                                  {item.name !== reply.name && reply.name !== auth.currentUser?.displayName && (
+                                      <Badge variant="stone">
+                                        <MagicWandIcon className="h-4 w-4 cursor-pointer hover:text-purple-500" onClick={() => handleMagicPrompt(reply.text, item.id)} />
+                                      </Badge>
+                                    )}
                                 </div>
                                 {reply.image && (
-                                  <img src={reply.image} alt="Image" width={300} height={550} className="mt-2 mb-2 rounded lg" />
+                                  <><img src={reply.image} alt="Image" width={300} height={550} className="mt-2 mb-2 rounded lg" /><div className="flex gap-9 mt-2">
+                                    <Badge variant="stone">
+                                      <button onClick={() => handleLike(item.id, reply.id)}>
+                                        <ThumbsUp strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-blue-500 mr-2" />
+                                      </button>
+                                      <span>{reply.likes?.length || 0}</span>
+                                    </Badge>
+                                    <Badge variant="stone">
+                                      <button onClick={() => handleDislike(item.id, reply.id)}>
+                                        <ThumbsDown strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-red-500 mr-2" />
+                                      </button>
+                                      <span>{reply.dislikes?.length || 0}</span>
+                                    </Badge>
+                                    {item.name !== reply.name && reply.name !== auth.currentUser?.displayName && (
+                                      <Badge variant="stone">
+                                        <MagicWandIcon className="h-4 w-4 cursor-pointer hover:text-purple-500" onClick={() => handleMagicPrompt(reply.text, item.id)} />
+                                      </Badge>
+                                    )}
+                                    {reply.image && (
+                                      <Badge variant="stone">
+                                        <ArrowDownToLine strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-purple-500" onClick={() => Download(reply.image)} />
+                                      </Badge>
+                                    )}
+                                  </div></>
                                 )}
-                                <div className="flex gap-9 mt-2">
-                                  <Badge variant="stone">
-                                    <button onClick={() => handleLike(item.id, reply.id)}>
-                                      <ThumbsUp strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-blue-500 mr-2" />
-                                    </button>
-                                    <span>{reply.likes?.length || 0}</span>
-                                  </Badge>
-                                  <Badge variant="stone">
-                                    <button onClick={() => handleDislike(item.id, reply.id)}>
-                                      <ThumbsDown strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-red-500 mr-2" />
-                                    </button>
-                                    <span>{reply.dislikes?.length || 0}</span>
-                                  </Badge>
-                                  {item.name !== reply.name && reply.name !== auth.currentUser?.displayName && (
-                                    <Badge variant="stone">
-                                      <MagicWandIcon className="h-4 w-4 cursor-pointer hover:text-purple-500" onClick={() => handleMagicPrompt(reply.text, item.id)} />
-                                    </Badge>
-                                  )}
-                                  {reply.image && (
-                                    <Badge variant="stone">
-                                      <ArrowDownToLine strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-purple-500" onClick={() => Download(reply.image)} />
-                                    </Badge>
-                                  )}
-                                </div>
+                              
                               </div>
                             </div>
                           ))}
