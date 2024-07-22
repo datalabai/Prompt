@@ -180,8 +180,6 @@ export function PromptModeToggle({ onIconSelect, category }: PromptModeTogglePro
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="w-9 px-0 mr-2">
             {renderIcon()}
-            <MoonIcon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-            <span className="sr-only">Toggle theme</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
