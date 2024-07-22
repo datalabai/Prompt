@@ -1,4 +1,5 @@
 import { Avatar } from "@radix-ui/react-avatar";
+import { add } from "date-fns";
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { query,where,getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc,setDoc,orderBy,onSnapshot, getCountFromServer,serverTimestamp,Firestore,arrayUnion, arrayRemove} from "firebase/firestore";
@@ -118,8 +119,18 @@ export const addUserToFirestore = async (user) => {
     console.log("Adding post:", post);
     if(option==="chat" || option===""){
       try {
-        const docRef = await addDoc(collection(db, category), post);
-        console.log("Document written with ID: ", docRef.id);
+        const docref=await addDoc(collection(db, category), {
+          name: post.name,
+          email: post.email,
+          text: post.text,
+          date: post.date,
+          photo: post.photo,
+          image: post.image,
+          likes: [],
+          dislikes:[],
+          read: true,
+        });
+        console.log("Document written with ID: ", docref.id);
       } catch (e) {
         console.error("Error adding document: ", e);
       }

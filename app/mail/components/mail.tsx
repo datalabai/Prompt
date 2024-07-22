@@ -50,7 +50,7 @@ type MailItem = {
   name: string;
   email: string;
   text: string;
-  date: string;
+  date: Date;
   photo: string;
   image: string;
   likes: never[];
@@ -75,6 +75,8 @@ export function Mail({
 
   useEffect(() => {
     const unsubscribe = getPosts(activeCategory, (posts: any) => {
+      alert(posts);
+      console.log(posts);
       setMails(posts);
     });
 
@@ -99,7 +101,7 @@ export function Mail({
         name: auth.currentUser?.displayName || "",
         email: auth.currentUser?.email || "",
         text: message,
-        date: new Date().getTime().toString(),
+        date: new Date().getTime(),
         read: true,
         photo: auth.currentUser?.photoURL || "",
         likes:[],
@@ -123,7 +125,7 @@ export function Mail({
         name: auth.currentUser?.displayName || "",
         email: auth.currentUser?.email || "",
         text: "I would like to, " + message,
-        date: new Date().getTime().toString(),
+        date: new Date().getTime(),
         read: true,
         photo: auth.currentUser?.photoURL || "",
         image: './loading.gif',

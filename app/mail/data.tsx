@@ -4,7 +4,7 @@ export const mails = [
     name: "Samuel Turner",
     email: "samuelturner@example.com",
     text: "I would like to, Create a best meme on current crypto market",
-    date: "2022-07-28T17:30:00",
+    date: new Date().getTime(),
     photo: "./load-32_128.gif",
     image: "./load-32_128.gif",
     likes: [],
