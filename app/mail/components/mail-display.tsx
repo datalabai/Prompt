@@ -80,10 +80,11 @@ export function MailDisplay({ mail }: MailDisplayProps) {
                 <Avatar>
                   <AvatarImage src={mail.photo} alt={mail.name} />
                   <AvatarFallback>
-                    {mail.name
-                      .split(" ")
-                      .map((chunk: any[]) => chunk[0])
-                      .join("")}
+                  {mail.name
+  .split(" ")
+  .map((chunk: string) => chunk[0]) // Correctly specify chunk type as string
+  .join("")}
+
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid gap-1">
