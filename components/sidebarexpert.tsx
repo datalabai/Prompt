@@ -62,7 +62,7 @@ export function Sidebar({ links, isCollapsed, isMobile }: SidebarProps) {
           */}
         </div>
       )}
-      <nav className="grid gap-1 px-2 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2">
+      {/* <nav className="grid gap-1 px-2 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2">
         {links.map((link, index) =>
           isCollapsed ? (
             <TooltipProvider key={index}>
@@ -129,7 +129,7 @@ export function Sidebar({ links, isCollapsed, isMobile }: SidebarProps) {
             </Link>
           )
         )}
-      </nav>
+      </nav> */}
     </div>
   );
 }

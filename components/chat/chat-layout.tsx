@@ -8,7 +8,6 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { cn } from "@/lib/utils";
-import { Sidebar } from "../sidebarexpert";
 import { Chat } from "./chat";
 
 interface ChatLayoutProps {
@@ -75,7 +74,7 @@ export function ChatLayout({
           isCollapsed && "min-w-[50px] md:min-w-[70px] transition-all duration-300 ease-in-out"
         )}
       >
-        <Sidebar
+        {/* <Sidebar
           isCollapsed={isCollapsed || isMobile}
           links={userData.map((user) => ({
             name: user.name,
@@ -84,7 +83,7 @@ export function ChatLayout({
             variant: selectedUser.name === user.name ? "grey" : "ghost",
           }))}
           isMobile={isMobile}
-        />
+        /> */}
       </ResizablePanel>
       <ResizableHandle withHandle />
       <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
