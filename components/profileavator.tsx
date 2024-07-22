@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { auth } from "@/app/firebase";
 import { UserAuth } from "../app/context/AuthContext";
+import Link from "next/link";
 
 interface ProfileAvatorProps {
   enableProfile: () => void;
@@ -30,8 +31,10 @@ export function ProfileAvator({ enableProfile }: ProfileAvatorProps) {
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={enableProfile}>
+        <DropdownMenuItem >
+        <Link href="/profile">
           {user?.displayName || "User"}
+         </Link> 
         </DropdownMenuItem>
         <DropdownMenuItem onClick={logOut}>Logout</DropdownMenuItem>
       </DropdownMenuContent>
