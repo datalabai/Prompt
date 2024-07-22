@@ -205,13 +205,13 @@ export function MailList({ items, category}: MailListProps) {
               <div className="flex justify-between line-clamp-2 text-xs text-muted-foreground">
                 {item.text.substring(0, 300)}
                 <div className="flex items-center gap-1">
-                  <MessageSquare strokeWidth="1.5" size="30" onClick={() => toggleInput(item.id)}  />
+                  <MessageSquare strokeWidth="1.5" size="24" onClick={() => toggleInput(item.id)}  />
                   <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
                   {replies[item.id] ? replies[item.id].length : 0} 
                 </Badge>
                 </div>
               </div>
-              <div className="space-x-4 pb-4">
+              
               {item.image && (
                                 <><img src={item.image} alt="Image" width={300} height={550} className="mt-4  mb-2 rounded lg" />
                                 <div className="flex gap-9 mt-2" style={{ marginLeft: "0px" }}>
@@ -243,7 +243,7 @@ export function MailList({ items, category}: MailListProps) {
                                 
                 )}
                            
-                          </div>
+                          
               
               {showInputItemId === item.id && (
                 <>

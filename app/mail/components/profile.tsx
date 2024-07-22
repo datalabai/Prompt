@@ -206,7 +206,7 @@ export default function Profile() {
                           <TableHead className="hidden sm:table-cell">Prompt</TableHead>
                           <TableHead className="hidden sm:table-cell">Type</TableHead>
                           <TableHead className="hidden md:table-cell">Date</TableHead>
-                          <TableHead className="hidden md:table-cell">Suggested To</TableHead>
+                          <TableHead className="hidden md:table-cell">Suggested</TableHead>
                           <TableHead className="text-right">Amount</TableHead>
                         </TableRow>
                       </TableHeader>
