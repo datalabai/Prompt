@@ -199,17 +199,18 @@ export function MailList({ items, category}: MailListProps) {
                   )}
                 </div>
                 <div className={cn("text-xs", mail.selected === item.id ? "text-foreground" : "text-muted-foreground")}>
-                {formatDistanceToNow(new Date(item.date), { addSuffix: true })}
-                </div>
-              </div>
-              <div className="flex justify-between line-clamp-2 text-xs text-muted-foreground">
-                {item.text.substring(0, 300)}
+                {/* {formatDistanceToNow(new Date(item.date), { addSuffix: true })} */}
                 <div className="flex items-center gap-1">
                   <MessageSquare strokeWidth="1.5" size="24" onClick={() => toggleInput(item.id)}  />
                   <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
                   {replies[item.id] ? replies[item.id].length : 0} 
                 </Badge>
                 </div>
+                </div>
+              </div>
+              <div className="flex justify-between line-clamp-2 text-xs text-muted-foreground">
+                {item.text.substring(0, 300)}
+                
               </div>
               
               {item.image && (
