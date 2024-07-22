@@ -49,18 +49,29 @@ export const rewards = async () => {
 };
 
 export const getProfile = async () => {
-  const user = auth.currentUser;
-  if (user) {
-    const userDocRef = doc(db, "users", user.uid); // assuming your user data is in a 'users' collection
-    const userDoc = await getDoc(userDocRef);
-    if (userDoc.exists()) {
-      return userDoc.data();
-    } else {
-      console.log("No such document!");
+  alert("getProfile");
+  try {
+    const user = auth.currentUser;
+    if (!user) {
+      console.log("No user is signed in.");
       return null;
     }
-  } else {
-    console.log("No user is signed in.");
+
+    const uid = user.uid;
+    console.log('uid:', uid); // Logging the UID for debugging purposes
+
+    const response = await fetch(`https://wallet-api-vyxx.onrender.com/profile?uid=${uid}`);
+    const data = await response.json();
+    console.log('data:', data);
+
+    const rewards = await fetch(`https://wallet-api-vyxx.onrender.com/rewards?uid=${uid}`).then(res => res.json());
+    const transactions = await fetch(`https://wallet-api-vyxx.onrender.com/transactions?uid=${uid}`).then(res => res.json());
+    console.log('rewards:', rewards);
+    console.log('transactions:', transactions);
+
+    return { user: data, rewards: rewards, transactions: transactions };
+  } catch (error) {
+    console.error("Error fetching profile data:", error);
     return null;
   }
 };

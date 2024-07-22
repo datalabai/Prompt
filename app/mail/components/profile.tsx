@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Card,
@@ -7,22 +7,21 @@ import {
   CardTitle,
   CardDescription,
   CardFooter,
-  CardContent
+  CardContent,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { getProfile } from "@/app/firebase"; // Ensure the correct path to your Firebase file
 
 type ProfileData = {
-  address: string;
-  createdAt: number;
-  displayName: string;
+  name: string;
   email: string;
-  index: number;
-  isAdmin: boolean;
+  wallet: string;
   photo: string;
-  uid: string;
+  amount: number;
+  usdc: number;
 };
 
 type TransactionData = {
@@ -38,34 +37,38 @@ function createData(transactionId: string, type: string, prompt: string, date: s
 }
 
 export default function Profile() {
-  // Static profile data
-  const profileData: ProfileData = {
-    address: "0x1234567890abcdef",
-    createdAt: Date.now(),
-    displayName: "John Doe",
-    email: "johndoe@example.com",
-    index: 1,
-    isAdmin: false,
-    photo: "https://via.placeholder.com/150",
-    uid: "uid1234567890",
-  };
+  const [profileData, setProfileData] = useState<ProfileData | null>(null);
+  const [transactionData, setTransactionData] = useState<TransactionData[]>([]);
+  const [rewardsData, setRewardsData] = useState<TransactionData[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Static transaction data
-  const transactionData: TransactionData[] = [
-    { sig: "tx1234567890", type: "Deposit", prompt: "Payment for service", time: Date.now(), amount: 100 },
-    { sig: "tx0987654321", type: "Withdrawal", prompt: "Withdrawal request", time: Date.now(), amount: 50 },
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const profile = await getProfile();
+        if (profile) {
+          setProfileData(profile.user);
+          setTransactionData(profile.transactions);
+          setRewardsData(profile.rewards);
+        }
+      } catch (error) {
+        console.error("Error fetching profile data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const formatTimestamp = (timestamp: string | number | Date) => {
     const date = new Date(timestamp);
-
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const year = date.getFullYear();
     const month = monthNames[date.getMonth()];
     const day = String(date.getDate()).padStart(2, '0');
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
-
     return `${month}-${day}-${year} ${hours}:${minutes}`;
   };
 
@@ -83,6 +86,24 @@ export default function Profile() {
     )
   );
 
+  const rewardRows = rewardsData.map((reward) =>
+    createData(
+      reward.sig,
+      reward.type,
+      reward.prompt,
+      formatTimestamp(reward.time),
+      reward.amount
+    )
+  );
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!profileData) {
+    return <div>No profile data available.</div>;
+  }
+
   const image = profileData.photo;
 
   return (
@@ -97,7 +118,7 @@ export default function Profile() {
                   <AvatarFallback>SR</AvatarFallback>
                 </Avatar>
                 <CardHeader className="ml-0">
-                  <CardTitle>{profileData.displayName}</CardTitle>
+                  <CardTitle>{profileData.name}</CardTitle>
                   <CardDescription className="max-w-lg text-balance leading-relaxed">
                     {profileData.email}
                   </CardDescription>
@@ -107,7 +128,7 @@ export default function Profile() {
               <Card>
                 <CardHeader className="pb-2">
                   <CardDescription>Balance</CardDescription>
-                  <CardTitle className="text-4xl">$1,329</CardTitle>
+                  <CardTitle className="text-4xl">${profileData.amount}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-xs text-muted-foreground">+25% from last week</div>
@@ -118,8 +139,8 @@ export default function Profile() {
               </Card>
               <Card>
                 <CardHeader className="pb-2">
-                  <CardDescription>Rewards</CardDescription>
-                  <CardTitle className="text-4xl">$5,329</CardTitle>
+                  <CardDescription>USDC</CardDescription>
+                  <CardTitle className="text-4xl">${profileData.usdc}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-xs text-muted-foreground">+10% from last month</div>
@@ -170,7 +191,7 @@ export default function Profile() {
                               {transaction.prompt}
                             </TableCell>
                             <TableCell className=" font-medium">
-                               1.10 USDC
+                              {transaction.amount} USDC
                             </TableCell>
                           </TableRow>
                         ))}
@@ -195,7 +216,28 @@ export default function Profile() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {/* Add table rows with static rewards data here */}
+                        {rewardRows.map((reward, index) => (
+                          <TableRow key={index}>
+                            <TableCell>
+                              <div className="font-medium">{sliceTransactionId(reward.transactionId)}</div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="font-medium">{reward.prompt}</div>
+                            </TableCell>
+                            <TableCell className=" font-medium">
+                              {reward.type}
+                            </TableCell>
+                            <TableCell className="font-medium">
+                              {reward.date}
+                            </TableCell>
+                            <TableCell className=" font-medium">
+                              {reward.prompt}
+                            </TableCell>
+                            <TableCell className=" font-medium">
+                              {reward.amount} USDC
+                            </TableCell>
+                          </TableRow>
+                        ))}
                       </TableBody>
                     </Table>
                   </CardContent>

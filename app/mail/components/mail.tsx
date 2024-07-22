@@ -36,6 +36,7 @@ import { set } from "date-fns";
 import Profile from "./profile";
 import { Notifications } from "./notifications";
 import { Mail as MailType } from '../data';
+import { UserAuth } from "@/app/context/AuthContext";
 
 
 interface MailProps {
@@ -67,6 +68,7 @@ export function Mail({
   const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed);
   const [activeCategory, setActiveCategory] = React.useState("General");
   const [mail] = useMail();
+  const {user} = UserAuth();
   const [inputValue, setInputValue] = useState("");
   const [mails, setMails] = useState<MailType[]>([]);
   const [selectedIcon, setSelectedIcon] = useState<React.ComponentType | null>(null);
@@ -162,87 +164,84 @@ export function Mail({
 
   return (
     <TooltipProvider delayDuration={0}>
-      <ResizablePanelGroup
-        direction="horizontal"
-        onLayout={(sizes: number[]) => {
-          document.cookie = `react-resizable-panels:layout=${JSON.stringify(sizes)}`;
-        }}
-        className="h-full max-h-[800px] items-stretch"
-      >
-        <ResizablePanel
-          defaultSize={defaultLayout[0]}
-          collapsedSize={navCollapsedSize}
-          collapsible={true}
-          minSize={15}
-          maxSize={20}
-          onCollapse={() => {
-            setIsCollapsed(true);
-            document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(true)}`;
+      {user ? (
+        <ResizablePanelGroup
+          direction="horizontal"
+          onLayout={(sizes: number[]) => {
+            document.cookie = `react-resizable-panels:layout=${JSON.stringify(sizes)}`;
           }}
-          onExpand={() => {
-            setIsCollapsed(false);
-            document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(false)}`;
-          }}
-          className={cn(isCollapsed && "min-w-[50px] md:min-w-[70px] transition-all duration-300 ease-in-out")}
+          className="h-full max-h-[800px] items-stretch"
         >
-          <Separator />
-          <Nav
-            isCollapsed={isCollapsed}
-            links={[
-              { title: "General", label: "", icon: House, variant: "default" },
-              { title: "Private", label: "", icon: GlobeLock, variant: "ghost" },
-              { title: "Expert", label: "", icon: BookOpenText, variant: "ghost" },
-              { title: "Memes", label: "", icon: Palette, variant: "ghost" },
-              { title: "Logos", label: "", icon: Biohazard, variant: "ghost" },
-              { title: "Images", label: "", icon: Images, variant: "ghost" },
-              { title: "Resumes", label: "", icon: ClipboardList, variant: "ghost" },
-              { title: "Texts", label: "", icon: List, variant: "ghost" },
-            ]}
-            onLinkClick={handleCategoryChange}
-          />
-        </ResizablePanel>
-        <ResizableHandle withHandle />
-        {/* <ResizablePanel>
-        <Tabs defaultValue="all">          <Profile/></Tabs>
-        </ResizablePanel> */}
-        <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
-          <Tabs defaultValue="all">
-            <div className="bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-              <form>
-              <div className="relative w-full">
-  <input
-    type="text"
-    className="w-full border rounded-lg pl-12 p-2 mt-2"
-    placeholder="I would like to..."
-    value={inputValue}
-    onChange={(e) => setInputValue(e.target.value)}
-    onKeyDown={handleKeyDown}
-  />
-                  <PromptModeToggle onIconSelect={handleIconSelect} category={activeCategory} />
-</div>
-
-              </form>
-            </div>
-            <TabsContent value="all" className="m-0">
-              <MailList items={mails} category={activeCategory} />
-            </TabsContent>
-            <TabsContent value="unread" className="m-0">
-              <MailList items={mails.filter((item) => !item.read)} category={activeCategory} />
-            </TabsContent>
-          </Tabs>
-        </ResizablePanel>
-        <ResizableHandle withHandle />
-        <ResizablePanel defaultSize={defaultLayout[2]}>
-          {activeCategory === "Expert" && (
-            <MailDisplay
-              mail={mails.find((item) => item.id === mail.selected) || null}
+          <ResizablePanel
+            defaultSize={defaultLayout[0]}
+            collapsedSize={navCollapsedSize}
+            collapsible={true}
+            minSize={15}
+            maxSize={20}
+            onCollapse={() => {
+              setIsCollapsed(true);
+              document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(true)}`;
+            }}
+            onExpand={() => {
+              setIsCollapsed(false);
+              document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(false)}`;
+            }}
+            className={cn(isCollapsed && "min-w-[50px] md:min-w-[70px] transition-all duration-300 ease-in-out")}
+          >
+            <Separator />
+            <Nav
+              isCollapsed={isCollapsed}
+              links={[
+                { title: "General", label: "", icon: House, variant: "default" },
+                { title: "Private", label: "", icon: GlobeLock, variant: "ghost" },
+                { title: "Expert", label: "", icon: BookOpenText, variant: "ghost" },
+                { title: "Memes", label: "", icon: Palette, variant: "ghost" },
+                { title: "Logos", label: "", icon: Biohazard, variant: "ghost" },
+                { title: "Images", label: "", icon: Images, variant: "ghost" },
+                { title: "Resumes", label: "", icon: ClipboardList, variant: "ghost" },
+                { title: "Texts", label: "", icon: List, variant: "ghost" },
+              ]}
+              onLinkClick={handleCategoryChange}
             />
-          )}
-          {/* {activeCategory !== "Expert" && (
-          <Notifications />
-          )} */}
-        </ResizablePanel>
-      </ResizablePanelGroup>
+          </ResizablePanel>
+          <ResizableHandle withHandle />
+          <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
+            <Tabs defaultValue="all">
+              <div className="bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+                <form>
+                  <div className="relative w-full">
+                    <input
+                      type="text"
+                      className="w-full border rounded-lg pl-12 p-2 mt-2"
+                      placeholder="I would like to..."
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                    />
+                    <PromptModeToggle onIconSelect={handleIconSelect} category={activeCategory} />
+                  </div>
+                </form>
+              </div>
+              <TabsContent value="all" className="m-0">
+                <MailList items={mails} category={activeCategory} />
+              </TabsContent>
+              <TabsContent value="unread" className="m-0">
+                <MailList items={mails.filter((item) => !item.read)} category={activeCategory} />
+              </TabsContent>
+            </Tabs>
+          </ResizablePanel>
+          <ResizableHandle withHandle />
+          <ResizablePanel defaultSize={defaultLayout[2]}>
+            {activeCategory === "Expert" && (
+              <MailDisplay mail={mails.find((item) => item.id === mail.selected) || null} />
+            )}
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      ) : (
+        <div className="flex items-center mt-12  justify-center h-[600px] ">
+          <p className="text-xl font-semibold">Please Login to View Your Channels</p>
+        </div>
+      )}
     </TooltipProvider>
   );
 }
