@@ -359,7 +359,7 @@ export const sendMessage = async (receiverEmail, message) => {
   //alert(chatId);
   try {
     await addDoc(collection(db, 'chats', chatId, 'messages'), {
-      text: message.message,
+      text: message.text,
       createdAt: serverTimestamp(),
       avatar: message.avatar,
       name: message.name,

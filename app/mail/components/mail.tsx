@@ -75,7 +75,6 @@ export function Mail({
 
   useEffect(() => {
     const unsubscribe = getPosts(activeCategory, (posts: any) => {
-      alert(posts);
       console.log(posts);
       setMails(posts);
     });
