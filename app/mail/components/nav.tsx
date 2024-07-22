@@ -80,9 +80,8 @@ export function Nav({ links: initialLinks, isCollapsed, onLinkClick }: NavProps)
               href="#"
               className={cn(
                 buttonVariants({ variant: link.variant, size: "sm" }),
-                link.variant === "default"
-                  ? "dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white"
-                  : "dark:bg-white dark:text-black dark:hover:bg-white dark:hover:text-black",
+                link.variant === "default" &&
+                "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white",
                 "justify-start"
               )}
               onClick={() => handleLinkClick(link.title)}
