@@ -3,15 +3,13 @@ export const mails = [
     id: "6c9a7f94-8329-4d70-95d3-51f68c186ae1",
     name: "Samuel Turner",
     email: "samuelturner@example.com",
-    subject: "Weekend Hike",
     text: "I would like to, Create a best meme on current crypto market",
     date: "2022-07-28T17:30:00",
-    read: false,
     photo: "./load-32_128.gif",
     image: "./load-32_128.gif",
     likes: [],
     dislikes:[],
-    labels: ["personal"],
+    read: true,
   },
 ]
 

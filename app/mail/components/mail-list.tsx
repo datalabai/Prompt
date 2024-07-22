@@ -1,6 +1,6 @@
 import { ComponentProps, useEffect, useState } from "react";
-import formatDistanceToNow from "date-fns/formatDistanceToNow";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { formatDistanceToNow } from 'date-fns';
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -45,7 +45,7 @@ export function MailList({ items, category}: MailListProps) {
         text: message,
         date: new Date().getTime(),
         image: `./load-32_128.gif`,
-        photo:auth.currentUser?.photoURL
+        photo:auth.currentUser?.photoURL,
       };
       setPostText("");
       setReplies((prevReplies) => ({
@@ -199,7 +199,7 @@ export function MailList({ items, category}: MailListProps) {
                   )}
                 </div>
                 <div className={cn("text-xs", mail.selected === item.id ? "text-foreground" : "text-muted-foreground")}>
-                  {formatDistanceToNow(new Date(item.date), { addSuffix: true })}
+                {formatDistanceToNow(new Date(item.date), { addSuffix: true })}
                 </div>
               </div>
               <div className="flex justify-between line-clamp-2 text-xs text-muted-foreground">

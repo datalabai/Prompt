@@ -19,7 +19,7 @@ interface SidebarProps {
     name: string;
     messages: Message[];
     avatar: string;
-    variant: "grey" | "ghost";
+    variant: "grey" | "ghost"; // Update here if needed
   }[];
   onClick?: () => void;
   isMobile: boolean;
@@ -37,8 +37,8 @@ export function Sidebar({ links, isCollapsed, isMobile }: SidebarProps) {
             <p className="font-medium">Chats</p>
             <span className="text-zinc-300">({links.length})</span>
           </div>
-
-          {/* <div>
+          {/* 
+          <div>
             <Link
               href="#"
               className={cn(
@@ -58,7 +58,8 @@ export function Sidebar({ links, isCollapsed, isMobile }: SidebarProps) {
             >
               <SquarePen size={20} />
             </Link>
-          </div> */}
+          </div> 
+          */}
         </div>
       )}
       <nav className="grid gap-1 px-2 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2">
@@ -84,7 +85,7 @@ export function Sidebar({ links, isCollapsed, isMobile }: SidebarProps) {
                         height={6}
                         className="w-10 h-10 "
                       />
-                    </Avatar>{" "}
+                    </Avatar>
                     <span className="sr-only">{link.name}</span>
                   </Link>
                 </TooltipTrigger>

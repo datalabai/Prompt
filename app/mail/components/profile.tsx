@@ -1,7 +1,6 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { auth, getProfile,transactions } from "@/app/firebase";
 import {
   Card,
   CardHeader,
@@ -14,8 +13,6 @@ import { Progress } from "@/components/ui/progress";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Badge } from "@/components/ui/badge";
-
 
 type ProfileData = {
   address: string;
@@ -28,28 +25,36 @@ type ProfileData = {
   uid: string;
 };
 
-function createData(transactionId: any, type: any, prompt: any, date: string, amount: any) {
-    return { transactionId, type, prompt, date, amount };
-  }
+type TransactionData = {
+  sig: string;
+  type: string;
+  prompt: string;
+  time: string | number | Date;
+  amount: number;
+};
+
+function createData(transactionId: string, type: string, prompt: string, date: string, amount: number) {
+  return { transactionId, type, prompt, date, amount };
+}
 
 export default function Profile() {
-  const [profileData, setProfileData] = useState<ProfileData | null>(null);
-  const [transactionData, setTransactionData] = useState([]);
+  // Static profile data
+  const profileData: ProfileData = {
+    address: "0x1234567890abcdef",
+    createdAt: Date.now(),
+    displayName: "John Doe",
+    email: "johndoe@example.com",
+    index: 1,
+    isAdmin: false,
+    photo: "https://via.placeholder.com/150",
+    uid: "uid1234567890",
+  };
 
-  useEffect(() => {
-    const fetchTransactions = async () => {
-      try {
-        const data = await transactions();
-        console.log("Transaction Data");
-        console.log(data);
-        setTransactionData(data);
-      } catch (error) {
-        console.error('Error fetching transaction data:', error);
-      }
-    };
-
-    fetchTransactions();
-  }, []);
+  // Static transaction data
+  const transactionData: TransactionData[] = [
+    { sig: "tx1234567890", type: "Deposit", prompt: "Payment for service", time: Date.now(), amount: 100 },
+    { sig: "tx0987654321", type: "Withdrawal", prompt: "Withdrawal request", time: Date.now(), amount: 50 },
+  ];
 
   const formatTimestamp = (timestamp: string | number | Date) => {
     const date = new Date(timestamp);
@@ -68,7 +73,7 @@ export default function Profile() {
     return transactionId.slice(0, 5) + '...' + transactionId.slice(-5);
   };
 
-  const rows = transactionData.map((transaction, index) =>
+  const rows = transactionData.map((transaction) =>
     createData(
       transaction.sig,
       transaction.type,
@@ -78,28 +83,7 @@ export default function Profile() {
     )
   );
 
-  useEffect(() => {
-    const fetchProfileData = async () => {
-      try {
-        const data = await getProfile();
-        if (data) {
-          setProfileData(data as ProfileData);
-        } else {
-          console.error('No profile data found');
-        }
-      } catch (error) {
-        console.error('Error fetching profile data:', error);
-      }
-    };
-
-    if (!profileData) {
-      fetchProfileData();
-    }
-  }, [profileData]);
-
-  
-
-  const image = auth.currentUser?.photoURL;
+  const image = profileData.photo;
 
   return (
     <ScrollArea className="h-screen">
@@ -109,13 +93,13 @@ export default function Profile() {
             <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
               <Card className="flex sm:col-span-2">
                 <Avatar className="m-3 w-24 h-24">
-                  <AvatarImage src={image || profileData?.photo || "KS"} />
+                  <AvatarImage src={image || "KS"} />
                   <AvatarFallback>SR</AvatarFallback>
                 </Avatar>
                 <CardHeader className="ml-0">
-                  <CardTitle>{profileData?.displayName || "Loading..."}</CardTitle>
+                  <CardTitle>{profileData.displayName}</CardTitle>
                   <CardDescription className="max-w-lg text-balance leading-relaxed">
-                    {profileData?.email || "Loading..."}
+                    {profileData.email}
                   </CardDescription>
                 </CardHeader>
                 <CardFooter></CardFooter>
@@ -168,28 +152,28 @@ export default function Profile() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                      {rows.map((transaction, index) => (
-                <TableRow key={index}>
-                  <TableCell>
-                    <div className="font-medium">{sliceTransactionId(transaction.transactionId)}</div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="font-medium">{transaction.prompt}</div>
-                  </TableCell>
-                  <TableCell className=" font-medium">
-                    {transaction.type}
-                  </TableCell>
-                  <TableCell className="font-medium">
-                      {transaction.date}
-                  </TableCell>
-                  <TableCell className=" font-medium">
-                    {transaction.prompt}
-                  </TableCell>
-                  <TableCell className=" font-medium">
-                     1.10 USDC
-                  </TableCell>
-                </TableRow>
-              ))}
+                        {rows.map((transaction, index) => (
+                          <TableRow key={index}>
+                            <TableCell>
+                              <div className="font-medium">{sliceTransactionId(transaction.transactionId)}</div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="font-medium">{transaction.prompt}</div>
+                            </TableCell>
+                            <TableCell className=" font-medium">
+                              {transaction.type}
+                            </TableCell>
+                            <TableCell className="font-medium">
+                              {transaction.date}
+                            </TableCell>
+                            <TableCell className=" font-medium">
+                              {transaction.prompt}
+                            </TableCell>
+                            <TableCell className=" font-medium">
+                               1.10 USDC
+                            </TableCell>
+                          </TableRow>
+                        ))}
                       </TableBody>
                     </Table>
                   </CardContent>
@@ -211,7 +195,7 @@ export default function Profile() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {/* Add table rows with transaction data here */}
+                        {/* Add table rows with static rewards data here */}
                       </TableBody>
                     </Table>
                   </CardContent>

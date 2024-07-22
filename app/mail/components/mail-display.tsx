@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { auth, sendMessage, listenForMessages, getOrCreateChatRoom, getUid } from "@/app/firebase";
 import { Unsubscribe } from "firebase/firestore";
+import { Mail } from "../data";
 
 interface MailDisplayProps {
   mail: Mail | null

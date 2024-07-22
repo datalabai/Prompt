@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import * as React from "react";
 import Link from "next/link";
@@ -35,7 +35,7 @@ export function Nav({ links: initialLinks, isCollapsed, onLinkClick }: NavProps)
     const updatedLinks = links.map(link => ({
       ...link,
       variant: link.title === title ? "default" : "ghost"
-    }));
+    })) as NavProps['links']; // Explicitly set the type
 
     // Update the links state
     setLinks(updatedLinks);

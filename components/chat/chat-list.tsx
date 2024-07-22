@@ -57,32 +57,36 @@ export function ChatList({
               }}
               className={cn(
                 "flex flex-col gap-2 px-4 py-2 whitespace-pre-wrap",
-                message.name !== selectedUser.name ? "items-start" : "items-end"
+                message.name !== selectedUser.name ? "items-end" : "items-start"
               )}
             >
               <div className="flex gap-3 items-center">
                 {message.name === selectedUser.name && (
-                   <><span className=" bg-accent p-3 rounded-md max-w-xs">
-                    {message.text}
-                  </span><Avatar className="flex justify-center items-center">
+                   <>
+                   <Avatar className="flex justify-center items-center">
                       <AvatarImage
                         src={message.avatar}
                         alt={message.name}
                         width={6}
                         height={6} />
-                    </Avatar></>
+                    </Avatar>
+                   <span className=" bg-accent p-3 rounded-md max-w-xs">
+                    {message.text}
+                  </span></>
                 )}
                
                 {message.name !== selectedUser.name && (
-                  <><Avatar className="flex justify-center items-center">
+                  <><span className=" bg-accent p-3 rounded-md max-w-xs">
+                      {message.text}
+                    </span>
+                    <Avatar className="flex justify-center items-center">
                     <AvatarImage
                       src={message.avatar}
                       alt={message.name}
                       width={6}
                       height={6} />
-                  </Avatar><span className=" bg-accent p-3 rounded-md max-w-xs">
-                      {message.text}
-                    </span></>
+                  </Avatar>
+                    </>
                 )}
                 
               </div>

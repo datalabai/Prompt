@@ -35,21 +35,31 @@ import { PromptModeToggle } from "@/components/prompt-dropmenu";
 import { set } from "date-fns";
 import Profile from "./profile";
 import { Notifications } from "./notifications";
+import { Mail as MailType } from '../data';
 
 
 interface MailProps {
-  accounts: {
-    label: string;
-    email: string;
-    icon: React.ReactNode;
-  }[];
+  mails: MailType[];
   defaultLayout: number[] | undefined;
   defaultCollapsed?: boolean;
   navCollapsedSize: number;
 }
 
+type MailItem = {
+  id: string;
+  name: string;
+  email: string;
+  text: string;
+  date: string;
+  photo: string;
+  image: string;
+  likes: never[];
+  dislikes: never[];
+  read: boolean;
+};
+
 export function Mail({
-  accounts,
+  mails: MailType,
   defaultLayout = [265, 440, 655],
   defaultCollapsed = false,
   navCollapsedSize,
@@ -58,7 +68,7 @@ export function Mail({
   const [activeCategory, setActiveCategory] = React.useState("General");
   const [mail] = useMail();
   const [inputValue, setInputValue] = useState("");
-  const [mails, setMails] = useState<Mail[]>([]);
+  const [mails, setMails] = useState<MailType[]>([]);
   const [selectedIcon, setSelectedIcon] = useState<React.ComponentType | null>(null);
   const [selectedIconName, setSelectedIconName] = useState<string>("");
   const [showProfile, setShowProfile] = useState(false);
@@ -85,12 +95,16 @@ export function Mail({
       { 
     if (message.trim() !== "") {
       const newPost = {
-        name: auth.currentUser?.displayName,
-        email: auth.currentUser?.email,
+        id:"1",
+        name: auth.currentUser?.displayName || "",
+        email: auth.currentUser?.email || "",
         text: message,
-        date: new Date().getTime(),
+        date: new Date().getTime().toString(),
         read: true,
-        photo: auth.currentUser?.photoURL,
+        photo: auth.currentUser?.photoURL || "",
+        likes:[],
+        dislikes:[],
+        image:""
       };
       try {
         setInputValue("");
@@ -105,19 +119,27 @@ export function Mail({
   {
     if (message.trim() !== "") {
       const newPost = {
-        name: auth.currentUser?.displayName,
-        email: auth.currentUser?.email,
+        id:"1",
+        name: auth.currentUser?.displayName || "",
+        email: auth.currentUser?.email || "",
         text: "I would like to, " + message,
-        date: new Date().getTime(),
+        date: new Date().getTime().toString(),
         read: true,
-        photo: auth.currentUser?.photoURL,
+        photo: auth.currentUser?.photoURL || "",
         image: './loading.gif',
+        likes:[],
+        dislikes:[],
       };
       //alert("Your request has been sent to the expert. Please wait for the response.");
       try {
         setInputValue("");
         setMails([newPost,...mails]);
         await addPost(newPost, activeCategory,'prompt');
+        alert("failed to generate Image");
+        const unsubscribe = getPosts(activeCategory, (posts: any) => {
+          setMails(posts);
+        });
+        return () => unsubscribe();
       } catch (error) {
         console.error("Error adding post:", error);
       }
@@ -179,12 +201,9 @@ export function Mail({
           />
         </ResizablePanel>
         <ResizableHandle withHandle />
-        {activeCategory === "Profile" && (
-        <ResizablePanel defaultSize={defaultLayout[1]} minSize={40}>
+        {/* <ResizablePanel>
         <Tabs defaultValue="all">          <Profile/></Tabs>
-        </ResizablePanel>
-        )}
-        {activeCategory !== "Profile" && (
+        </ResizablePanel> */}
         <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
           <Tabs defaultValue="all">
             <div className="bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -211,7 +230,6 @@ export function Mail({
             </TabsContent>
           </Tabs>
         </ResizablePanel>
-         )}
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={defaultLayout[2]}>
           {activeCategory === "Expert" && (
