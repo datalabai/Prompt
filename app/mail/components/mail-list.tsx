@@ -310,13 +310,13 @@ export function MailList({ items, category }: MailListProps) {
                             className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left"
                             onClick={() => handleMenuOptionClick('chat')}
                           >
-                            <ChatBubbleIcon className="text-primary" style={{ width: '15px', height: '15px' }} /> <span className="ml-2">Chat</span>
+                            <ChatBubbleIcon style={{ width: '15px', height: '15px' }} /> <span className="ml-2">Chat</span>
                           </button>
                           <button
                             className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left"
                             onClick={() => handleMenuOptionClick('prompt')}
                           >
-                            <MagicWandIcon className="text-primary" style={{ width: '15px', height: '15px' }} /> <span className="ml-2">Prompt</span>
+                            <MagicWandIcon style={{ width: '15px', height: '15px' }} /> <span className="ml-2">Prompt</span>
                           </button>
                         </div>
                       )}
