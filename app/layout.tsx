@@ -1,5 +1,7 @@
 import "@/config/globals.css"
 import { Metadata, Viewport } from "next"
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
 
 import { siteConfig } from "@/config/site"
 import { fontSans } from "@/lib/fonts"
@@ -87,6 +89,8 @@ export default function RootLayout({ children }: RootLayoutProps) {
           )}
         >
           <AuthContextProvider>
+          <ToastContainer />
+
           <ThemeProvider
             attribute="class"
             defaultTheme="system"

@@ -12,6 +12,7 @@ import { addReply, listenForReplies, auth, likeReply, dislikeReply, likePost, di
 import { ChatBubbleIcon, MagicWandIcon, PlusCircledIcon } from '@radix-ui/react-icons';
 import { ThumbsUp, ThumbsDown, ArrowDownToLine } from "lucide-react";
 import { UserAuth } from "@/app/context/AuthContext";
+import { toast } from "react-toastify";
 
 interface MailListProps {
   items: Mail[];
@@ -43,7 +44,7 @@ export function MailList({ items, category }: MailListProps) {
       email: auth.currentUser?.email,
       text: message,
       date: new Date().getTime(),
-      image: `./load-32_128.gif`,
+      image: `./loading.gif`,
       photo: auth.currentUser?.photoURL,
     };
     setPostText("");
@@ -51,7 +52,10 @@ export function MailList({ items, category }: MailListProps) {
       ...prevReplies,
       [itemId]: [...(prevReplies[itemId] || []), reply],
     }));
-    await addReply(itemId, category, reply, 'prompt');
+    const count= await addReply(itemId, category, reply, 'prompt');
+    if(count!==undefined){
+      toast.info(count);
+    }
   }
 
   const Download = async (url: string) => {
@@ -88,7 +92,7 @@ export function MailList({ items, category }: MailListProps) {
         email: auth.currentUser?.email,
         text: postText,
         date: new Date().getTime(),
-        image: selectedOption === 'prompt' ? `./load-32_128.gif` : null,
+        option: selectedOption === 'prompt' ? 'prompt' : 'chat',
         photo: auth.currentUser?.photoURL
       };
       setPostText("");
@@ -96,7 +100,7 @@ export function MailList({ items, category }: MailListProps) {
         ...prevReplies,
         [itemId]: [...(prevReplies[itemId] || []), reply],
       }));
-      await addReply(itemId, category, reply, selectedOption);
+      await addReply(itemId, category, reply,'chat');
     }
   };
 
@@ -162,6 +166,11 @@ export function MailList({ items, category }: MailListProps) {
     }
   };
 
+  const capitalizeWords = (str: string) => {
+    return str.replace(/\b\w/g, (char) => char.toUpperCase());
+  };
+  
+
   return (
     <ScrollArea className="h-[600px]">
       {user ? (
@@ -187,7 +196,7 @@ export function MailList({ items, category }: MailListProps) {
               <div className="flex flex-col w-full gap-1">
                 <div className="flex items-center justify-between w-full">
                   <div className="flex items-center gap-2">
-                    <div className="font-semibold">{item.name}</div>
+                  <div className="font-semibold">{capitalizeWords(item.name)}</div>
                     {!item.read && (
                       <span className="flex h-2 w-2 rounded-full bg-blue-600" />
                     )}
@@ -208,7 +217,7 @@ export function MailList({ items, category }: MailListProps) {
                 {item.image && (
                   <>
                     <img src={item.image} alt="Image" width={300} height={550} className="mt-4 mb-2 rounded lg" />
-                    <div className="flex gap-9 mt-2" style={{ marginLeft: "0px" }}>
+                    <div className="flex gap-20 mt-2 justify">
                       <Badge variant="stone">
                         <button onClick={() => handlePostLike(item.id)}>
                           <ThumbsUp strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-blue-500 mr-2" />
@@ -246,10 +255,10 @@ export function MailList({ items, category }: MailListProps) {
                                 <AvatarFallback>N R</AvatarFallback>
                               </Avatar>
                               <div className="flex flex-col ml-2">
-                                <div className="font-semibold">{reply.name}</div>
+                                <div className="font-semibold">{capitalizeWords(reply.name)}</div>
                                 <div className="flex justify-between line-clamp-2 text-xs text-muted-foreground">
                                   {reply.text}
-                                  {item.name !== reply.name && reply.name !== auth.currentUser?.displayName && (
+                                   {reply.option === 'prompt' && (
                                       <Badge variant="stone">
                                         <MagicWandIcon className="h-4 w-4 cursor-pointer hover:text-purple-500" onClick={() => handleMagicPrompt(reply.text, item.id)} />
                                       </Badge>
@@ -269,19 +278,11 @@ export function MailList({ items, category }: MailListProps) {
                                       </button>
                                       <span>{reply.dislikes?.length || 0}</span>
                                     </Badge>
-                                    {item.name !== reply.name && reply.name !== auth.currentUser?.displayName && (
-                                      <Badge variant="stone">
-                                        <MagicWandIcon className="h-4 w-4 cursor-pointer hover:text-purple-500" onClick={() => handleMagicPrompt(reply.text, item.id)} />
-                                      </Badge>
-                                    )}
-                                    {reply.image && (
-                                      <Badge variant="stone">
+                                    <Badge variant="stone">
                                         <ArrowDownToLine strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-purple-500" onClick={() => Download(reply.image)} />
                                       </Badge>
-                                    )}
                                   </div></>
                                 )}
-                              
                               </div>
                             </div>
                           ))}

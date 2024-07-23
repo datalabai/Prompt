@@ -4,6 +4,8 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { query,where,getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc,setDoc,orderBy,onSnapshot, getCountFromServer,serverTimestamp,Firestore,arrayUnion, arrayRemove} from "firebase/firestore";
 import { get } from "http";
+import { format } from "date-fns";
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyBe7LVB7NZGQ4ih869GmtX2iwYvE0hzbLE",
@@ -18,6 +20,8 @@ const app = initializeApp(firebaseConfig);
 
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+const MAX_FREE_TRIALS =10;
 
 export const transactions = async () => {
   try {
@@ -126,11 +130,11 @@ export const addUserToFirestore = async (user) => {
     }
   };
 
-  export const addPost = async (post, category,option) => {
+  export const addPost = async (post, category, option) => {
     console.log("Adding post:", post);
-    if(option==="chat" || option===""){
+    if (option === "chat" || option === "") {
       try {
-        const docref=await addDoc(collection(db, category), {
+        const docRef = await addDoc(collection(db, category), {
           name: post.name,
           email: post.email,
           text: post.text,
@@ -138,33 +142,44 @@ export const addUserToFirestore = async (user) => {
           photo: post.photo,
           image: post.image,
           likes: [],
-          dislikes:[],
+          dislikes: [],
           read: true,
-        });
-        console.log("Document written with ID: ", docref.id);
-      } catch (e) {
-        console.error("Error adding document: ", e);
-      }
-      return;
-    }
-    const image= await fetchImageForMessage(post.text); 
-      //alert(image);
-      if(image=='Failed to generate image. Please try again later.')
-        {
-          return;
-        }
-      try {
-        const docRef = await addDoc(collection(db, category), {
-          ...post,
-          image:image,
-          createdAt: serverTimestamp(),
         });
         console.log("Document written with ID: ", docRef.id);
       } catch (e) {
         console.error("Error adding document: ", e);
       }
       return;
+    }
+  
+    const data = await fetchImageForMessage(post.text);
+    if (data.trails <= 0) {
+      return "You have no free trails left";
+    }
+    if (data.image === 'Failed to generate image. Please try again later.') {
+      return "fail";
+    }
+    try {
+      const docRef = await addDoc(collection(db, category), {
+        name: post.name,
+        email: post.email,
+        text: post.text,
+        date: post.date,
+        photo: post.photo,
+        likes: [],
+        dislikes: [],
+        read: true,
+        image: data.image,
+        createdAt: serverTimestamp(),
+      });
+      console.log("Document written with ID: ", docRef.id);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+  
+    return `You have ${data.trails} free trails left`;
   };
+  
   
   export const getPosts = (category, callback) => {
     const user=auth.currentUser?.displayName;
@@ -202,27 +217,68 @@ export const addUserToFirestore = async (user) => {
   };
 
 
-  const fetchImageForMessage = async (message) => {
-    console.log('fetching image for:', message);
-    try {
-        const response = await fetch(`https://sandbox-410710.el.r.appspot.com/?prompt=${message}`);
-        const data=await response.text();
-        console.log('data:', data);
-        return data;
-    } catch (error) {
-        console.error('Error fetching image:', error);
-        return null;
+  const resetFreeTrials = async (userRef, userDoc) => {
+    const today = format(new Date(), "yyyy-MM-dd");
+    
+    if (!userDoc.lastReset || userDoc.lastReset !== today) {
+      await updateDoc(userRef, {
+        freeTrials: MAX_FREE_TRIALS,
+        lastReset: today,
+      });
+      return MAX_FREE_TRIALS;
     }
+  
+    return userDoc.freeTrials;
   };
   
+  const fetchImageForMessage = async (message) => {
+    const user = auth.currentUser;
+    if (!user) {
+      throw new Error("No user is signed in.");
+    }
+  
+    const userRef = doc(db, "users", user.uid);
+    const userDocSnap = await getDoc(userRef);
+  
+    if (!userDocSnap.exists()) {
+      throw new Error("User document does not exist.");
+    }
+  
+    const userDoc = userDocSnap.data();
+    let freeTrials = await resetFreeTrials(userRef, userDoc);
+  
+    if (freeTrials <= 0) {
+      return {image:"",trails:freeTrials}
+    }
+  
+    try {
+      const response = await fetch(`https://sandbox-410710.el.r.appspot.com/?prompt=${message}`);
+      const data = await response.text();
+  
+      // Decrement free trials
+      await updateDoc(userRef, {
+        freeTrials: freeTrials - 1,
+      });
+  
+      return {image:data,trails:freeTrials}
+    } catch (error) {
+      console.error("Error fetching image:", error);
+      return "Failed to generate image. Please try again later.";
+    }
+  };
   export const addReply = async (postId,category,reply,option) => {
+    console.log("Adding reply:", reply);
     try {
       if(option === "prompt"){
         console.log(reply);
-        const image= await fetchImageForMessage(reply.text); 
-        if(image=='Failed to generate image. Please try again later.')
+        const data= await fetchImageForMessage(reply.text); 
+        if(data.freeTrials<=0)
           {
-            return;
+            return "You have no freeTrails left";
+          }
+        if(data.image=='Failed to generate image. Please try again later.')
+          {
+            return "Failed to Generate Image. Please try again later.";
           }
         const postRef = doc(db, category, postId);
         await addDoc(collection(postRef, "replies"), {
@@ -231,10 +287,10 @@ export const addUserToFirestore = async (user) => {
           email:reply.email,
           date:reply.date,
           createdAt: serverTimestamp(),
-          image:image,
+          image:data.image,
           photo:reply.photo
         });
-        return;
+       return `you have ${data.trails} freeTrails left`;
       }
       if(option === "chat")
       {
@@ -251,6 +307,7 @@ export const addUserToFirestore = async (user) => {
         createdAt: serverTimestamp(),
       });
       console.log("Reply added to post ID: ", postId);
+      return;
     } catch (e) {
       console.error("Error adding reply: ", e);
     }
@@ -332,6 +389,7 @@ export const listenForReplies = (postId, category, callback) => {
         console.warn("Document with no data found:", doc.id);
       }
     });
+    console.log("Replies:", replies);
     callback(replies);
   }, (error) => {
     console.error("Error listening for replies:", error);

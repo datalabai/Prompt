@@ -10,7 +10,6 @@ import {
   List,
   Palette,
   ClipboardList,
-  CirclePlus,
 } from "lucide-react";
 import { PlusCircledIcon } from '@radix-ui/react-icons';
 import { cn } from "@/lib/utils";
@@ -28,16 +27,16 @@ import { MailDisplay } from "./mail-display";
 import { MailList } from "./mail-list";
 import { Nav } from "./nav";
 import { useMail } from "../use-mail";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { addPost, auth, getPosts } from "@/app/firebase";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { PromptModeToggle } from "@/components/prompt-dropmenu";
-import { set } from "date-fns";
 import Profile from "./profile";
 import { Notifications } from "./notifications";
 import { Mail as MailType } from '../data';
 import { UserAuth } from "@/app/context/AuthContext";
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 interface MailProps {
   mails: MailType[];
@@ -65,89 +64,72 @@ export function Mail({
   defaultCollapsed = false,
   navCollapsedSize,
 }: MailProps) {
-  const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed);
-  const [activeCategory, setActiveCategory] = React.useState("General");
+  const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
+  const [activeCategory, setActiveCategory] = useState("General");
   const [mail] = useMail();
-  const {user} = UserAuth();
+  const { user } = UserAuth();
   const [inputValue, setInputValue] = useState("");
   const [mails, setMails] = useState<MailType[]>([]);
   const [selectedIcon, setSelectedIcon] = useState<React.ComponentType | null>(null);
   const [selectedIconName, setSelectedIconName] = useState<string>("");
   const [showProfile, setShowProfile] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [trails, setTrails] = useState<number | null>(null); // New state for trails count
 
-  useEffect(() => {
-    const unsubscribe = getPosts(activeCategory, (posts: any) => {
+  const fetchPosts = useCallback(async (category: string) => {
+    setIsLoading(true);
+    const unsubscribe = getPosts(category, (posts: any) => {
       console.log(posts);
       setMails(posts);
+      setIsLoading(false);
     });
 
     return () => unsubscribe();
-  }, [activeCategory]);
+  }, []);
+
+  useEffect(() => {
+    fetchPosts(activeCategory);
+  }, [activeCategory, fetchPosts]);
 
   const enableProfile = () => {
     setShowProfile(true);
   };
 
-  
   const handleCategoryChange = (category: string) => {
     setActiveCategory(category);
   };
 
   const handleSendMessage = async (message: string) => {
-    if(selectedIconName === "chat" || selectedIconName === "") 
-      { 
-    if (message.trim() !== "") {
-      const newPost = {
-        id:"1",
-        name: auth.currentUser?.displayName || "",
-        email: auth.currentUser?.email || "",
-        text: message,
-        date: new Date().getTime(),
-        read: true,
-        photo: auth.currentUser?.photoURL || "",
-        likes:[],
-        dislikes:[],
-        image:""
-      };
-      try {
-        setInputValue("");
-        setMails([...mails, newPost]);
-        await addPost(newPost, activeCategory,selectedIconName);
-      } catch (error) {
-        console.error("Error adding post:", error);
+    if (message.trim() === "") return;
+
+    const newPost = {
+      id: `temp-${Date.now()}`,  // Temporary ID for the new post
+      name: auth.currentUser?.displayName || "",
+      email: auth.currentUser?.email || "",
+      text: message,
+      date: new Date().getTime(),
+      read: true,
+      photo: auth.currentUser?.photoURL || "",
+      image: selectedIconName === "chat" || selectedIconName === "" ? "" : "./loading.gif",
+      likes: [],
+      dislikes: [],
+    };
+
+    // Update the local state immediately
+    setMails((prevMails) => [newPost, ...prevMails]);
+    setInputValue("");
+
+    try {
+      const trailsCount = await addPost(newPost, activeCategory, selectedIconName === "chat" || selectedIconName === "" ? "chat" : "prompt");
+      if (trailsCount !== undefined) {
+        toast.info(trailsCount); 
+         // Update the trails count
       }
+      fetchPosts(activeCategory); // Refresh posts after adding new one
+    } catch (error) {
+      console.error("Error adding post:", error);
+      // Optionally, handle the error by removing the temporary post or showing an error message
     }
-  }
-  else
-  {
-    if (message.trim() !== "") {
-      const newPost = {
-        id:"1",
-        name: auth.currentUser?.displayName || "",
-        email: auth.currentUser?.email || "",
-        text: "I would like to, " + message,
-        date: new Date().getTime(),
-        read: true,
-        photo: auth.currentUser?.photoURL || "",
-        image: './loading.gif',
-        likes:[],
-        dislikes:[],
-      };
-      //alert("Your request has been sent to the expert. Please wait for the response.");
-      try {
-        setInputValue("");
-        setMails([newPost,...mails]);
-        await addPost(newPost, activeCategory,'prompt');
-        alert("failed to generate Image");
-        const unsubscribe = getPosts(activeCategory, (posts: any) => {
-          setMails(posts);
-        });
-        return () => unsubscribe();
-      } catch (error) {
-        console.error("Error adding post:", error);
-      }
-    }
-  }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -222,8 +204,12 @@ export function Mail({
                   </div>
                 </form>
               </div>
-              <TabsContent value="all" className="m-0">
-                <MailList items={mails} category={activeCategory} />
+              <TabsContent value="all" className="m-0 h-[600px]">
+                {isLoading ? (
+                  <p>Loading...</p>
+                ) : (
+                  <MailList items={mails} category={activeCategory} />
+                )}
               </TabsContent>
               <TabsContent value="unread" className="m-0">
                 <MailList items={mails.filter((item) => !item.read)} category={activeCategory} />
@@ -238,8 +224,8 @@ export function Mail({
           </ResizablePanel>
         </ResizablePanelGroup>
       ) : (
-        <div className="flex items-center mt-12  justify-center h-[600px] ">
-          <p className="text-xl font-semibold">Please Login to View Your Channels</p>
+        <div className="flex items-center mt-12 justify-center h-[600px]">
+          <p className="text-xl">Please Login to View Your Channels</p>
         </div>
       )}
     </TooltipProvider>
