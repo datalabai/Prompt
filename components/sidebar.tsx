@@ -61,10 +61,10 @@ const Sidebar: React.FC = () => {
               Resumes
             </a>
           </li>
-          <li className={`flex my-2 py-2 ${activeItem === 'Texts' ? 'bg-gray-200' : ''}`}>
+          <li className={`flex my-2 py-2 ${activeItem === 'Text' ? 'bg-gray-200' : ''}`}>
             <List />
-            <a href="#" className="block pl-2 rounded" onClick={() => handleItemClick('Texts')}>
-              Texts
+            <a href="#" className="block pl-2 rounded" onClick={() => handleItemClick('Text')}>
+              Text
             </a>
           </li>
         </ul>

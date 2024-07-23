@@ -91,9 +91,9 @@ export function PromptModeToggle({ onIconSelect, category }: PromptModeTogglePro
               <ClipboardList className="mr-2 h-4 w-4" />
               Resumes
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleMenuItemClick(List, 'texts')}>
+            <DropdownMenuItem onClick={() => handleMenuItemClick(List, 'text')}>
               <List className="mr-2 h-4 w-4" />
-              Texts
+              Text
             </DropdownMenuItem>
           </>
         );
@@ -156,12 +156,12 @@ export function PromptModeToggle({ onIconSelect, category }: PromptModeTogglePro
             </DropdownMenuItem>
           </>
         );
-      case "Texts":
+      case "Text":
         return (
           <>
-            <DropdownMenuItem onClick={() => handleMenuItemClick(List, 'texts')}>
+            <DropdownMenuItem onClick={() => handleMenuItemClick(List, 'text')}>
               <List className="mr-2 h-4 w-4" />
-              Texts
+              Text
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleMenuItemClick(ChatBubbleIcon, 'chat')}>
               <ChatBubbleIcon className="mr-2 h-4 w-4" />

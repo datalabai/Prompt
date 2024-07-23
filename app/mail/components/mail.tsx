@@ -177,7 +177,7 @@ export function Mail({
                 { title: "General", label: "", icon: House, variant: "default" },
                 // { title: "Private", label: "", icon: GlobeLock, variant: "ghost" },
                 // { title: "Expert", label: "", icon: BookOpenText, variant: "ghost" },
-                { title: "Texts", label: "", icon: List, variant: "ghost" },
+                { title: "Text", label: "", icon: List, variant: "ghost" },
                 { title: "Images", label: "", icon: Images, variant: "ghost" },
                 { title: "Logos", label: "", icon: Biohazard, variant: "ghost" },
                 { title: "Resumes", label: "", icon: ClipboardList, variant: "ghost" },
