@@ -252,24 +252,12 @@ export function MailList({ items, category }: MailListProps) {
                   item.image === './loading.gif' ? (
                     <img src={item.image} alt="Image" width={300} height={550} className="mt-4 mb-2 rounded lg" />
                   ) : (
+                    item.image!=='' &&  (
                     <div>
-                      <Texts generatedText={item.image} onCopy={handleCopy} />
-                      <div className="flex gap-64 mt-2 items-center">
-                        <Badge variant="stone">
-                          <button onClick={() => handlePostLike(item.id)}>
-                            <ThumbsUp strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-blue-500 mr-2" />
-                          </button>
-                          <span>{item.likes?.length || 0}</span>
-                        </Badge>
-                        <Badge variant="stone">
-                          <button onClick={() => handlePostDislike(item.id)}>
-                            <ThumbsDown strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-red-500 mr-2" />
-                          </button>
-                          <span>{item.dislikes?.length || 0}</span>
-                        </Badge>
-                      </div>
+                      <Texts generatedText={item.image} post={item} category={category} />
                     </div>
                   )
+                  )         
                 )}
                 {showInputItemId === item.id && (
                   <>
@@ -352,11 +340,6 @@ export function MailList({ items, category }: MailListProps) {
                         </div>
                       )}
                     </div>
-                    {selectedOption === 'prompt' && (
-                      <div className="w-full mt-2">
-                        <Texts generatedText="This is the GPT-generated text." onCopy={handleCopy} />
-                      </div>
-                    )}
                   </>
                 )}
               </div>

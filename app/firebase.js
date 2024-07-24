@@ -130,9 +130,79 @@ export const addUserToFirestore = async (user) => {
     }
   };
 
+  export const addMessageToPrivateChannel = async (post,option) => {
+    const user = auth.currentUser;
+    let privateChannelRef ;
+  
+  
+    privateChannelRef = doc(db, "privateChannels", user.uid);
+  
+    // Ensure the private channel exists
+    const privateChannelSnap = await getDoc(privateChannelRef);
+    if (!privateChannelSnap.exists()) {
+      console.error("Private channel does not exist for user with UID:", user.uid);
+      await createPrivateChannel(user.uid);
+    }
+  
+    const messagesRef = collection(db, "privateChannels", user.uid, "messages");
+  
+  
+    if(option==="prompt"){
+      try {
+        const data = await fetchImageForMessage(post.text);
+        if (data.trails <= 0) {
+          return "You have no free trails left";
+        }
+        if (data.image === 'Failed to generate image. Please try again later.') {
+          return "fail";
+        }
+        try {
+          const docRef = await addDoc(messagesRef, {
+            name: post.name,
+            email: post.email,
+            text: post.text,
+            date: post.date,
+            photo: post.photo,
+            likes: [],
+            dislikes: [],
+            read: true,
+            image: data.image,
+            createdAt: serverTimestamp(),
+          });
+          console.log("Document written with ID: ", docRef.id);
+          return `You have ${data.trails} free trails left`; // This line may need adjustment based on actual response format
+      } catch (error) {
+        console.error("Error adding message: ", error);
+        return {type:'error',message:error};
+      }
+    } catch (error) {
+      console.error("Error fetching image:", error);
+      return "Failed to generate image. Please try again later.";
+    }
+  }
+  else{
+    try {
+      const docRef = await addDoc(messagesRef, {
+        name: post.name,
+        email: post.email,
+        text: post.text,
+        date: post.date,
+        photo: post.photo,
+        image: post.image,
+        likes: [],
+        dislikes: [],
+        read: true,
+      });
+      console.log("Document written with ID: ", docRef.id);
+    }
+    catch (error) {
+      console.error("Error adding message: ", error);
+    }
+  }
+  };
+
   // FetchText function to fetch text from the endpoint
 export const FetchText = async (text) => {
-  alert(text);
   const user = auth.currentUser;
   if (!user) {
     throw new Error("No user is signed in.");
@@ -155,7 +225,6 @@ export const FetchText = async (text) => {
     
     const response = await fetch(`https://sandbox-410710.el.r.appspot.com/chat?prompt=${text}`);
     const data = await response.text();
-    alert(data);
     
     await updateDoc(userRef, {
       freeTrials: freeTrials - 1,
@@ -242,25 +311,26 @@ export const addPost = async (post, category, option) => {
   
   
   export const getPosts = (category, callback) => {
-    const user=auth.currentUser?.displayName;
-    // Create a query that orders documents by the 'createdAt' field
-    if(category === "Expert"){
-      const postsQuery = query(collection(db, "General"), orderBy("date", "desc"));
-      // Set up the real-time listener
-      const unsubscribe = onSnapshot(postsQuery, (querySnapshot) => {
-        const posts = [];
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          if (!data.image && data.name !== user) {
-            console.log('Data inside:', data);
-            posts.push({ id: doc.id, ...data });
-          }
+    const user=auth.currentUser;
+
+
+    if(category === 'Private')
+      {
+        const messagesRef = collection(db, "privateChannels", user.uid, "messages");
+      const orderedMessagesQuery = query(messagesRef, orderBy("date", "desc"));
+    
+      const unsubscribe = onSnapshot(orderedMessagesQuery, (snapshot) => {
+        const messages = [];
+        snapshot.forEach((doc) => {
+          messages.push({ id: doc.id, ...doc.data() });
         });
-        callback(posts);
-      });
-      // Return the unsubscribe function to allow for cleanup
+        // Reverse the order of messages to display the newest first
+        callback(messages.reverse());
+      }); 
+
       return unsubscribe;
     }
+    // Create a query that orders documents by the 'createdAt' field in descending order
     const postsQuery = query(collection(db, category), orderBy("date", "desc"));
   
     // Set up the real-time listener

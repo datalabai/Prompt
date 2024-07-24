@@ -28,7 +28,7 @@ import { MailList } from "./mail-list";
 import { Nav } from "./nav";
 import { useMail } from "../use-mail";
 import { useEffect, useState, useCallback } from "react";
-import { addPost, auth, getPosts } from "@/app/firebase";
+import { addMessageToPrivateChannel, addPost, auth, getPosts } from "@/app/firebase";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { PromptModeToggle } from "@/components/prompt-dropmenu";
 import Profile from "./profile";
@@ -37,6 +37,8 @@ import { Mail as MailType } from '../data';
 import { UserAuth } from "@/app/context/AuthContext";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {Spinner} from "@/components/ui/spinner";
+
 
 interface MailProps {
   mails: MailType[];
@@ -120,11 +122,17 @@ export function Mail({
     setInputValue("");
 
     try {
+      if(activeCategory === "Private") {
+        await addMessageToPrivateChannel(newPost, selectedIconName === "chat" || selectedIconName === "" ? "chat" : "prompt");
+      }
+      else
+      {
       const trailsCount = await addPost(newPost, activeCategory, selectedIconName === "chat" || selectedIconName === "" ? "chat" : "prompt");
       if (trailsCount !== undefined) {
         toast.info(trailsCount); 
          // Update the trails count
       }
+    }
       fetchPosts(activeCategory); 
     } catch (error) {
       console.error("Error adding post:", error);
@@ -175,13 +183,13 @@ export function Mail({
               isCollapsed={isCollapsed}
               links={[
                 { title: "General", label: "", icon: House, variant: "default" },
-                // { title: "Private", label: "", icon: GlobeLock, variant: "ghost" },
+                { title: "Private", label: "", icon: GlobeLock, variant: "ghost" },
                 // { title: "Expert", label: "", icon: BookOpenText, variant: "ghost" },
                 { title: "Text", label: "", icon: List, variant: "ghost" },
                 { title: "Images", label: "", icon: Images, variant: "ghost" },
                 { title: "Logos", label: "", icon: Biohazard, variant: "ghost" },
-                { title: "Resumes", label: "", icon: ClipboardList, variant: "ghost" },
                 { title: "Memes", label: "", icon: Palette, variant: "ghost" },
+                { title: "Resumes", label: "", icon: ClipboardList, variant: "ghost" },
               ]}
               onLinkClick={handleCategoryChange}
             />
@@ -206,7 +214,9 @@ export function Mail({
               </div>
               <TabsContent value="all" className="m-0 h-[600px]">
                 {isLoading ? (
-                  <p>Loading...</p>
+                  <div className="flex items-center justify-center mt-72 gap-12">
+                  <Spinner size="medium" >Loading...</Spinner>
+                </div>
                 ) : (
                   <MailList items={mails} category={activeCategory} />
                 )}

@@ -1,12 +1,17 @@
 import React, { useState, useRef } from 'react';
 import { CopyIcon, CheckIcon } from '@radix-ui/react-icons';
+import { Badge } from "@/components/ui/badge";
+import { BadgeEuro, ThumbsDown, ThumbsUp } from 'lucide-react';
+import { likePost,dislikePost } from '@/app/firebase';
+import { toast } from 'react-toastify';
 
 interface TextsProps {
   generatedText: string;
-  onCopy: () => void; 
+  post: any;
+  category: string;
 }
 
-const Texts: React.FC<TextsProps> = ({ generatedText, onCopy }) => {
+const Texts: React.FC<TextsProps> = ({ generatedText,post,category }) => {
   const [copied, setCopied] = useState(false);
   const textContentRef = useRef<HTMLDivElement>(null);
 
@@ -17,28 +22,59 @@ const Texts: React.FC<TextsProps> = ({ generatedText, onCopy }) => {
         .then(() => {
           setCopied(true);
           setTimeout(() => setCopied(false), 2000); 
-          onCopy(); 
         })
         .catch((error) => console.error('Failed to copy: ', error));
     }
+    // toast.info('Text copied to clipboard', {
+    //   position: "top-right",
+    //   autoClose: 100,
+    //   hideProgressBar: false,
+    //   closeOnClick: true,
+    //   pauseOnHover: true,
+    //   draggable: true,
+    //   progress: undefined,
+    // }
+    // );
   };
+
+  const handlePostLike = async (postId: string) => {
+    await likePost(postId, category);
+  }
+
+  const handlePostDislike = async (postId: string) => {
+    await dislikePost(postId, category);
+  }
 
   return (
     <div className="pt-4 relative">
       <div ref={textContentRef} className="w-fit  text-content whitespace-pre-wrap text-left">
         {generatedText}
       </div>
-      <button
-        onClick={handleCopy}
-        className="absolute top-45 right-52 p-1 rounded"
-      >
+      <div className="flex gap-64 justify-between">
+                        <Badge variant="stone">
+                          <button onClick={() => handlePostLike(post.id)}>
+                            <ThumbsUp strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-blue-500 mr-2" />
+                          </button>
+                          <span>{post.likes?.length || 0}</span>
+                        </Badge>
+                        <Badge variant="stone">
+                          <button onClick={() => handlePostDislike(post.id)}>
+                            <ThumbsDown strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-red-500 mr-2" />
+                          </button>
+                          <span>{post.dislikes?.length || 0}</span>
+                        </Badge>
+                        <Badge variant="stone">
+                        <button
+        onClick={handleCopy}      >
         <CopyIcon className="h-6 w-6" />
+      
       </button>
       {copied && (
-        <div className="text-green-500 absolute top-45 right-60">
           <CheckIcon className="h-6 w-6" />
-        </div>
-      )}
+        )}
+      </Badge>
+                      </div>
+    
     </div>
   );
 };
