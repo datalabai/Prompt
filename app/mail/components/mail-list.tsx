@@ -1,4 +1,4 @@
-import { ComponentProps, useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow } from 'date-fns';
 import { cn } from "@/lib/utils";
@@ -7,12 +7,13 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Mail } from "../data";
 import { useMail } from "../use-mail";
 import { MessageSquare } from "lucide-react";
-import React from "react";
 import { addReply, listenForReplies, auth, likeReply, dislikeReply, likePost, dislikePost } from "@/app/firebase";
 import { ChatBubbleIcon, MagicWandIcon, PlusCircledIcon } from '@radix-ui/react-icons';
 import { ThumbsUp, ThumbsDown, ArrowDownToLine } from "lucide-react";
 import { UserAuth } from "@/app/context/AuthContext";
 import { toast } from "react-toastify";
+import Texts from "./text";
+import { CopyIcon } from '@radix-ui/react-icons';
 
 interface MailListProps {
   items: Mail[];
@@ -135,6 +136,10 @@ export function MailList({ items, category }: MailListProps) {
     }
   };
 
+  const handleCopy = () => {
+    console.log('Copy button clicked');
+  };
+
   useEffect(() => {
     if (items.length === 0) {
       setReplies({});
@@ -214,7 +219,7 @@ export function MailList({ items, category }: MailListProps) {
                     </Badge>
                   </div>
                 </div>
-                {item.image && (
+                {item.image && category !== 'Text' && (
                   <>
                     <img src={item.image} alt="Image" width={300} height={550} className="mt-4 mb-2 rounded lg" />
                     <div className="flex gap-20 mt-2 justify">
@@ -230,7 +235,7 @@ export function MailList({ items, category }: MailListProps) {
                         </button>
                         <span>{item.dislikes?.length || 0}</span>
                       </Badge>
-                      {item.name !== item.name && item.name !== auth.currentUser?.displayName && (
+                      {item.name !== auth.currentUser?.displayName && (
                         <Badge variant="stone">
                           <MagicWandIcon className="h-4 w-4 cursor-pointer hover:text-purple-500" onClick={() => handleMagicPrompt(item.text, item.id)} />
                         </Badge>
@@ -242,6 +247,29 @@ export function MailList({ items, category }: MailListProps) {
                       )}
                     </div>
                   </>
+                )}
+                {category === 'Text' &&  (
+                  item.image === './loading.gif' ? (
+                    <img src={item.image} alt="Image" width={300} height={550} className="mt-4 mb-2 rounded lg" />
+                  ) : (
+                    <div>
+                      <Texts generatedText={item.image} onCopy={handleCopy} />
+                      <div className="flex gap-64 mt-2 items-center">
+                        <Badge variant="stone">
+                          <button onClick={() => handlePostLike(item.id)}>
+                            <ThumbsUp strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-blue-500 mr-2" />
+                          </button>
+                          <span>{item.likes?.length || 0}</span>
+                        </Badge>
+                        <Badge variant="stone">
+                          <button onClick={() => handlePostDislike(item.id)}>
+                            <ThumbsDown strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-red-500 mr-2" />
+                          </button>
+                          <span>{item.dislikes?.length || 0}</span>
+                        </Badge>
+                      </div>
+                    </div>
+                  )
                 )}
                 {showInputItemId === item.id && (
                   <>
@@ -265,23 +293,26 @@ export function MailList({ items, category }: MailListProps) {
                                     )}
                                 </div>
                                 {reply.image && (
-                                  <><img src={reply.image} alt="Image" width={300} height={550} className="mt-2 mb-2 rounded lg" /><div className="flex gap-9 mt-2">
-                                    <Badge variant="stone">
-                                      <button onClick={() => handleLike(item.id, reply.id)}>
-                                        <ThumbsUp strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-blue-500 mr-2" />
-                                      </button>
-                                      <span>{reply.likes?.length || 0}</span>
-                                    </Badge>
-                                    <Badge variant="stone">
-                                      <button onClick={() => handleDislike(item.id, reply.id)}>
-                                        <ThumbsDown strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-red-500 mr-2" />
-                                      </button>
-                                      <span>{reply.dislikes?.length || 0}</span>
-                                    </Badge>
-                                    <Badge variant="stone">
+                                  <>
+                                    <img src={reply.image} alt="Image" width={300} height={550} className="mt-2 mb-2 rounded lg" />
+                                    <div className="flex gap-9 mt-2">
+                                      <Badge variant="stone">
+                                        <button onClick={() => handleLike(item.id, reply.id)}>
+                                          <ThumbsUp strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-blue-500 mr-2" />
+                                        </button>
+                                        <span>{reply.likes?.length || 0}</span>
+                                      </Badge>
+                                      <Badge variant="stone">
+                                        <button onClick={() => handleDislike(item.id, reply.id)}>
+                                          <ThumbsDown strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-red-500 mr-2" />
+                                        </button>
+                                        <span>{reply.dislikes?.length || 0}</span>
+                                      </Badge>
+                                      <Badge variant="stone">
                                         <ArrowDownToLine strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-purple-500" onClick={() => Download(reply.image)} />
                                       </Badge>
-                                  </div></>
+                                    </div>
+                                  </>
                                 )}
                               </div>
                             </div>
@@ -321,6 +352,11 @@ export function MailList({ items, category }: MailListProps) {
                         </div>
                       )}
                     </div>
+                    {selectedOption === 'prompt' && (
+                      <div className="w-full mt-2">
+                        <Texts generatedText="This is the GPT-generated text." onCopy={handleCopy} />
+                      </div>
+                    )}
                   </>
                 )}
               </div>

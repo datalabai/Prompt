@@ -130,28 +130,87 @@ export const addUserToFirestore = async (user) => {
     }
   };
 
-  export const addPost = async (post, category, option) => {
-    console.log("Adding post:", post);
-    if (option === "chat" || option === "") {
-      try {
-        const docRef = await addDoc(collection(db, category), {
-          name: post.name,
-          email: post.email,
-          text: post.text,
-          date: post.date,
-          photo: post.photo,
-          image: post.image,
-          likes: [],
-          dislikes: [],
-          read: true,
-        });
-        console.log("Document written with ID: ", docRef.id);
-      } catch (e) {
-        console.error("Error adding document: ", e);
-      }
-      return;
+  // FetchText function to fetch text from the endpoint
+export const FetchText = async (text) => {
+  alert(text);
+  const user = auth.currentUser;
+  if (!user) {
+    throw new Error("No user is signed in.");
+  }
+
+  const userRef = doc(db, "users", user.uid);
+  const userDocSnap = await getDoc(userRef);
+
+  if (!userDocSnap.exists()) {
+    throw new Error("User document does not exist.");
+  }
+
+  const userDoc = userDocSnap.data();
+  let freeTrials = await resetFreeTrials(userRef, userDoc);
+
+  if (freeTrials <= 0) {
+    return {text:"",trails:freeTrials}
+  }
+  try {
+    
+    const response = await fetch(`https://sandbox-410710.el.r.appspot.com/chat?prompt=${text}`);
+    const data = await response.text();
+    alert(data);
+    
+    await updateDoc(userRef, {
+      freeTrials: freeTrials - 1,
+    });
+
+    return {text:data,trails:freeTrials}
+  } catch (error) {
+    console.error("Error fetching image:", error);
+    return "Failed to generate image. Please try again later.";
+  }
+};
+
+// addPost function to add a post to Firebase
+export const addPost = async (post, category, option) => {
+  console.log("Adding post:", post);
+
+  if (option === "chat" || option === "") {
+    try {
+      const docRef = await addDoc(collection(db, category), {
+        name: post.name,
+        email: post.email,
+        text: post.text,
+        date: post.date,
+        photo: post.photo,
+        image: post.image,
+        likes: [],
+        dislikes: [],
+        read: true,
+      });
+      console.log("Document written with ID: ", docRef.id);
+    } catch (e) {
+      console.error("Error adding document: ", e);
     }
-  
+    return;
+  }
+
+  if (category === "Text") {
+    const data = await FetchText(post.text);
+
+
+    const docRef = await addDoc(collection(db, category), {
+      name: post.name,
+      email: post.email,
+      text: post.text,
+      date: post.date,
+      photo: post.photo,
+      likes: [],
+      dislikes: [],
+      read: true,
+      image: data.text,
+    });
+
+    console.log("Document written with ID: ", docRef.id);
+    return `You have ${data.trails} free trails left`; // This line may need adjustment based on actual response format
+  } else {
     const data = await fetchImageForMessage(post.text);
     if (data.trails <= 0) {
       return "You have no free trails left";
@@ -176,9 +235,10 @@ export const addUserToFirestore = async (user) => {
     } catch (e) {
       console.error("Error adding document: ", e);
     }
-  
     return `You have ${data.trails} free trails left`;
-  };
+  }
+};
+
   
   
   export const getPosts = (category, callback) => {

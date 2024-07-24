@@ -125,7 +125,7 @@ export function Mail({
         toast.info(trailsCount); 
          // Update the trails count
       }
-      fetchPosts(activeCategory); // Refresh posts after adding new one
+      fetchPosts(activeCategory); 
     } catch (error) {
       console.error("Error adding post:", error);
       // Optionally, handle the error by removing the temporary post or showing an error message
