@@ -1,18 +1,18 @@
-import "@/config/globals.css"
-import { Metadata, Viewport } from "next"
+import "@/config/globals.css";
+import { Metadata, Viewport } from "next";
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
 
-import { siteConfig } from "@/config/site"
-import { fontSans } from "@/lib/fonts"
-import { cn } from "@/lib/utils"
-import { ThemeProvider } from "@/components/providers"
-import { TailwindIndicator } from "@/components/tailwind-indicator"
-import { ThemeSwitcher } from "@/components/theme-switcher"
-import { SiteHeader } from "@/components/site-header"
-import { SiteFooter } from "@/components/site-footer"
-import { AuthContextProvider } from "./context/AuthContext"
-
+import { siteConfig } from "@/config/site";
+import { fontSans } from "@/lib/fonts";
+import { cn } from "@/lib/utils";
+import { ThemeProvider } from "@/components/providers";
+import { TailwindIndicator } from "@/components/tailwind-indicator";
+import { ThemeSwitcher } from "@/components/theme-switcher";
+import { SiteHeader } from "@/components/site-header";
+import { SiteFooter } from "@/components/site-footer";
+import { AuthContextProvider } from "./context/AuthContext";
+import GoogleAnalytics from "./GoogleAnalytics";
 
 export const metadata: Metadata = {
   title: {
@@ -64,17 +64,17 @@ export const metadata: Metadata = {
     apple: "/apple-touch-icon.png",
   },
   manifest: `${siteConfig.url}`,
-}
+};
 
 export const viewport: Viewport = {
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "white" },
     { media: "(prefers-color-scheme: dark)", color: "black" },
   ],
-}
+};
 
 interface RootLayoutProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 export default function RootLayout({ children }: RootLayoutProps) {
@@ -88,29 +88,28 @@ export default function RootLayout({ children }: RootLayoutProps) {
             fontSans.variable
           )}
         >
+          <GoogleAnalytics />
           <AuthContextProvider>
-          <ToastContainer />
-
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <div vaul-drawer-wrapper="">
-            <SiteHeader />
-              <div className="relative flex min-h-screen flex-col bg-background mt-2">
-              
-                {children}
+            <ToastContainer />
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <div vaul-drawer-wrapper="">
+                <SiteHeader />
+                <div className="relative flex min-h-screen flex-col bg-background mt-2">
+                  {children}
+                </div>
+                <SiteFooter />
               </div>
-              <SiteFooter />
-            </div>
-            <TailwindIndicator />
-            <ThemeSwitcher />
-          </ThemeProvider>
+              <TailwindIndicator />
+              <ThemeSwitcher />
+            </ThemeProvider>
           </AuthContextProvider>
         </body>
       </html>
     </>
-  )
+  );
 }

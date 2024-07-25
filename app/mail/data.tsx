@@ -10,6 +10,7 @@ export const mails = [
     likes: [],
     dislikes:[],
     read: true,
+    option:"chat",
   },
 ]
 

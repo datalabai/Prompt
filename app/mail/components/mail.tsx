@@ -81,7 +81,6 @@ export function Mail({
   const fetchPosts = useCallback(async (category: string) => {
     setIsLoading(true);
     const unsubscribe = getPosts(category, (posts: any) => {
-      console.log(posts);
       setMails(posts);
       setIsLoading(false);
     });
@@ -115,6 +114,7 @@ export function Mail({
       image: selectedIconName === "chat" || selectedIconName === "" ? "" : "./loading.gif",
       likes: [],
       dislikes: [],
+      option: selectedIconName,
     };
 
     // Update the local state immediately
@@ -123,11 +123,11 @@ export function Mail({
 
     try {
       if(activeCategory === "Private") {
-        await addMessageToPrivateChannel(newPost, selectedIconName === "chat" || selectedIconName === "" ? "chat" : "prompt");
+        await addMessageToPrivateChannel(newPost, selectedIconName);
       }
       else
       {
-      const trailsCount = await addPost(newPost, activeCategory, selectedIconName === "chat" || selectedIconName === "" ? "chat" : "prompt");
+      const trailsCount = await addPost(newPost, activeCategory, selectedIconName);
       if (trailsCount !== undefined) {
         toast.info(trailsCount); 
          // Update the trails count

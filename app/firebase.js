@@ -26,10 +26,10 @@ const MAX_FREE_TRIALS =10;
 export const transactions = async () => {
   try {
     const uid = auth.currentUser.uid; 
-    console.log('uid:', uid); 
+    // console.log('uid:', uid); 
     const response = await fetch(`https://wallet-api-vyxx.onrender.com/trans?uid=${uid}`);
     const data = await response.json();
-    console.log('data:', data);
+    // console.log('data:', data);
     return data; 
   }
   catch (error) {
@@ -41,10 +41,10 @@ export const rewards = async () => {
   try {
 
     const uid = auth.currentUser.uid;
-    console.log('uid:', uid);
+    // console.log('uid:', uid);
     const response = await fetch(`https://wallet-api-vyxx.onrender.com/rewards?uid=${uid}`);
     const data = await response.json();
-    console.log('data:', data);
+    // console.log('data:', data);
     return data;
   }
   catch (error) {
@@ -70,8 +70,8 @@ export const getProfile = async () => {
 
     const rewards = await fetch(`https://wallet-api-vyxx.onrender.com/rewards?uid=${uid}`).then(res => res.json());
     const transactions = await fetch(`https://wallet-api-vyxx.onrender.com/transactions?uid=${uid}`).then(res => res.json());
-    console.log('rewards:', rewards);
-    console.log('transactions:', transactions);
+    // console.log('rewards:', rewards);
+    // console.log('transactions:', transactions);
 
     return { user: data, rewards: rewards, transactions: transactions };
   } catch (error) {
@@ -81,14 +81,15 @@ export const getProfile = async () => {
 };
 
 export const addUserToFirestore = async (user) => {
-    console.log("add user to firebase");
+   console.log(user.photoURL);
+    // console.log("add user to firebase");
     try {
       const userRef = doc(db, "users", user.uid);
       // Check if the user document already exists
       const docSnap = await getDoc(userRef);
-      console.log(docSnap.data());
+      // console.log(docSnap.data());
       if (docSnap.exists()) {
-        console.log("Document with UID", user.uid, "already exists.");
+        // console.log("Document with UID", user.uid, "already exists.");
         await createPrivateChannel(user.uid);
         return; // Exit the function if the user document exists
       }    
@@ -102,7 +103,7 @@ export const addUserToFirestore = async (user) => {
       });
       await createPrivateChannel(user.uid);
       await fetch(`https://wallet-api-vyxx.onrender.com/wallet?uid=${user.uid}`);
-      console.log("User added successfully to Firestore.");
+      // console.log("User added successfully to Firestore.");
     } catch (error) {
       console.error("Error adding user to Firestore:", error);
     }
@@ -225,7 +226,6 @@ export const FetchText = async (text) => {
     
     const response = await fetch(`https://sandbox-410710.el.r.appspot.com/chat?prompt=${text}`);
     const data = await response.text();
-    
     await updateDoc(userRef, {
       freeTrials: freeTrials - 1,
     });
@@ -241,46 +241,8 @@ export const FetchText = async (text) => {
 export const addPost = async (post, category, option) => {
   console.log("Adding post:", post);
 
-  if (option === "chat" || option === "") {
-    try {
-      const docRef = await addDoc(collection(db, category), {
-        name: post.name,
-        email: post.email,
-        text: post.text,
-        date: post.date,
-        photo: post.photo,
-        image: post.image,
-        likes: [],
-        dislikes: [],
-        read: true,
-      });
-      console.log("Document written with ID: ", docRef.id);
-    } catch (e) {
-      console.error("Error adding document: ", e);
-    }
-    return;
-  }
-
-  if (category === "Text") {
-    const data = await FetchText(post.text);
-
-
-    const docRef = await addDoc(collection(db, category), {
-      name: post.name,
-      email: post.email,
-      text: post.text,
-      date: post.date,
-      photo: post.photo,
-      likes: [],
-      dislikes: [],
-      read: true,
-      image: data.text,
-    });
-
-    console.log("Document written with ID: ", docRef.id);
-    return `You have ${data.trails} free trails left`; // This line may need adjustment based on actual response format
-  } else {
-    const data = await fetchImageForMessage(post.text);
+  const generateAndAddPost = async (prompt, postText) => {
+    const data = await fetchImageForMessage(prompt + postText);
     if (data.trails <= 0) {
       return "You have no free trails left";
     }
@@ -291,7 +253,7 @@ export const addPost = async (post, category, option) => {
       const docRef = await addDoc(collection(db, category), {
         name: post.name,
         email: post.email,
-        text: post.text,
+        text: prompt + postText,
         date: post.date,
         photo: post.photo,
         likes: [],
@@ -299,14 +261,128 @@ export const addPost = async (post, category, option) => {
         read: true,
         image: data.image,
         createdAt: serverTimestamp(),
+        option: option,
       });
       console.log("Document written with ID: ", docRef.id);
+      return `You have ${data.trails} free trails left`;
     } catch (e) {
       console.error("Error adding document: ", e);
+      return "Error adding document";
     }
-    return `You have ${data.trails} free trails left`;
+  };
+
+  switch (option) {
+    case 'memes':
+      return await generateAndAddPost("Meme on ", post.text);
+
+    case 'logos':
+      return await generateAndAddPost("Logo on ", post.text);
+
+    case 'images':
+      return await generateAndAddPost("Image on ", post.text);
+
+    case 'text':
+    case 'resumes':
+      const textData = await FetchText(post.text);
+      if (textData.trails <= 0) {
+        return "You have no free trails left";
+      }
+      try {
+        const docRef = await addDoc(collection(db, category), {
+          name: post.name,
+          email: post.email,
+          text: post.text,
+          date: post.date,
+          photo: post.photo,
+          likes: [],
+          dislikes: [],
+          read: true,
+          image: textData.text,
+          option: option,
+        });
+        console.log("Document written with ID: ", docRef.id);
+        return `You have ${textData.trails} free trails left`;
+      } catch (e) {
+        console.error("Error adding document: ", e);
+        return "Error adding document";
+      }      
+    case 'chat':
+    case '':
+      try {
+        const docRef = await addDoc(collection(db, category), {
+          name: post.name,
+          email: post.email,
+          text: post.text,
+          date: post.date,
+          photo: post.photo,
+          image: post.image,
+          likes: [],
+          dislikes: [],
+          read: true,
+          option: option,
+        });
+        console.log("Document written with ID: ", docRef.id);
+        return;
+      } catch (e) {
+        console.error("Error adding document: ", e);
+        return "Error adding document";
+      }
+
+    default:
+      if (category === "Text") {
+        const textData = await FetchText(post.text);
+        if (textData.trails <= 0) {
+          return "You have no free trails left";
+        }
+        try {
+          const docRef = await addDoc(collection(db, category), {
+            name: post.name,
+            email: post.email,
+            text: post.text,
+            date: post.date,
+            photo: post.photo,
+            likes: [],
+            dislikes: [],
+            read: true,
+            image: textData.text,
+          });
+          console.log("Document written with ID: ", docRef.id);
+          return `You have ${textData.trails} free trails left`;
+        } catch (e) {
+          console.error("Error adding document: ", e);
+          return "Error adding document";
+        }
+      } else {
+        const data = await fetchImageForMessage(post.text);
+        if (data.trails <= 0) {
+          return "You have no free trails left";
+        }
+        if (data.image === 'Failed to generate image. Please try again later.') {
+          return "fail";
+        }
+        try {
+          const docRef = await addDoc(collection(db, category), {
+            name: post.name,
+            email: post.email,
+            text: post.text,
+            date: post.date,
+            photo: post.photo,
+            likes: [],
+            dislikes: [],
+            read: true,
+            image: data.image,
+            createdAt: serverTimestamp(),
+          });
+          console.log("Document written with ID: ", docRef.id);
+          return `You have ${data.trails} free trails left`;
+        } catch (e) {
+          console.error("Error adding document: ", e);
+          return "Error adding document";
+        }
+      }
   }
 };
+
 
   
   
@@ -384,7 +460,6 @@ export const addPost = async (post, category, option) => {
     try {
       const response = await fetch(`https://sandbox-410710.el.r.appspot.com/?prompt=${message}`);
       const data = await response.text();
-  
       // Decrement free trials
       await updateDoc(userRef, {
         freeTrials: freeTrials - 1,
@@ -397,9 +472,9 @@ export const addPost = async (post, category, option) => {
     }
   };
   export const addReply = async (postId,category,reply,option) => {
-    console.log("Adding reply:", reply);
+    // console.log("Adding reply:", reply);
     try {
-      if(option === "prompt"){
+      if(option === "prompt" && category !=="Text"){
         console.log(reply);
         const data= await fetchImageForMessage(reply.text); 
         if(data.freeTrials<=0)
@@ -422,6 +497,26 @@ export const addPost = async (post, category, option) => {
         });
        return `you have ${data.trails} freeTrails left`;
       }
+      if(option === "prompt" && category ==="Text"){
+        const data= await FetchText(reply.text); 
+        if(data.trails<=0)
+          {
+            return "You have no freeTrails left";
+          }
+        const postRef = doc(db, category, postId);
+        await addDoc(collection(postRef, "replies"), {
+          name:reply.name,
+          text:reply.text,
+          email:reply.email,
+          date:reply.date,
+          createdAt: serverTimestamp(),
+          image:data.text,
+          photo:reply.photo,
+          likes:[],
+          dislikes:[],
+        });
+       return `you have ${data.trails} freeTrails left`;
+      }
       if(option === "chat")
       {
       const postRef = doc(db, category, postId);
@@ -436,7 +531,7 @@ export const addPost = async (post, category, option) => {
         ...reply,
         createdAt: serverTimestamp(),
       });
-      console.log("Reply added to post ID: ", postId);
+      // console.log("Reply added to post ID: ", postId);
       return;
     } catch (e) {
       console.error("Error adding reply: ", e);
@@ -519,7 +614,7 @@ export const listenForReplies = (postId, category, callback) => {
         console.warn("Document with no data found:", doc.id);
       }
     });
-    console.log("Replies:", replies);
+    // console.log("Replies:", replies);
     callback(replies);
   }, (error) => {
     console.error("Error listening for replies:", error);

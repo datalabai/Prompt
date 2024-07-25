@@ -25,7 +25,6 @@ export function ChatList({
       messagesContainerRef.current.scrollTop =
         messagesContainerRef.current.scrollHeight;
     }
-    console.log(selectedUser);
     //alert(selectedUser);
   }, [messages]);
 

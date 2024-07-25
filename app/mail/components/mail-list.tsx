@@ -219,46 +219,49 @@ export function MailList({ items, category }: MailListProps) {
                     </Badge>
                   </div>
                 </div>
-                {item.image && category !== 'Text' && (
-                  <>
-                    <img src={item.image} alt="Image" width={300} height={550} className="mt-4 mb-2 rounded lg" />
-                    <div className="flex gap-20 mt-2 justify">
-                      <Badge variant="stone">
-                        <button onClick={() => handlePostLike(item.id)}>
-                          <ThumbsUp strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-blue-500 mr-2" />
-                        </button>
-                        <span>{item.likes?.length || 0}</span>
-                      </Badge>
-                      <Badge variant="stone">
-                        <button onClick={() => handlePostDislike(item.id)}>
-                          <ThumbsDown strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-red-500 mr-2" />
-                        </button>
-                        <span>{item.dislikes?.length || 0}</span>
-                      </Badge>
-                      {item.name !== auth.currentUser?.displayName && (
-                        <Badge variant="stone">
-                          <MagicWandIcon className="h-4 w-4 cursor-pointer hover:text-purple-500" onClick={() => handleMagicPrompt(item.text, item.id)} />
-                        </Badge>
-                      )}
-                      {item.image && (
-                        <Badge variant="stone">
-                          <ArrowDownToLine strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-purple-500" onClick={() => Download(item.image)} />
-                        </Badge>
-                      )}
-                    </div>
-                  </>
-                )}
-                {category === 'Text' &&  (
-                  item.image === './loading.gif' ? (
-                    <img src={item.image} alt="Image" width={300} height={550} className="mt-4 mb-2 rounded lg" />
-                  ) : (
-                    item.image!=='' &&  (
-                    <div>
-                      <Texts generatedText={item.image} post={item} category={category} />
-                    </div>
-                  )
-                  )         
-                )}
+                {item.image && category !== 'Text' && item.option !== 'text' && category !== 'Resumes' && item.option!=='resumes' && (
+  <>
+    <img src={item.image} alt="Image" width={300} height={550} className="mt-4 mb-2 rounded-lg" />
+    <div className="flex gap-20 mt-2">
+      <Badge variant="stone">
+        <button onClick={() => handlePostLike(item.id)}>
+          <ThumbsUp strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-blue-500 mr-2" />
+        </button>
+        <span>{item.likes?.length || 0}</span>
+      </Badge>
+      <Badge variant="stone">
+        <button onClick={() => handlePostDislike(item.id)}>
+          <ThumbsDown strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-red-500 mr-2" />
+        </button>
+        <span>{item.dislikes?.length || 0}</span>
+      </Badge>
+      {/* {item.name !== auth.currentUser?.displayName && (
+        <Badge variant="stone">
+          <MagicWandIcon className="h-4 w-4 cursor-pointer hover:text-purple-500" onClick={() => handleMagicPrompt(item.text, item.id)} />
+        </Badge>
+      )} */}
+      {item.image && (
+        <Badge variant="stone">
+          <ArrowDownToLine strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-purple-500" onClick={() => Download(item.image)} />
+        </Badge>
+      )}
+    </div>
+  </>
+)}
+
+
+{(category === 'Text' || item.option === 'text' || category === 'Resumes' || item.option ==='resumes') && (
+  item.image === './loading.gif' ? (
+    <img src={item.image} alt="Image" width={300} height={550} className="mt-4 mb-2 rounded-lg" />
+  ) : (
+    item.image !== '' && (
+      <div>
+        <Texts generatedText={item.image} post={item} category={category} />
+      </div>
+    )
+  )
+)}
+
                 {showInputItemId === item.id && (
                   <>
                     <div className="gap-2 mb-2">
