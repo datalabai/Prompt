@@ -219,10 +219,10 @@ export function MailList({ items, category }: MailListProps) {
                     </Badge>
                   </div>
                 </div>
-                {item.image && category !== 'Text' && item.option !== 'text' && category !== 'Resumes' && item.option!=='resumes' && (
+                {item.image && category !== 'Text' && item.option !== 'text' && category!=='Resumes' &&  item.option!=='resumes' &&(
   <>
     <img src={item.image} alt="Image" width={300} height={550} className="mt-4 mb-2 rounded-lg" />
-    <div className="flex gap-20 mt-2">
+    <div className="flex gap-20 mt-2 ">
       <Badge variant="stone">
         <button onClick={() => handlePostLike(item.id)}>
           <ThumbsUp strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-blue-500 mr-2" />
@@ -249,8 +249,7 @@ export function MailList({ items, category }: MailListProps) {
   </>
 )}
 
-
-{(category === 'Text' || item.option === 'text' || category === 'Resumes' || item.option ==='resumes') && (
+{(category === 'Text' || item.option === 'text' || category === 'Resumes' || item.option === 'resumes') && (
   item.image === './loading.gif' ? (
     <img src={item.image} alt="Image" width={300} height={550} className="mt-4 mb-2 rounded-lg" />
   ) : (

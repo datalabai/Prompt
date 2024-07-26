@@ -131,12 +131,9 @@ export const addUserToFirestore = async (user) => {
     }
   };
 
-  export const addMessageToPrivateChannel = async (post,option) => {
+  export const addMessageToPrivateChannel = async (post, option) => {
     const user = auth.currentUser;
-    let privateChannelRef ;
-  
-  
-    privateChannelRef = doc(db, "privateChannels", user.uid);
+    const privateChannelRef = doc(db, "privateChannels", user.uid);
   
     // Ensure the private channel exists
     const privateChannelSnap = await getDoc(privateChannelRef);
@@ -147,59 +144,90 @@ export const addUserToFirestore = async (user) => {
   
     const messagesRef = collection(db, "privateChannels", user.uid, "messages");
   
-  
-    if(option==="prompt"){
+    const addMessage = async (messageData) => {
       try {
-        const data = await fetchImageForMessage(post.text);
-        if (data.trails <= 0) {
-          return "You have no free trails left";
-        }
-        if (data.image === 'Failed to generate image. Please try again later.') {
-          return "fail";
-        }
-        try {
-          const docRef = await addDoc(messagesRef, {
-            name: post.name,
-            email: post.email,
-            text: post.text,
-            date: post.date,
-            photo: post.photo,
-            likes: [],
-            dislikes: [],
-            read: true,
-            image: data.image,
-            createdAt: serverTimestamp(),
-          });
-          console.log("Document written with ID: ", docRef.id);
-          return `You have ${data.trails} free trails left`; // This line may need adjustment based on actual response format
+        const docRef = await addDoc(messagesRef, messageData);
+        console.log("Document written with ID: ", docRef.id);
+        return { type: 'success', id: docRef.id };
       } catch (error) {
         console.error("Error adding message: ", error);
-        return {type:'error',message:error};
+        return { type: 'error', message: error.message };
       }
-    } catch (error) {
-      console.error("Error fetching image:", error);
-      return "Failed to generate image. Please try again later.";
-    }
-  }
-  else{
-    try {
-      const docRef = await addDoc(messagesRef, {
+    };
+  
+    const generateAndAddMessage = async (prompt, postText) => {
+      const data = await fetchImageForMessage(prompt + postText);
+      if (data.trails <= 0) {
+        return "You have no free trails left";
+      }
+      if (data.image === 'Failed to generate image. Please try again later.') {
+        return "fail";
+      }
+      const messageData = {
         name: post.name,
         email: post.email,
-        text: post.text,
+        text: prompt + postText,
         date: post.date,
         photo: post.photo,
-        image: post.image,
         likes: [],
         dislikes: [],
         read: true,
-      });
-      console.log("Document written with ID: ", docRef.id);
+        image: data.image,
+        createdAt: serverTimestamp(),
+        option: option,
+      };
+      return await addMessage(messageData);
+    };
+  
+    switch (option) {
+      case 'memes':
+        return await generateAndAddMessage("Meme on ", post.text);
+  
+      case 'logos':
+        return await generateAndAddMessage("Logo on ", post.text);
+  
+      case 'images':
+        return await generateAndAddMessage("Image on ", post.text);
+  
+      case 'text':
+      case 'resumes':
+        const textData = await FetchText(post.text);
+        if (textData.trails <= 0) {
+          return "You have no free trails left";
+        }
+        const messageData = {
+          name: post.name,
+          email: post.email,
+          text: post.text,
+          date: post.date,
+          photo: post.photo,
+          likes: [],
+          dislikes: [],
+          read: true,
+          image: textData.text,
+          createdAt: serverTimestamp(),
+          option: option,
+        };
+        return await addMessage(messageData);
+  
+      case 'prompt':
+        return await generateAndAddMessage("Prompt on ", post.text);
+  
+      default:
+        const defaultMessageData = {
+          name: post.name,
+          email: post.email,
+          text: post.text,
+          date: post.date,
+          photo: post.photo,
+          image: post.image,
+          likes: [],
+          dislikes: [],
+          read: true,
+          createdAt: serverTimestamp(),
+        };
+        return await addMessage(defaultMessageData);
     }
-    catch (error) {
-      console.error("Error adding message: ", error);
-    }
-  }
   };
 
   // FetchText function to fetch text from the endpoint
@@ -335,7 +363,7 @@ export const addPost = async (post, category, option) => {
           return "You have no free trails left";
         }
         try {
-          const docRef = await addDoc(collection(db, category), {
+          const docRef = await addDoc(collection(db,category), {
             name: post.name,
             email: post.email,
             text: post.text,
@@ -400,8 +428,9 @@ export const addPost = async (post, category, option) => {
         snapshot.forEach((doc) => {
           messages.push({ id: doc.id, ...doc.data() });
         });
+        console.log("Messages:", messages);
         // Reverse the order of messages to display the newest first
-        callback(messages.reverse());
+        callback(messages);
       }); 
 
       return unsubscribe;
