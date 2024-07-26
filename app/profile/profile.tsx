@@ -13,6 +13,7 @@ import { Progress } from "@/components/ui/progress";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { auth } from "../firebase";
 
 type ProfileData = {
   address: string;
@@ -97,9 +98,9 @@ export default function Profile() {
                   <AvatarFallback>SR</AvatarFallback>
                 </Avatar>
                 <CardHeader className="ml-0">
-                  <CardTitle>{profileData.displayName}</CardTitle>
+                  <CardTitle>{auth.currentUser?.displayName}</CardTitle>
                   <CardDescription className="max-w-lg text-balance leading-relaxed">
-                    {profileData.email}
+                    {auth.currentUser?.email}
                   </CardDescription>
                 </CardHeader>
                 <CardFooter></CardFooter>
