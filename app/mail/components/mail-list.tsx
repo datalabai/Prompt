@@ -178,7 +178,6 @@ export function MailList({ items, category }: MailListProps) {
 
   return (
     <ScrollArea className="h-[600px]">
-      {user ? (
         <div className="flex flex-col gap-2 p-4 pt-0">
           {items.map((item) => (
             <button
@@ -275,7 +274,12 @@ export function MailList({ items, category }: MailListProps) {
                               <div className="flex flex-col ml-2">
                                 <div className="font-semibold">{capitalizeWords(reply.name)}</div>
                                 <div className="flex justify-between line-clamp-2 text-xs text-muted-foreground">
-                                  {reply.text}
+                                  {reply.option=== 'prompt' ? (
+                                    //make the text reveal on click
+                                    <div className="cursor-pointer blur-[2px]">{reply.text}</div>
+                                  ) : (
+                                    <div>{reply.text}</div>
+                                  )}                                 
                                    {reply.option === 'prompt' && (
                                       <Badge variant="stone">
                                         <MagicWandIcon className="h-4 w-4 cursor-pointer hover:text-purple-500" onClick={() => handleMagicPrompt(reply.text, item.id)} />
@@ -348,11 +352,6 @@ export function MailList({ items, category }: MailListProps) {
             </button>
           ))}
         </div>
-      ) : (
-        <div className="flex flex-col gap-2 p-4 pt-0">
-          <p>Please log in to view channels</p>
-        </div>
-      )}
     </ScrollArea>
   );
 }

@@ -25,16 +25,6 @@ const Texts: React.FC<TextsProps> = ({ generatedText,post,category }) => {
         })
         .catch((error) => console.error('Failed to copy: ', error));
     }
-    // toast.info('Text copied to clipboard', {
-    //   position: "top-right",
-    //   autoClose: 100,
-    //   hideProgressBar: false,
-    //   closeOnClick: true,
-    //   pauseOnHover: true,
-    //   draggable: true,
-    //   progress: undefined,
-    // }
-    // );
   };
 
   const handlePostLike = async (postId: string) => {

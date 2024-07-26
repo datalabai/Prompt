@@ -4,6 +4,8 @@ import Image from "next/image"
 
 
 import MailPage from "./mail/page"
+import { auth } from "./firebase"
+import { use } from "react"
 
 export default function IndexPage() {
   return (
@@ -25,6 +27,8 @@ export default function IndexPage() {
           alt="Mail"
           className="block dark:hidden"
         />
+      </section>
+      <section>
       </section>
       <section className="hidden md:block">
         <div className="overflow-hidden rounded-lg border bg-background shadow">
