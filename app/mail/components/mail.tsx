@@ -154,7 +154,6 @@ export function Mail({
 
   return (
     <TooltipProvider delayDuration={0}>
-      {user ? (
         <ResizablePanelGroup
           direction="horizontal"
           onLayout={(sizes: number[]) => {
@@ -233,11 +232,6 @@ export function Mail({
             )}
           </ResizablePanel>
         </ResizablePanelGroup>
-      ) : (
-        <div className="flex items-center mt-12 justify-center h-[600px]">
-          <p className="text-xl">Please Login to View Your Channels</p>
-        </div>
-      )}
     </TooltipProvider>
   );
 }

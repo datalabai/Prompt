@@ -178,7 +178,6 @@ export function MailList({ items, category }: MailListProps) {
 
   return (
     <ScrollArea className="h-[600px]">
-      {user ? (
         <div className="flex flex-col gap-2 p-4 pt-0">
           {items.map((item) => (
             <button
@@ -348,11 +347,6 @@ export function MailList({ items, category }: MailListProps) {
             </button>
           ))}
         </div>
-      ) : (
-        <div className="flex flex-col gap-2 p-4 pt-0">
-          <p>Please log in to view channels</p>
-        </div>
-      )}
     </ScrollArea>
   );
 }
