@@ -40,6 +40,12 @@ export function MailList({ items, category }: MailListProps) {
   };
 
   const handleMagicPrompt = async (message: string, itemId: any) => {
+    setPostText("");
+    if(!user)
+    {
+      toast.error('Please Login to continue');
+      return;
+    }
     const reply = {
       name: auth.currentUser?.displayName,
       email: auth.currentUser?.email,
@@ -87,6 +93,12 @@ export function MailList({ items, category }: MailListProps) {
   };
 
   const handlePostSubmit = async (itemId: any) => {
+    setPostText("");
+    if(!user)
+    {
+      toast.error('Please Login to continue');
+      return;
+    }
     if (postText.trim() !== "") {
       const reply = {
         name: auth.currentUser?.displayName,
@@ -274,7 +286,12 @@ export function MailList({ items, category }: MailListProps) {
                               <div className="flex flex-col ml-2">
                                 <div className="font-semibold">{capitalizeWords(reply.name)}</div>
                                 <div className="flex justify-between line-clamp-2 text-xs text-muted-foreground">
-                                  {reply.text}
+                                  {reply.option=== 'prompt' ? (
+                                    //make the text reveal on click
+                                    <div className="cursor-pointer blur-[2px]">{reply.text}</div>
+                                  ) : (
+                                    <div>{reply.text}</div>
+                                  )}                                 
                                    {reply.option === 'prompt' && (
                                       <Badge variant="stone">
                                         <MagicWandIcon className="h-4 w-4 cursor-pointer hover:text-purple-500" onClick={() => handleMagicPrompt(reply.text, item.id)} />
