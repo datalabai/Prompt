@@ -18,9 +18,19 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useQRCode } from 'next-qrcode';
 import { FiCheck, FiCopy } from 'react-icons/fi';
 import { MdQrCodeScanner } from "react-icons/md";
+import { Modal } from '@/components/ui/Modal';
 import { Button } from "@/components/ui/button";
-import Modal from "@/components/ui/Modal";
-
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 
 type ProfileData = {
@@ -185,7 +195,7 @@ export default function Profile() {
             )}
           </div>
         </div>
-        <Button className="mt-12" onClick={() => setIsModalOpen(true)}>Buy Credits</Button>
+        <Modal></Modal>
       </CardHeader>
       <CardFooter></CardFooter>
     </Card>
@@ -277,11 +287,6 @@ export default function Profile() {
           </div>
         </div>
       </div>
-      <Modal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSubmit={handleBuyCredits}
-      />
     </ScrollArea>
   );
 }
