@@ -286,12 +286,11 @@ export function MailList({ items, category }: MailListProps) {
                               <div className="flex flex-col ml-2">
                                 <div className="font-semibold">{capitalizeWords(reply.name)}</div>
                                 <div className="flex justify-between line-clamp-2 text-xs text-muted-foreground">
-                                  {reply.option=== 'prompt' ? (
-                                    //make the text reveal on click
-                                    <div className="cursor-pointer blur-[2px]">{reply.text}</div>
-                                  ) : (
-                                    <div>{reply.text}</div>
-                                  )}                                 
+                                  {reply.option === 'prompt' &&(
+                                    <>
+                                      <Badge>Suggested by</Badge>
+                                      <div className="cursor-pointer blur-[1px]">{reply.text}</div></>
+                                  ) }                             
                                    {reply.option === 'prompt' && (
                                       <Badge variant="stone">
                                         <MagicWandIcon className="h-4 w-4 cursor-pointer hover:text-purple-500" onClick={() => handleMagicPrompt(reply.text, item.id)} />
@@ -300,6 +299,7 @@ export function MailList({ items, category }: MailListProps) {
                                 </div>
                                 {reply.image && (
                                   <>
+                                  <Badge>Prompt Generated </Badge>
                                     <img src={reply.image} alt="Image" width={300} height={550} className="mt-2 mb-2 rounded lg" />
                                     <div className="flex gap-9 mt-2">
                                       <Badge variant="stone">

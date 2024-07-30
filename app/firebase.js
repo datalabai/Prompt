@@ -653,7 +653,7 @@ export const listenForReplies = (postId, category, callback) => {
         console.warn("Document with no data found:", doc.id);
       }
     });
-    // console.log("Replies:", replies);
+    console.log("Replies:", replies);
     callback(replies);
   }, (error) => {
     console.error("Error listening for replies:", error);

@@ -2,8 +2,9 @@ import React, { useRef, useEffect, useState } from 'react';
 import { PublicKey, Keypair, Connection, TransactionSignature } from '@solana/web3.js';
 import { encodeURL, createQR, findReference, FindReferenceError, validateTransfer } from '@solana/pay';
 import BigNumber from 'bignumber.js';
-import {Spinner} from './spinner'; // Import the Spinner component
+import { Spinner } from './spinner'; // Import the Spinner component
 import TickMark from './TickMark'; // Import the TickMark component
+import { toast } from 'react-toastify';
 
 interface SimpleQRCodeProps {
   input: string;
@@ -23,7 +24,7 @@ const SimpleQRCode: React.FC<SimpleQRCodeProps> = ({ input, setPaymentStatus, se
     splToken: PublicKey | undefined,
     reference: PublicKey,
     memo: string
-) {
+  ) {
     console.log(`5. Verifying the payment`);
 
     const connection = new Connection('https://devnet.helius-rpc.com/?api-key=423d5aa1-fcad-42f7-936f-3f8f318158c4', 'confirmed');
@@ -32,19 +33,19 @@ const SimpleQRCode: React.FC<SimpleQRCodeProps> = ({ input, setPaymentStatus, se
 
     // Merchant app should always validate that the transaction transferred the expected amount to the recipient
     const response = await validateTransfer(
-        connection,
-        found.signature,
-        {
-            recipient,
-            amount,
-            splToken: undefined,
-            reference,
-            memo
-        },
-        { commitment: 'confirmed' }
+      connection,
+      found.signature,
+      {
+        recipient,
+        amount,
+        splToken: undefined,
+        reference,
+        memo
+      },
+      { commitment: 'confirmed' }
     );
     return response;
-}
+  }
 
   useEffect(() => {
     const generateQRCode = async () => {
@@ -88,15 +89,16 @@ const SimpleQRCode: React.FC<SimpleQRCodeProps> = ({ input, setPaymentStatus, se
           }, 1000); // Check every second
         });
 
-        // console.log('Payment verified:', response);
-        // const response= await verifyTx(recipient, amount,splToken, reference, memo);
-
         if (signature) {
           setPaymentStatus('Payment confirmed');
+          toast.success('Payment confirmed', {
+            onClose: () => window.location.reload() // Reload the page or redirect after confirmation
+          });
         }
       } catch (error) {
         console.error(error);
         setPaymentStatus('Payment failed');
+        toast.error('Payment failed');
       } finally {
         setLoading(false); // Stop loading
       }
@@ -106,12 +108,12 @@ const SimpleQRCode: React.FC<SimpleQRCodeProps> = ({ input, setPaymentStatus, se
   }, [input, setPaymentStatus, setLoading]);
 
   return (
-    <div>
-      {loading && <Spinner size="large" />}
-      {!loading && paymentStatus === 'Payment confirmed' && <TickMark />}
-      <div ref={qrRef} id="qr-code" className="mt-4" style={{ display: loading || paymentStatus === 'Payment confirmed' || qrScanned ? 'none' : 'block' }} />
+    <div className="flex flex-col items-center">
+      <div ref={qrRef} />
+      {loading && <Spinner size="large" show={loading} />}
+      {qrScanned && <TickMark />}
     </div>
   );
-};
+}
 
 export default SimpleQRCode;

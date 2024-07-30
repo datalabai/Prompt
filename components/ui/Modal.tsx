@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import SimpleQRCode from './QrCode';
+import { toast } from 'react-toastify'; // Import toast for notifications
 
 interface ModalProps {
   isOpen: boolean;
@@ -28,8 +29,9 @@ export default function Modal({ isOpen, onClose, onSubmit }: ModalProps) {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-white p-4 rounded shadow-lg">
-        {paymentStatus==='pending'  ? (
+      {paymentStatus  === 'pending'  && (
+        <div className="bg-white p-4 rounded shadow-lg">
+        {!showQRCode ? (
           <>
             <h2 className="text-xl mb-4">Buy Credits</h2>
             <input
@@ -46,11 +48,12 @@ export default function Modal({ isOpen, onClose, onSubmit }: ModalProps) {
           <div className="flex flex-col items-center">
             
               <SimpleQRCode input={amount} setPaymentStatus={setPaymentStatus} setLoading={setLoading} loading={false} paymentStatus={''} />
-            <p className="mt-4">Payment Status: {paymentStatus}</p>
-            <button onClick={handleCloseQRCode} className="bg-gray-500 text-white p-2 rounded mt-4">Close</button>
+            {/* <p className="mt-4">Payment Status: {paymentStatus}</p>
+            <button onClick={handleCloseQRCode} className="bg-gray-500 text-white p-2 rounded mt-4">Close</button> */}
           </div>
         )}
       </div>
+      )}
     </div>
   );
 }
