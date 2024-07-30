@@ -4,10 +4,9 @@ import SimpleQRCode from './QrCode';
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: () => void;
 }
 
-export default function Modal({ isOpen, onClose, onSubmit }: ModalProps) {
+export default function Modal({ isOpen, onClose}: ModalProps) {
   const [showQRCode, setShowQRCode] = useState<boolean>(false);
   const [amount, setAmount] = useState<string>('');
   const [paymentStatus, setPaymentStatus] = useState<string>('pending');
@@ -15,7 +14,6 @@ export default function Modal({ isOpen, onClose, onSubmit }: ModalProps) {
 
   const handleSubmit = () => {
     setShowQRCode(true);
-    onSubmit();
   };
 
   const handleCloseQRCode = () => {
@@ -29,7 +27,7 @@ export default function Modal({ isOpen, onClose, onSubmit }: ModalProps) {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-white p-4 rounded shadow-lg">
-        {paymentStatus==='pending'  ? (
+        {!showQRCode ? (
           <>
             <h2 className="text-xl mb-4">Buy Credits</h2>
             <input

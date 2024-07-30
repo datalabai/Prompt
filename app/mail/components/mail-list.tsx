@@ -186,6 +186,25 @@ export function MailList({ items, category }: MailListProps) {
   const capitalizeWords = (str: string) => {
     return str.replace(/\b\w/g, (char) => char.toUpperCase());
   };
+
+  const ReplyText = (reply :any) => {
+    const words = reply.split(' ');
+  
+    let displayText;
+    if (words.length > 4) {
+      const firstThreeWords = words.slice(0, 3).join(' ');
+      const lastWord = words[words.length - 1];
+      displayText = `${firstThreeWords} ... ${lastWord}`;
+    } else {
+      displayText = reply.text; // If there are 4 or fewer words, display the full text
+    }
+  
+    return (
+      <div className="cursor-pointer ">
+        {displayText}
+      </div>
+    );
+  };
   
 
   return (
@@ -288,7 +307,7 @@ export function MailList({ items, category }: MailListProps) {
                                 <div className="flex justify-between line-clamp-2 text-xs text-muted-foreground">
                                   {reply.option=== 'prompt' ? (
                                     //make the text reveal on click
-                                    <div className="cursor-pointer blur-[2px]">{reply.text}</div>
+                                    <div className="cursor-pointer">{ReplyText(reply.text)}</div>
                                   ) : (
                                     <div>{reply.text}</div>
                                   )}                                 

@@ -4,6 +4,7 @@ import { encodeURL, createQR, findReference, FindReferenceError, validateTransfe
 import BigNumber from 'bignumber.js';
 import {Spinner} from './spinner'; // Import the Spinner component
 import TickMark from './TickMark'; // Import the TickMark component
+import { toast } from 'react-toastify';
 
 interface SimpleQRCodeProps {
   input: string;
@@ -88,11 +89,9 @@ const SimpleQRCode: React.FC<SimpleQRCodeProps> = ({ input, setPaymentStatus, se
           }, 1000); // Check every second
         });
 
-        // console.log('Payment verified:', response);
-        // const response= await verifyTx(recipient, amount,splToken, reference, memo);
-
         if (signature) {
           setPaymentStatus('Payment confirmed');
+          toast.success('Payment confirmed you got 150 Credits');
         }
       } catch (error) {
         console.error(error);

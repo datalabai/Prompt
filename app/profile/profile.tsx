@@ -279,7 +279,6 @@ export default function Profile() {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSubmit={handleBuyCredits}
       />
     </ScrollArea>
   );
