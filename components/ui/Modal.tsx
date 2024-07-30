@@ -29,7 +29,7 @@ export default function Modal({ isOpen, onClose, onSubmit }: ModalProps) {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-white p-4 rounded shadow-lg">
-        {!showQRCode ? (
+        {paymentStatus==='pending'  ? (
           <>
             <h2 className="text-xl mb-4">Buy Credits</h2>
             <input

@@ -1,8 +1,4 @@
 import Image from "next/image"
-
-
-
-
 import Profile from "./profile"
 import Link from "next/link"
 import { House } from "lucide-react"

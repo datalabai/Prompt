@@ -118,6 +118,12 @@ export function Mail({
 
 
   const handleSendMessage = async (message: string) => {
+    setInputValue("");
+    if(!user)
+      {
+        toast.error('Please Login to continue');
+        return;
+      }
     if (message.trim() === "") return;
   
     const newPost = {

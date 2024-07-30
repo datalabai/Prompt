@@ -40,6 +40,12 @@ export function MailList({ items, category }: MailListProps) {
   };
 
   const handleMagicPrompt = async (message: string, itemId: any) => {
+    setPostText("");
+    if(!user)
+    {
+      toast.error('Please Login to continue');
+      return;
+    }
     const reply = {
       name: auth.currentUser?.displayName,
       email: auth.currentUser?.email,
@@ -87,6 +93,12 @@ export function MailList({ items, category }: MailListProps) {
   };
 
   const handlePostSubmit = async (itemId: any) => {
+    setPostText("");
+    if(!user)
+    {
+      toast.error('Please Login to continue');
+      return;
+    }
     if (postText.trim() !== "") {
       const reply = {
         name: auth.currentUser?.displayName,

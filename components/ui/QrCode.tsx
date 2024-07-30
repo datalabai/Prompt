@@ -1,8 +1,8 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { PublicKey, Keypair, Connection, TransactionSignature } from '@solana/web3.js';
-import { encodeURL, createQR, findReference, FindReferenceError } from '@solana/pay';
+import { encodeURL, createQR, findReference, FindReferenceError, validateTransfer } from '@solana/pay';
 import BigNumber from 'bignumber.js';
-import { Spinner } from './spinner'; // Import the Spinner component
+import {Spinner} from './spinner'; // Import the Spinner component
 import TickMark from './TickMark'; // Import the TickMark component
 
 interface SimpleQRCodeProps {
@@ -15,6 +15,36 @@ interface SimpleQRCodeProps {
 
 const SimpleQRCode: React.FC<SimpleQRCodeProps> = ({ input, setPaymentStatus, setLoading, loading, paymentStatus }) => {
   const qrRef = useRef<HTMLDivElement>(null);
+  const [qrScanned, setQrScanned] = useState(false);
+
+  async function verifyTx(
+    recipient: PublicKey,
+    amount: BigNumber,
+    splToken: PublicKey | undefined,
+    reference: PublicKey,
+    memo: string
+) {
+    console.log(`5. Verifying the payment`);
+
+    const connection = new Connection('https://devnet.helius-rpc.com/?api-key=423d5aa1-fcad-42f7-936f-3f8f318158c4', 'confirmed');
+    // Merchant app locates the transaction signature from the unique reference address it provided in the transfer link
+    const found = await findReference(connection, reference);
+
+    // Merchant app should always validate that the transaction transferred the expected amount to the recipient
+    const response = await validateTransfer(
+        connection,
+        found.signature,
+        {
+            recipient,
+            amount,
+            splToken: undefined,
+            reference,
+            memo
+        },
+        { commitment: 'confirmed' }
+    );
+    return response;
+}
 
   useEffect(() => {
     const generateQRCode = async () => {
@@ -46,6 +76,7 @@ const SimpleQRCode: React.FC<SimpleQRCodeProps> = ({ input, setPaymentStatus, se
               signatureInfo = await findReference(connection, reference, { finality: 'confirmed' });
               console.log('\n 🖌  Signature found: ', signatureInfo.signature);
               clearInterval(interval);
+              setQrScanned(true); // QR code scanned
               resolve(signatureInfo);
             } catch (error: any) {
               if (!(error instanceof FindReferenceError)) {
@@ -56,6 +87,9 @@ const SimpleQRCode: React.FC<SimpleQRCodeProps> = ({ input, setPaymentStatus, se
             }
           }, 1000); // Check every second
         });
+
+        // console.log('Payment verified:', response);
+        // const response= await verifyTx(recipient, amount,splToken, reference, memo);
 
         if (signature) {
           setPaymentStatus('Payment confirmed');
@@ -75,7 +109,7 @@ const SimpleQRCode: React.FC<SimpleQRCodeProps> = ({ input, setPaymentStatus, se
     <div>
       {loading && <Spinner size="large" />}
       {!loading && paymentStatus === 'Payment confirmed' && <TickMark />}
-      <div ref={qrRef} id="qr-code" className="mt-4" style={{ display: loading || paymentStatus === 'Payment confirmed' ? 'none' : 'block' }} />
+      <div ref={qrRef} id="qr-code" className="mt-4" style={{ display: loading || paymentStatus === 'Payment confirmed' || qrScanned ? 'none' : 'block' }} />
     </div>
   );
 };
