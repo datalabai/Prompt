@@ -30,6 +30,7 @@ export function MailList({ items, category }: MailListProps) {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const { user } = UserAuth();
   const fallbackImageUrl = `/avatars/01.png`; // Replace with your fallback image URL
+  const [replyVisible, setReplyVisible] = useState<boolean>(true);
 
   const toggleTextArea = (itemId: string) => {
     setOpenTextAreaId(openTextAreaId === itemId ? null : itemId);
@@ -37,6 +38,7 @@ export function MailList({ items, category }: MailListProps) {
 
   const toggleInput = (itemId: string) => {
     setShowInputItemId(showInputItemId === itemId ? null : itemId);
+    setReplyVisible(!replyVisible);
   };
 
   const handleMagicPrompt = async (message: string, itemId: any) => {
@@ -272,7 +274,7 @@ export function MailList({ items, category }: MailListProps) {
   )
 )}
 
-                {showInputItemId === item.id && (
+                {replyVisible && (
                   <>
                     <div className="gap-2 mb-2">
                       {replies[item.id] && replies[item.id].length > 0 && (
@@ -288,7 +290,6 @@ export function MailList({ items, category }: MailListProps) {
                                 <div className="flex justify-between line-clamp-2 text-xs text-muted-foreground">
                                   {reply.option === 'prompt' &&(
                                     <>
-                                      <Badge>Suggested by</Badge>
                                       <div className="cursor-pointer blur-[1px]">{reply.text}</div></>
                                   ) }                             
                                    {reply.option === 'prompt' && (
@@ -299,7 +300,6 @@ export function MailList({ items, category }: MailListProps) {
                                 </div>
                                 {reply.image && (
                                   <>
-                                  <Badge>Prompt Generated </Badge>
                                     <img src={reply.image} alt="Image" width={300} height={550} className="mt-2 mb-2 rounded lg" />
                                     <div className="flex gap-9 mt-2">
                                       <Badge variant="stone">
@@ -326,6 +326,9 @@ export function MailList({ items, category }: MailListProps) {
                         </>
                       )}
                     </div>
+                    </>
+                    )}
+                    {showInputItemId === item.id && (
                     <div className="relative w-full">
                       <input
                         type="text"
@@ -358,7 +361,7 @@ export function MailList({ items, category }: MailListProps) {
                         </div>
                       )}
                     </div>
-                  </>
+                  
                 )}
               </div>
             </button>
