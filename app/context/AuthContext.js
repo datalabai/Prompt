@@ -25,6 +25,7 @@ export const AuthContextProvider = ({ children }) => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      localStorage.setItem("uid", currentUser?.uid);
       setUser(currentUser);
       addUserToFirestore(currentUser);
     });

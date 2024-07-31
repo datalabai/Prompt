@@ -60,28 +60,30 @@ export const rewards = async () => {
 };
 
 export const getProfile = async () => {
-  alert("getProfile");
   try {
-    const user = auth.currentUser;
-    if (!user) {
-      console.log("No user is signed in.");
-      return null;
-    }
+    const uid =localStorage.getItem("uid");
+    // if (!user) {
+    //   console.log("No user is signed in.");
+    //   return null;
+    // }
 
-    const uid = user.uid;
+    // const uid = user.uid;
     console.log('uid:', uid); // Logging the UID for debugging purposes
 
     const response = await fetch(`${walletApiUrl}/profile?uid=${uid}`);
+    const credits = await fetchCredits();
+
     const data = await response.json();
-    alert(data);
     console.log('data:', data);
+    const userData={ ...data, credits: credits }; 
+    console.log('userData:', userData);
 
     const rewards = await fetch(`${walletApiUrl}/rewards?uid=${uid}`).then(res => res.json());
     const transactions = await fetch(`${walletApiUrl}/trans?uid=${uid}`).then(res => res.json());
     // console.log('rewards:', rewards);
     // console.log('transactions:', transactions);
 
-    return { user: data, rewards: rewards, transactions: transactions };
+    return { user: userData, rewards: rewards, transactions: transactions };
   } catch (error) {
     console.error("Error fetching profile data:", error);
     return null;
@@ -633,6 +635,41 @@ export const addPost = async (post, category, option) => {
       console.error('Error disliking reply: ', e);
     }
   };
+
+export const updateUserData = async (credits) => {
+  try {
+    const uid=localStorage.getItem("uid");
+    const userRef = doc(db, "users", uid);
+   //add a new field to the user document
+    const userDocSnap = await getDoc(userRef);
+    if (!userDocSnap.exists()) {
+      console.error("User document does not exist.");
+      return;
+    }
+    const total = userDocSnap.data().credits + credits;
+    await updateDoc(userRef, {
+      credits: total,
+    });
+    console.log("User data updated successfully.");
+  } catch (error) {
+    console.error("Error updating user data:", error);
+  }
+};
+
+export const fetchCredits = async () => {
+  try {
+    const uid =localStorage.getItem("uid");
+    const userRef = doc(db, "users", uid);
+    const userDoc = await getDoc(userRef);
+    if (userDoc.exists()) {
+      return userDoc.data().credits;
+    }
+    return 0;
+  } catch (error) {
+    console.error("Error fetching credits:", error);
+    return 0;
+  }
+}
   
 export const listenForReplies = (postId, category, callback) => {
   if (!postId || !category) {

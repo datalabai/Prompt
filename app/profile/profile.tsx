@@ -32,6 +32,13 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+
+
 
 type ProfileData = {
   name: string;
@@ -40,6 +47,7 @@ type ProfileData = {
   photo: string;
   amount: number;
   usdc: number;
+  credits: number;
 };
 
 type TransactionData = {
@@ -63,6 +71,7 @@ export default function Profile() {
       try {
         const data = await getProfile();
         if (data) {
+          console.log(data);
           setProfileData(data.user);
           setTransactionData(data.transactions);
           localStorage.setItem('profileData', JSON.stringify(data.user));
@@ -77,8 +86,14 @@ export default function Profile() {
     const storedTransactionData = localStorage.getItem('transactionData');
 
     if (storedProfileData && storedTransactionData) {
-      setProfileData(JSON.parse(storedProfileData));
-      setTransactionData(JSON.parse(storedTransactionData));
+      const parsedProfileData = JSON.parse(storedProfileData);
+      const parsedTransactionData = JSON.parse(storedTransactionData);
+
+      setProfileData(parsedProfileData);
+      setTransactionData(parsedTransactionData);
+
+      // Fetch new data to ensure it is up-to-date
+      fetchProfileData();
     } else {
       fetchProfileData();
     }
@@ -169,14 +184,27 @@ export default function Profile() {
             </CopyToClipboard>
           </div>
           <div className="relative ml-4">
-            <button 
-              onMouseEnter={() => setShowQR(true)}
-              onMouseLeave={() => setShowQR(false)}
-              className="p-2 border rounded hover:bg-gray-200 flex items-center"
-            >
-              <MdQrCodeScanner />
-            </button>
-            {showQR && (
+          <Popover>
+  <PopoverTrigger><MdQrCodeScanner/></PopoverTrigger>
+  <PopoverContent>
+    <div ref={qrRef} className="p-2 bg-white border rounded hover:bg-gray-200  rounded shadow-lg">
+      <Canvas
+        text={profileData.wallet}
+        options={{
+          errorCorrectionLevel: 'M',
+          margin: 3,
+          scale: 12,
+          width: 200,
+          color: {
+            dark: '#000000FF',
+            light: '#FFFFFFFF',
+          },
+        }}
+      />  
+    </div>
+  </PopoverContent>
+</Popover>
+            {/* {showQR && (
               <div className="absolute top-full mt-2 left-1/2 transform -translate-x-1/2 p-2 bg-white border rounded shadow-lg">
                 <Canvas
                   text={profileData.wallet}
@@ -192,7 +220,7 @@ export default function Profile() {
                   }}
                 />
               </div>
-            )}
+            )} */}
           </div>
         </div>
         <Modal></Modal>
@@ -200,21 +228,13 @@ export default function Profile() {
       <CardFooter></CardFooter>
     </Card>
               <Card>
-                <CardHeader className="pb-2">
-                  <CardDescription>Balance</CardDescription>
-                  <CardTitle className="text-4xl">${profileData.usdc.toFixed(2)}</CardTitle>
+                <CardHeader>
+                  <CardDescription></CardDescription>
+                  <CardTitle className="text-xl">Credits</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-xs text-muted-foreground"></div>
+                  <div className="text-7xl">{profileData.credits}</div>
                 </CardContent>
-                <CardFooter>
-                </CardFooter>
-              </Card>
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardDescription>Rewards</CardDescription>
-                  <CardTitle className="text-4xl">$5,329.00</CardTitle>
-                </CardHeader>
                 <CardFooter>
                 </CardFooter>
               </Card>

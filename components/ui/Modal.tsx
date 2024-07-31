@@ -17,7 +17,8 @@ import {
   import { useState, useRef, useEffect } from "react";
   import { toast } from "react-toastify";
   import { AiOutlineCheckCircle } from 'react-icons/ai';
-  import { ImSpinner2 } from 'react-icons/im'; // For loading spinner
+  import { ImSpinner2 } from 'react-icons/im'; 
+import { updateUserData } from "@/app/firebase";
   
   export function Modal() {
     const [showQrCode, setShowQrCode] = useState(false);
@@ -118,21 +119,16 @@ import {
         });
   
         await sleep(3000); // Wait for 5 seconds before confirming payment
-        // const response = await verifyTx(
-        //   new PublicKey('CzKZcazeXoUJr8nksqVivN8ReHZ7Hrof8tdkpguZmDua'),
-        //   new BigNumber(usdcAmount),
-        //   reference,
-        //   'TS#12'
-        // );
-        // alert(response);
-        // console.log('🎉 Payment confirmed:', response);
         if (signature) {
           setPaymentStatus('Payment confirmed');
-          setLoading(false); // Stop loading when payment is confirmed
+          setLoading(false); 
+          const credits=parseInt(usdcAmount)*10;
+          await updateUserData(credits);
           toast.success('Payment confirmed', {
             onClose: () => window.location.reload() // Reload the page or redirect after confirmation
           });
         }
+
       } catch (error) {
         console.error('Error confirming payment:', error);
         toast.error('Error confirming payment');
