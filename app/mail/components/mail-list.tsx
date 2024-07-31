@@ -30,6 +30,7 @@ export function MailList({ items, category }: MailListProps) {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const { user } = UserAuth();
   const fallbackImageUrl = `/avatars/01.png`; // Replace with your fallback image URL
+  const [replyVisible, setReplyVisible] = useState<boolean>(true);
 
   const toggleTextArea = (itemId: string) => {
     setOpenTextAreaId(openTextAreaId === itemId ? null : itemId);
@@ -37,6 +38,7 @@ export function MailList({ items, category }: MailListProps) {
 
   const toggleInput = (itemId: string) => {
     setShowInputItemId(showInputItemId === itemId ? null : itemId);
+    //setReplyVisible(!replyVisible);
   };
 
   const handleMagicPrompt = async (message: string, itemId: any) => {
@@ -186,25 +188,6 @@ export function MailList({ items, category }: MailListProps) {
   const capitalizeWords = (str: string) => {
     return str.replace(/\b\w/g, (char) => char.toUpperCase());
   };
-
-  const ReplyText = (reply :any) => {
-    const words = reply.split(' ');
-  
-    let displayText;
-    if (words.length > 4) {
-      const firstThreeWords = words.slice(0, 3).join(' ');
-      const lastWord = words[words.length - 1];
-      displayText = `${firstThreeWords} ... ${lastWord}`;
-    } else {
-      displayText = reply.text; // If there are 4 or fewer words, display the full text
-    }
-  
-    return (
-      <div className="cursor-pointer ">
-        {displayText}
-      </div>
-    );
-  };
   
 
   return (
@@ -217,12 +200,14 @@ export function MailList({ items, category }: MailListProps) {
                 "flex items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent",
                 mail.selected === item.id && "bg-muted"
               )}
-              onClick={() =>
-                setMail({
-                  ...mail,
-                  selected: item.id,
-                })
-              }
+              // onClick={() =>
+              //   setMail({
+              //     ...mail,
+              //     selected: item.id,
+              //   })
+                
+              // }
+              onClick={() => toggleInput(item.id)}
             >
               <Avatar className="hidden h-9 w-9 sm:flex">
                 <AvatarImage src={item.photo || fallbackImageUrl} alt="Avatar" />
@@ -291,7 +276,7 @@ export function MailList({ items, category }: MailListProps) {
   )
 )}
 
-                {showInputItemId === item.id && (
+                {replyVisible && (
                   <>
                     <div className="gap-2 mb-2">
                       {replies[item.id] && replies[item.id].length > 0 && (
@@ -305,12 +290,10 @@ export function MailList({ items, category }: MailListProps) {
                               <div className="flex flex-col ml-2">
                                 <div className="font-semibold">{capitalizeWords(reply.name)}</div>
                                 <div className="flex justify-between line-clamp-2 text-xs text-muted-foreground">
-                                  {reply.option=== 'prompt' ? (
-                                    //make the text reveal on click
-                                    <div className="cursor-pointer">{ReplyText(reply.text)}</div>
-                                  ) : (
-                                    <div>{reply.text}</div>
-                                  )}                                 
+                                  {reply.option === 'prompt' &&(
+                                    <>
+                                      <div className="cursor-pointer blur-[1px]">{reply.text}</div></>
+                                  ) }                             
                                    {reply.option === 'prompt' && (
                                       <Badge variant="stone">
                                         <MagicWandIcon className="h-4 w-4 cursor-pointer hover:text-purple-500" onClick={() => handleMagicPrompt(reply.text, item.id)} />
@@ -345,6 +328,9 @@ export function MailList({ items, category }: MailListProps) {
                         </>
                       )}
                     </div>
+                    </>
+                    )}
+                    {showInputItemId === item.id && (
                     <div className="relative w-full">
                       <input
                         type="text"
@@ -377,7 +363,7 @@ export function MailList({ items, category }: MailListProps) {
                         </div>
                       )}
                     </div>
-                  </>
+                  
                 )}
               </div>
             </button>
