@@ -9,7 +9,7 @@ import { use } from "react"
 
 export default function IndexPage() {
   return (
-    <div className="container relative">
+    <div className="container relative pr-0">
       
      
       <section className="overflow-hidden rounded-lg border bg-background shadow-md md:hidden md:shadow-xl">

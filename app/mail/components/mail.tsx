@@ -248,12 +248,12 @@ export function Mail({
             </TabsContent>
           </Tabs>
         </ResizablePanel>
-        <ResizableHandle withHandle />
+        {/* <ResizableHandle withHandle />
         <ResizablePanel defaultSize={defaultLayout[2]}>
           {activeCategory === "Expert" && (
             <MailDisplay mail={mails.find((item) => item.id === mail.selected) || null} />
           )}
-        </ResizablePanel>
+        </ResizablePanel> */}
       </ResizablePanelGroup>
     </TooltipProvider>
   );
