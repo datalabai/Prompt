@@ -109,7 +109,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
                <SiteHeader toggleRightPanel={toggleRightPanel} />
              <div vaul-drawer-wrapper="" className="flex justify-between mt-2">
              
-                <div className="relative flex min-h-screen flex-col bg-background mt-2">
+                <div className="relative flex min-h-screen flex-col bg-background mt-2 w-full">
                   {children}
                 </div>
                 {showRightPanel && <RightPanel />}

@@ -268,7 +268,7 @@ export function MailList({ items, category }: MailListProps) {
     <img src={item.image} alt="Image" width={300} height={550} className="mt-4 mb-2 rounded-lg" />
   ) : (
     item.image !== '' && (
-      <div>
+      <div className="gap-2 mb-2">
         <Texts generatedText={item.image} post={item} category={category} />
       </div>
     )
