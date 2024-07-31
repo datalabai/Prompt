@@ -200,12 +200,14 @@ export function MailList({ items, category }: MailListProps) {
                 "flex items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent",
                 mail.selected === item.id && "bg-muted"
               )}
-              onClick={() =>
-                setMail({
-                  ...mail,
-                  selected: item.id,
-                })
-              }
+              // onClick={() =>
+              //   setMail({
+              //     ...mail,
+              //     selected: item.id,
+              //   })
+                
+              // }
+              onClick={() => toggleInput(item.id)}
             >
               <Avatar className="hidden h-9 w-9 sm:flex">
                 <AvatarImage src={item.photo || fallbackImageUrl} alt="Avatar" />
