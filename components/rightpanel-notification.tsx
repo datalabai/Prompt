@@ -1,5 +1,4 @@
 
-import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Card,
   CardContent,
@@ -11,7 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export function RightNotifications() {
   return (
-    <ScrollArea className="h-[685px]">
+    <div className="h-[685px] overflow-y-auto">
     <Card>
       <CardHeader className="pb-3">
         <CardTitle className="text-lg font-large">Prompts</CardTitle>
@@ -51,6 +50,6 @@ export function RightNotifications() {
         
       </CardContent>
     </Card>
-    </ScrollArea>
+    </div>
   )
 }

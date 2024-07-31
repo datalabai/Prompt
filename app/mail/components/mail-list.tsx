@@ -3,7 +3,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow } from 'date-fns';
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Mail } from "../data";
 import { useMail } from "../use-mail";
 import { MessageSquare } from "lucide-react";
@@ -191,7 +190,7 @@ export function MailList({ items, category }: MailListProps) {
   
 
   return (
-    <ScrollArea className="h-[600px]">
+    <div className="h-[600px] overflow-y-auto">
         <div className="flex flex-col gap-2 p-4 pt-0">
           {items.map((item) => (
             <button
@@ -369,6 +368,6 @@ export function MailList({ items, category }: MailListProps) {
             </button>
           ))}
         </div>
-    </ScrollArea>
+    </div>
   );
 }
