@@ -38,7 +38,7 @@ export function MailList({ items, category }: MailListProps) {
 
   const toggleInput = (itemId: string) => {
     setShowInputItemId(showInputItemId === itemId ? null : itemId);
-    setReplyVisible(!replyVisible);
+    //setReplyVisible(!replyVisible);
   };
 
   const handleMagicPrompt = async (message: string, itemId: any) => {
