@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import SimpleQRCode from './QrCode';
+// import SimpleQRCode from './QrCode';
 
 interface ModalProps {
   isOpen: boolean;
@@ -43,7 +43,7 @@ export default function Modal({ isOpen, onClose}: ModalProps) {
         ) : (
           <div className="flex flex-col items-center">
             
-              <SimpleQRCode input={amount} setPaymentStatus={setPaymentStatus} setLoading={setLoading} loading={false} paymentStatus={''} />
+              {/* <SimpleQRCode input={amount} setPaymentStatus={setPaymentStatus} setLoading={setLoading} loading={false} paymentStatus={''} /> */}
             <p className="mt-4">Payment Status: {paymentStatus}</p>
             <button onClick={handleCloseQRCode} className="bg-gray-500 text-white p-2 rounded mt-4">Close</button>
           </div>
