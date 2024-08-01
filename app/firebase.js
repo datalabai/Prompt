@@ -61,7 +61,8 @@ export const rewards = async () => {
 
 export const getProfile = async () => {
   try {
-    const uid =localStorage.getItem("uid");
+    const uid =auth.currentUser?.uid;
+    // const user = auth.currentUser;
     // if (!user) {
     //   console.log("No user is signed in.");
     //   return null;
