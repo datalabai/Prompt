@@ -283,7 +283,7 @@ export function MailList({ items, category }: MailListProps) {
                         {replies[item.id].map((reply, index) => (
                           <div key={index} className="flex mt-2">
                            {reply.image  ? (
-                            <div className="flex-col -space-y-3 overflow-hidden">
+                            <div className="flex-col -space-y-3">
                             <Crown  strokeWidth={1.25} className="h-6 w-6 pb-2 pl-2 icon-red" color="orange" />
                             <Avatar className="h-8 w-8">
                               <AvatarImage src="https://lh3.googleusercontent.com/a/ACg8ocKFM9tQaWu56LVff7pMGiAp9WmIpAbfO34DdO2zKf1R_wH5SPfM7Q=s96-c" alt="Avatar" />
