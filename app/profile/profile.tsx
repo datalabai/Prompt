@@ -18,8 +18,13 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useQRCode } from 'next-qrcode';
 import { FiCheck, FiCopy } from 'react-icons/fi';
 import { MdQrCodeScanner } from "react-icons/md";
-import { Button } from "@/components/ui/button";
-import Modal from "@/components/ui/Modal";
+import { Modal } from '@/components/ui/Modal';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+
 
 
 type ProfileData = {
@@ -29,6 +34,7 @@ type ProfileData = {
   photo: string;
   amount: number;
   usdc: number;
+  credits: number;
 };
 
 type TransactionData = {
@@ -52,6 +58,8 @@ export default function Profile() {
       try {
         const data = await getProfile();
         if (data) {
+          console.log(data);
+          alert(data.user);
           setProfileData(data.user);
           setTransactionData(data.transactions);
           localStorage.setItem('profileData', JSON.stringify(data.user));
@@ -66,8 +74,14 @@ export default function Profile() {
     const storedTransactionData = localStorage.getItem('transactionData');
 
     if (storedProfileData && storedTransactionData) {
-      setProfileData(JSON.parse(storedProfileData));
-      setTransactionData(JSON.parse(storedTransactionData));
+      const parsedProfileData = JSON.parse(storedProfileData);
+      const parsedTransactionData = JSON.parse(storedTransactionData);
+
+      setProfileData(parsedProfileData);
+      // setTransactionData(parsedTransactionData);
+
+      // Fetch new data to ensure it is up-to-date
+      fetchProfileData();
     } else {
       fetchProfileData();
     }
@@ -118,15 +132,15 @@ export default function Profile() {
     return <div>Loading...</div>;
   }
 
-  const rows = transactionData.map((transaction) =>
-    ({
-      transactionId: transaction.sig,
-      type: transaction.type,
-      prompt: transaction.prompt,
-      date: formatTimestamp(transaction.time),
-      amount: 0.1 
-    })
-  );
+  // const rows = transactionData.map((transaction) =>
+  //   ({
+  //     transactionId: transaction.sig,
+  //     type: transaction.type,
+  //     prompt: transaction.prompt,
+  //     date: formatTimestamp(transaction.time),
+  //     amount: 0.1 
+  //   })
+  // );
 
   return (
     <ScrollArea className="h-screen">
@@ -158,14 +172,27 @@ export default function Profile() {
             </CopyToClipboard>
           </div>
           <div className="relative ml-4">
-            <button 
-              onMouseEnter={() => setShowQR(true)}
-              onMouseLeave={() => setShowQR(false)}
-              className="p-2 border rounded hover:bg-gray-200 flex items-center"
-            >
-              <MdQrCodeScanner />
-            </button>
-            {showQR && (
+          <Popover>
+  <PopoverTrigger><MdQrCodeScanner/></PopoverTrigger>
+  <PopoverContent>
+    <div ref={qrRef} className="p-2 bg-white border rounded hover:bg-gray-200  rounded shadow-lg">
+      <Canvas
+        text={profileData.wallet}
+        options={{
+          errorCorrectionLevel: 'M',
+          margin: 3,
+          scale: 12,
+          width: 200,
+          color: {
+            dark: '#000000FF',
+            light: '#FFFFFFFF',
+          },
+        }}
+      />  
+    </div>
+  </PopoverContent>
+</Popover>
+            {/* {showQR && (
               <div className="absolute top-full mt-2 left-1/2 transform -translate-x-1/2 p-2 bg-white border rounded shadow-lg">
                 <Canvas
                   text={profileData.wallet}
@@ -181,34 +208,37 @@ export default function Profile() {
                   }}
                 />
               </div>
-            )}
+            )} */}
           </div>
         </div>
-        <Button className="mt-12" onClick={() => setIsModalOpen(true)}>Buy Credits</Button>
+        <Modal></Modal>
       </CardHeader>
       <CardFooter></CardFooter>
     </Card>
               <Card>
-                <CardHeader className="pb-2">
-                  <CardDescription>Balance</CardDescription>
-                  <CardTitle className="text-4xl">${profileData.usdc.toFixed(2)}</CardTitle>
+                <CardHeader>
+                  <CardDescription></CardDescription>
+                  <CardTitle className="text-xl">Credits</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-xs text-muted-foreground"></div>
+                  <div className="text-7xl">{profileData.credits}</div>
                 </CardContent>
                 <CardFooter>
                 </CardFooter>
               </Card>
               <Card>
-                <CardHeader className="pb-2">
-                  <CardDescription>Rewards</CardDescription>
-                  <CardTitle className="text-4xl">$5,329.00</CardTitle>
+                <CardHeader>
+                  <CardDescription></CardDescription>
+                  <CardTitle className="text-xl">Rewards</CardTitle>
                 </CardHeader>
+                <CardContent>
+                  <div className="text-7xl">0</div>
+                </CardContent>
                 <CardFooter>
                 </CardFooter>
               </Card>
             </div>
-            <Tabs defaultValue="Transactions">
+            {/* <Tabs defaultValue="Transactions">
               <div className="flex items-center">
                 <TabsList>
                   <TabsTrigger value="Transactions">Transactions</TabsTrigger>
@@ -267,19 +297,15 @@ export default function Profile() {
                       </TableHeader>
                       <TableBody>
                         {/* Add table rows with static rewards data here */}
-                      </TableBody>
+                      {/* </TableBody>
                     </Table>
                   </CardContent>
                 </Card>
               </TabsContent>
-            </Tabs>
+            </Tabs> */} 
           </div>
         </div>
       </div>
-      <Modal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
     </ScrollArea>
   );
 }

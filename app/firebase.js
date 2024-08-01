@@ -5,16 +5,23 @@ import { getAuth } from "firebase/auth";
 import { query,where,getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc,setDoc,orderBy,onSnapshot, getCountFromServer,serverTimestamp,Firestore,arrayUnion, arrayRemove} from "firebase/firestore";
 import { get } from "http";
 import { format } from "date-fns";
+import dotenv from 'dotenv';
+
+
+dotenv.config();
 
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBe7LVB7NZGQ4ih869GmtX2iwYvE0hzbLE",
-  authDomain: "discordbot-5a1b5.firebaseapp.com",
-  projectId: "discordbot-5a1b5",
-  storageBucket: "discordbot-5a1b5.appspot.com",
-  messagingSenderId: "942074563442",
-  appId: "1:942074563442:web:ee7686c5bce688559aebeb"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
+
+const walletApiUrl = process.env.NEXT_PUBLIC_WALLET_API_URL;
+const sandboxApiUrl = process.env.NEXT_PUBLIC_SANDBOX_API_URL;
 
 const app = initializeApp(firebaseConfig);
 
@@ -27,7 +34,7 @@ export const transactions = async () => {
   try {
     const uid = auth.currentUser.uid; 
     // console.log('uid:', uid); 
-    const response = await fetch(`https://wallet-api-vyxx.onrender.com/trans?uid=${uid}`);
+    const response = await fetch(`${walletApiUrl}/trans?uid=${uid}`);
     const data = await response.json();
     // console.log('data:', data);
     return data; 
@@ -42,7 +49,7 @@ export const rewards = async () => {
 
     const uid = auth.currentUser.uid;
     // console.log('uid:', uid);
-    const response = await fetch(`https://wallet-api-vyxx.onrender.com/rewards?uid=${uid}`);
+    const response = await fetch(`${walletApiUrl}/rewards?uid=${uid}`);
     const data = await response.json();
     // console.log('data:', data);
     return data;
@@ -53,27 +60,30 @@ export const rewards = async () => {
 };
 
 export const getProfile = async () => {
-  alert("getProfile");
   try {
-    const user = auth.currentUser;
-    if (!user) {
-      console.log("No user is signed in.");
-      return null;
-    }
+    const uid =localStorage.getItem("uid");
+    // if (!user) {
+    //   console.log("No user is signed in.");
+    //   return null;
+    // }
 
-    const uid = user.uid;
+    // const uid = user.uid;
     console.log('uid:', uid); // Logging the UID for debugging purposes
 
-    const response = await fetch(`https://wallet-api-vyxx.onrender.com/profile?uid=${uid}`);
+    const response = await fetch(`${walletApiUrl}/profile?uid=${uid}`);
+    const credits = await fetchCredits();
+
     const data = await response.json();
     console.log('data:', data);
+    const userData={ ...data, credits: credits }; 
+    console.log('userData:', userData);
 
-    const rewards = await fetch(`https://wallet-api-vyxx.onrender.com/rewards?uid=${uid}`).then(res => res.json());
-    const transactions = await fetch(`https://wallet-api-vyxx.onrender.com/transactions?uid=${uid}`).then(res => res.json());
+    const rewards = await fetch(`${walletApiUrl}/rewards?uid=${uid}`).then(res => res.json());
+    const transactions = await fetch(`${walletApiUrl}/trans?uid=${uid}`).then(res => res.json());
     // console.log('rewards:', rewards);
     // console.log('transactions:', transactions);
 
-    return { user: data, rewards: rewards, transactions: transactions };
+    return { user: userData, rewards: rewards, transactions: transactions };
   } catch (error) {
     console.error("Error fetching profile data:", error);
     return null;
@@ -102,7 +112,7 @@ export const addUserToFirestore = async (user) => {
         isAdmin: false,
       });
       await createPrivateChannel(user.uid);
-      await fetch(`https://wallet-api-vyxx.onrender.com/wallet?uid=${user.uid}`);
+      await fetch(`${walletApiUrl}/wallet?uid=${user.uid}`);
       // console.log("User added successfully to Firestore.");
     } catch (error) {
       console.error("Error adding user to Firestore:", error);
@@ -211,9 +221,11 @@ export const addUserToFirestore = async (user) => {
         return await addMessage(messageData);
   
       case 'prompt':
+        alert("Prompt on " + post.text);
         return await generateAndAddMessage("Prompt on ", post.text);
   
       default:
+        alert("Default case: adding plain message");
         const defaultMessageData = {
           name: post.name,
           email: post.email,
@@ -252,7 +264,7 @@ export const FetchText = async (text) => {
   }
   try {
     
-    const response = await fetch(`https://sandbox-410710.el.r.appspot.com/chat?prompt=${text}`);
+    const response = await fetch(`${sandboxApiUrl}/chat?prompt=${text}`);
     const data = await response.text();
     await updateDoc(userRef, {
       freeTrials: freeTrials - 1,
@@ -487,7 +499,7 @@ export const addPost = async (post, category, option) => {
     }
   
     try {
-      const response = await fetch(`https://sandbox-410710.el.r.appspot.com/?prompt=${message}`);
+      const response = await fetch(`${sandboxApiUrl}/?prompt=${message}`);
       const data = await response.text();
       // Decrement free trials
       await updateDoc(userRef, {
@@ -623,6 +635,41 @@ export const addPost = async (post, category, option) => {
       console.error('Error disliking reply: ', e);
     }
   };
+
+export const updateUserData = async (credits) => {
+  try {
+    const uid=localStorage.getItem("uid");
+    const userRef = doc(db, "users", uid);
+   //add a new field to the user document
+    const userDocSnap = await getDoc(userRef);
+    if (!userDocSnap.exists()) {
+      console.error("User document does not exist.");
+      return;
+    }
+    const total = userDocSnap.data().credits + credits;
+    await updateDoc(userRef, {
+      credits: total,
+    });
+    console.log("User data updated successfully.");
+  } catch (error) {
+    console.error("Error updating user data:", error);
+  }
+};
+
+export const fetchCredits = async () => {
+  try {
+    const uid =localStorage.getItem("uid");
+    const userRef = doc(db, "users", uid);
+    const userDoc = await getDoc(userRef);
+    if (userDoc.exists()) {
+      return userDoc.data().credits;
+    }
+    return 0;
+  } catch (error) {
+    console.error("Error fetching credits:", error);
+    return 0;
+  }
+}
   
 export const listenForReplies = (postId, category, callback) => {
   if (!postId || !category) {
@@ -643,7 +690,7 @@ export const listenForReplies = (postId, category, callback) => {
         console.warn("Document with no data found:", doc.id);
       }
     });
-    // console.log("Replies:", replies);
+    console.log("Replies:", replies);
     callback(replies);
   }, (error) => {
     console.error("Error listening for replies:", error);

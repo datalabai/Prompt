@@ -86,11 +86,11 @@ export function Mail({
     const cachedPosts = localStorage.getItem(`${CACHE_KEY_PREFIX}${category}`);
     if (cachedPosts) {
       setMails(JSON.parse(cachedPosts));
+      setIsLoading(false);
     } else {
       setMails([]); // Optional: clear existing mails if no cache
     }
   
-    // Fetch latest posts from server
     const unsubscribe = getPosts(category, (posts: any) => {
       setMails(posts);
       localStorage.setItem(`${CACHE_KEY_PREFIX}${category}`, JSON.stringify(posts));
