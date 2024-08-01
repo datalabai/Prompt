@@ -220,7 +220,9 @@ export default function Profile() {
                   <CardTitle className="text-xl">Credits</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-7xl">{profileData.credits}</div>
+                  <div className="text-7xl">
+                    {!profileData.credits ? 0 : profileData.credits}
+                  </div>
                 </CardContent>
                 <CardFooter>
                 </CardFooter>
