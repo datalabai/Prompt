@@ -59,7 +59,6 @@ export default function Profile() {
         const data = await getProfile();
         if (data) {
           console.log(data);
-          alert(data.user);
           setProfileData(data.user);
           setTransactionData(data.transactions);
           localStorage.setItem('profileData', JSON.stringify(data.user));
