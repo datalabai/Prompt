@@ -61,7 +61,7 @@ export const rewards = async () => {
 
 export const getProfile = async () => {
   try {
-    const uid =auth.currentUser?.uid;
+    const uid =localStorage.getItem("uid");
     // const user = auth.currentUser;
     // if (!user) {
     //   console.log("No user is signed in.");
@@ -69,7 +69,7 @@ export const getProfile = async () => {
     // }
 
     // const uid = user.uid;
-    console.log('uid:', uid); // Logging the UID for debugging purposes
+    console.log('uid:', uid); 
 
     const response = await fetch(`${walletApiUrl}/profile?uid=${uid}`);
     const credits = await fetchCredits();
