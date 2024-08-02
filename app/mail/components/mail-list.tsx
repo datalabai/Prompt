@@ -38,7 +38,7 @@ export function MailList({ items, category }: MailListProps) {
 
   const toggleInput = (itemId: string) => {
     setShowInputItemId(showInputItemId === itemId ? null : itemId);
-    //setReplyVisible(!replyVisible);
+    // setReplyVisible(!replyVisible);
   };
 
   const handleMagicPrompt = async (message: string, itemId: any) => {
@@ -207,7 +207,7 @@ export function MailList({ items, category }: MailListProps) {
               //   })
                 
               // }
-              onClick={() => toggleInput(item.id)}
+              // onClick={() => toggleInput(item.id)}
             >
               <Avatar className="hidden h-9 w-9 sm:flex">
                 <AvatarImage src={item.photo || fallbackImageUrl} alt="Avatar" />
@@ -289,16 +289,15 @@ export function MailList({ items, category }: MailListProps) {
                               </Avatar>
                               <div className="flex flex-col ml-2">
                                 <div className="font-semibold">{capitalizeWords(reply.name)}</div>
-                                <div className="flex justify-between line-clamp-2 text-xs text-muted-foreground">
-                                  {reply.option === 'prompt' &&(
-                                    <>
-                                      <div className="cursor-pointer blur-[1px]">{reply.text}</div></>
-                                  ) }                             
-                                   {reply.option === 'prompt' && (
-                                      <Badge variant="stone">
-                                        <MagicWandIcon className="h-4 w-4 cursor-pointer hover:text-purple-500" onClick={() => handleMagicPrompt(reply.text, item.id)} />
-                                      </Badge>
-                                    )}
+                                <div className="flex justify-between line-clamp-2 text-xs text-muted-foreground">                          
+                                   {reply.option === 'prompt' ? (
+                                      <><div className="cursor-pointer">{reply.text}</div><Badge variant="stone">
+                                      <MagicWandIcon className="h-4 w-4 cursor-pointer hover:text-purple-500" onClick={() => handleMagicPrompt(reply.text, item.id)} />
+                                    </Badge></>
+                                    ):(
+                                      <div className="cursor-pointer">{reply.text}</div>
+                                    )
+                                    }
                                 </div>
                                 {reply.image && (
                                   <>

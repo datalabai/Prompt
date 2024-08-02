@@ -28,7 +28,7 @@ import { MailList } from "./mail-list";
 import { Nav } from "./nav";
 import { useMail } from "../use-mail";
 import { useEffect, useState, useCallback } from "react";
-import { addMessageToPrivateChannel, addPost, auth, getPosts } from "@/app/firebase";
+import { addMessageToPrivateChannel, addPost, auth,getPosts} from "@/app/firebase";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { PromptModeToggle } from "@/components/prompt-dropmenu";
 import Profile from "./profile";
@@ -38,6 +38,7 @@ import { UserAuth } from "@/app/context/AuthContext";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Spinner } from "@/components/ui/spinner";
+import { set } from "date-fns";
 
 
 interface MailProps {
@@ -85,10 +86,12 @@ export function Mail({
   
     const cachedPosts = localStorage.getItem(`${CACHE_KEY_PREFIX}${category}`);
     if (cachedPosts) {
+      console.log("Using cached posts for category:", category);
       setMails(JSON.parse(cachedPosts));
       setIsLoading(false);
     } else {
-      setMails([]); // Optional: clear existing mails if no cache
+      setMails([]); 
+      setIsLoading(false);
     }
   
     const unsubscribe = getPosts(category, (posts: any) => {

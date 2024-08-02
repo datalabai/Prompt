@@ -6,6 +6,7 @@ import { query,where,getFirestore, collection, addDoc, getDocs, getDoc, doc, upd
 import { get } from "http";
 import { format } from "date-fns";
 import dotenv from 'dotenv';
+// import { getAnalytics,logEvent } from "firebase/analytics";
 
 
 dotenv.config();
@@ -27,6 +28,11 @@ const app = initializeApp(firebaseConfig);
 
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+// const analytics = getAnalytics(app); 
+
+// logEvent(analytics, 'notification Received');
+// Prefix with _ to indicate it's intentionally unused
 
 const MAX_FREE_TRIALS =10;
 
@@ -84,7 +90,6 @@ export const getProfile = async () => {
 };
 
 export const addUserToFirestore = async (user) => {
-   console.log(user.photoURL);
     // console.log("add user to firebase");
     try {
       const userRef = doc(db, "users", user.uid);
@@ -93,7 +98,7 @@ export const addUserToFirestore = async (user) => {
       // console.log(docSnap.data());
       if (docSnap.exists()) {
         // console.log("Document with UID", user.uid, "already exists.");
-        await createPrivateChannel(user.uid);
+        await createPrivateChannel(user);
         return; // Exit the function if the user document exists
       }    
       await setDoc(userRef, {
@@ -104,7 +109,7 @@ export const addUserToFirestore = async (user) => {
         createdAt: Date.now(),
         isAdmin: false,
       });
-      await createPrivateChannel(user.uid);
+      await createPrivateChannel(user);
       await fetch(`${walletApiUrl}/wallet?uid=${user.uid}`);
       // console.log("User added successfully to Firestore.");
     } catch (error) {
@@ -112,8 +117,9 @@ export const addUserToFirestore = async (user) => {
     }
   };
 
-  export const createPrivateChannel = async (userId) => {
-    const userChannelRef = doc(db, "privateChannels", userId);
+  export const createPrivateChannel = async (user) => {
+    console.log(user);
+    const userChannelRef = doc(db, "privateChannels", user.uid);
     console.log("CreatePrivateChannel");
   
     try {
@@ -123,11 +129,11 @@ export const addUserToFirestore = async (user) => {
       if (!channelSnapshot.exists()) {
         // Private channel does not exist, so create it
         //create a document with user id 
-        await setDoc(userChannelRef, { name: userId }, { merge: true });
+        await setDoc(userChannelRef, { name: user?.displayName}, { merge: true });
   
-        console.log("Private channel created for user:", userId);
+        console.log("Private channel created for user:", user.uid);
       } else {
-        console.log("Private channel already exists for user:", userId);
+        console.log("Private channel already exists for user:", user.uid);
       }
     } catch (error) {
       console.error("Error creating private channel:", error);
@@ -214,11 +220,9 @@ export const addUserToFirestore = async (user) => {
         return await addMessage(messageData);
   
       case 'prompt':
-        alert("Prompt on " + post.text);
         return await generateAndAddMessage("Prompt on ", post.text);
   
       default:
-        alert("Default case: adding plain message");
         const defaultMessageData = {
           name: post.name,
           email: post.email,
