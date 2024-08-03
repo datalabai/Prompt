@@ -108,6 +108,7 @@ export const addUserToFirestore = async (user) => {
         email: user.email,
         createdAt: Date.now(),
         isAdmin: false,
+        credits: 0,
       });
       await createPrivateChannel(user);
       await fetch(`${walletApiUrl}/wallet?uid=${user.uid}`);
@@ -281,10 +282,32 @@ export const addPost = async (post, category, option) => {
   const generateAndAddPost = async (prompt, postText) => {
     const data = await fetchImageForMessage(prompt + postText);
     if (data.trails <= 0) {
-      return "You have no free trails left";
+      if(data.credits)
+      {
+        if(data.credits<10)
+        {
+          return "You have no freeTrails or Credits left ! Please buy credits";
+        }
+        const docRef = await addDoc(collection(db, category), {
+          name: post.name,
+          email: post.email,
+          text: prompt + postText,
+          date: post.date,
+          photo: post.photo,
+          likes: [],
+          dislikes: [],
+          read: true,
+          image: data.image,
+          createdAt: serverTimestamp(),
+          option: option,
+        });
+        console.log("Document written with ID: ", docRef.id);
+        return `You have ${data.credits} credits left`;
+      }
+      return "You have no free trails or Credits left ! Please buy credits";
     }
     if (data.image === 'Failed to generate image. Please try again later.') {
-      return "fail";
+      return "Fail to generate image. Please try again later.";
     }
     try {
       const docRef = await addDoc(collection(db, category), {
@@ -491,8 +514,21 @@ export const addPost = async (post, category, option) => {
     const userDoc = userDocSnap.data();
     let freeTrials = await resetFreeTrials(userRef, userDoc);
   
-    if (freeTrials <= 0) {
-      return {image:"",trails:freeTrials}
+    if (freeTrials <= 0 ) {
+      if(userDoc.credits)
+      {
+        if(userDoc.credits<10)
+        {
+          return {image:"",trails:0,credits:userDoc.credits}
+        }
+        const response = await fetch(`${sandboxApiUrl}/?prompt=${message}`);
+        const data = await response.text();
+        await updateDoc(userRef, {
+          credits: userDoc.credits - 10,
+        });
+        return {image:data,trails:freeTrials,credits:userDoc.credits-10}
+      }
+      return {image:"",trails:freeTrials,credits:0}
     }
   
     try {
@@ -503,7 +539,7 @@ export const addPost = async (post, category, option) => {
         freeTrials: freeTrials - 1,
       });
   
-      return {image:data,trails:freeTrials}
+      return {image:data,trails:freeTrials,credits:userDoc.credits}
     } catch (error) {
       console.error("Error fetching image:", error);
       return "Failed to generate image. Please try again later.";
@@ -634,6 +670,7 @@ export const addPost = async (post, category, option) => {
   };
 
 export const updateUserData = async (credits) => {
+  alert(credits);
   try {
     const uid=localStorage.getItem("uid");
     const userRef = doc(db, "users", uid);
@@ -643,10 +680,18 @@ export const updateUserData = async (credits) => {
       console.error("User document does not exist.");
       return;
     }
+    if(userDocSnap.data().credits){
     const total = userDocSnap.data().credits + credits;
     await updateDoc(userRef, {
       credits: total,
     });
+  }
+  else{
+    await updateDoc(userRef, {
+      credits: credits,
+    });
+  }
+    alert("Credits updated successfully");
     console.log("User data updated successfully.");
   } catch (error) {
     console.error("Error updating user data:", error);

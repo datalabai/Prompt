@@ -60,9 +60,9 @@ export default function Profile() {
         if (data) {
           console.log(data);
           setProfileData(data.user);
-          setTransactionData(data.transactions);
+          // setTransactionData(data.transactions);
           localStorage.setItem('profileData', JSON.stringify(data.user));
-          localStorage.setItem('transactionData', JSON.stringify(data.transactions));
+          // localStorage.setItem('transactionData', JSON.stringify(data.transactions));
         }
       } catch (error) {
         console.error("Error fetching profile data:", error);
@@ -70,12 +70,12 @@ export default function Profile() {
     };
 
     const storedProfileData = localStorage.getItem('profileData');
-    const storedTransactionData = localStorage.getItem('transactionData');
+    // const storedTransactionData = localStorage.getItem('transactionData');
 
-    if (storedProfileData && storedTransactionData) {
+    if (storedProfileData) {
       const parsedProfileData = JSON.parse(storedProfileData);
-      const parsedTransactionData = JSON.parse(storedTransactionData);
-
+      // const parsedTransactionData = JSON.parse(storedTransactionData);
+      console.log("Parsed profile data:", parsedProfileData);
       setProfileData(parsedProfileData);
       // setTransactionData(parsedTransactionData);
 
