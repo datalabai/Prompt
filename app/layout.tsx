@@ -32,7 +32,7 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
 
-  const [showRightPanel, setShowRightPanel] = useState(false);
+  const [showRightPanel, setShowRightPanel] = useState(true);
 
   const toggleRightPanel = () => {
     setShowRightPanel(prev => !prev);
