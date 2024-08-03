@@ -77,12 +77,12 @@ export const getProfile = async () => {
     const userData={ ...data, credits: credits }; 
     console.log('userData:', userData);
 
-    const rewards = await fetch(`${walletApiUrl}/rewards?uid=${uid}`).then(res => res.json());
-    const transactions = await fetch(`${walletApiUrl}/trans?uid=${uid}`).then(res => res.json());
+    // const rewards = await fetch(`${walletApiUrl}/rewards?uid=${uid}`).then(res => res.json());
+    // const transactions = await fetch(`${walletApiUrl}/trans?uid=${uid}`).then(res => res.json());
     // console.log('rewards:', rewards);
     // console.log('transactions:', transactions);
 
-    return { user: userData, rewards: rewards, transactions: transactions };
+    return { user: userData, rewards: [], transactions: [] };
   } catch (error) {
     console.error("Error fetching profile data:", error);
     return null;
