@@ -8,7 +8,7 @@ import { useMail } from "../use-mail";
 import { MessageSquare } from "lucide-react";
 import { addReply, listenForReplies, auth, likeReply, dislikeReply, likePost, dislikePost } from "@/app/firebase";
 import { ChatBubbleIcon, MagicWandIcon, PlusCircledIcon } from '@radix-ui/react-icons';
-import { ThumbsUp, ThumbsDown, ArrowDownToLine } from "lucide-react";
+import { ThumbsUp, ThumbsDown, ArrowDownToLine,Dot } from "lucide-react";
 import { UserAuth } from "@/app/context/AuthContext";
 import { toast } from "react-toastify";
 import Texts from "./text";
@@ -206,32 +206,37 @@ export function MailList({ items, category }: MailListProps) {
             //   })
 
             // }
-            onClick={() => toggleInput(item.id)}
+            //onClick={() => toggleInput(item.id)}
           >
             <Avatar className="hidden h-9 w-9 sm:flex">
               <AvatarImage src={item.photo || fallbackImageUrl} alt="Avatar" />
               <AvatarFallback>KS</AvatarFallback>
             </Avatar>
             <div className="flex flex-col w-full gap-1">
-              <div className="flex items-center justify-between w-full">
+            <div className="flex justify-between">
+              <div className="flex items-center w-full">
                 <div className="flex items-center gap-2">
-                  <div className="font-semibold">{capitalizeWords(item.name)}</div>
+                  <div className="font-semibold">{capitalizeWords(item.name)} </div>
                   {!item.read && (
                     <span className="flex h-2 w-2 rounded-full bg-blue-600" />
                   )}
                 </div>
+                <Dot/>
                 <div className={cn("text-xs", mail.selected === item.id ? "text-foreground" : "text-muted-foreground")}>
-                  {formatDistanceToNow(new Date(item.date), { addSuffix: true })}
+                   {formatDistanceToNow(new Date(item.date), { addSuffix: true })}
                 </div>
+                
               </div>
-              <div className="flex justify-between line-clamp-2 text-xs text-muted-foreground">
-                {item.text.substring(0, 300)}
-                <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1">
                   <MessageSquare strokeWidth="1.5" size="24" onClick={() => toggleInput(item.id)} />
                   <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
                     {replies[item.id] ? replies[item.id].length : 0}
                   </Badge>
                 </div>
+            </div>  
+              <div className="flex justify-between line-clamp-2 text-xs text-muted-foreground">
+                {item.text.substring(0, 300)}
+                
               </div>
               {item.image && category !== 'Text' && item.option !== 'text' && category !== 'Resumes' && item.option !== 'resumes' && (
                 <>
