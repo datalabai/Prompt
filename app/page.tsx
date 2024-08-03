@@ -70,30 +70,8 @@ export const metadata: Metadata = {
 export default function IndexPage() {
   return (
     <div className="container relative pr-0">
-      
-     
-      <section className="overflow-hidden rounded-lg border bg-background shadow-md md:hidden md:shadow-xl">
-        <Image
-          src="/mobileview.png"
-          width={1280}
-          height={727}
-          alt="Mail"
-          className="hidden dark:block"
-        />
-        <Image
-          src="/mobileview.png"
-          width={1280}
-          height={727}
-          alt="Mail"
-          className="block dark:hidden"
-        />
-      </section>
-      <section>
-      </section>
-      <section className="hidden md:block">
-        <div className="overflow-hidden rounded-lg border bg-background shadow">
-          <MailPage />
-        </div>
+       <section className="overflow-hidden rounded-lg border bg-background shadow-md md:shadow-xl">
+        <MailPage />
       </section>
     </div>
   )

@@ -201,7 +201,7 @@ export function Mail({
           }}
           className={cn(isCollapsed && "min-w-[50px] md:min-w-[70px] transition-all duration-300 ease-in-out")}
         >
-          <Separator />
+         
           <Nav
             isCollapsed={isCollapsed}
             links={[
@@ -216,7 +216,7 @@ export function Mail({
             onLinkClick={handleCategoryChange}
           />
         </ResizablePanel>
-        <ResizableHandle withHandle />
+        <ResizableHandle  />
         <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
           <Tabs defaultValue="all">
             <div className="bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60">
