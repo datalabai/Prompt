@@ -22,6 +22,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   description: siteConfig.description,
   keywords: [
+    "Uber for Prompts",
     "AI Content Creation",
     "Chatbot Assistance",
     "Creative Writing Prompts",
