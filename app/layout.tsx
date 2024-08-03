@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   authors: [
     {
       name: "prompt",
-      url: "https://promptexpert.xyz/",
+      url: "https://prompt.fun/",
     },
   ],
   creator: "prompt",
