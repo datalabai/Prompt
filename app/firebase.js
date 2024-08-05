@@ -78,7 +78,6 @@ export const getProfile = async () => {
     const activities = doc(db, "users", uid);
     const activitiesSnapshot = await getDoc(activities);
     const activitiesData = activitiesSnapshot.data();
-    alert(activitiesData.activities);
     console.log('userData:', userData);
     console.log('activitiesData:', activitiesData);
     return { user: userData ,transactions: activitiesData.activities };
@@ -280,7 +279,6 @@ export const addPost = async (post, category, option) => {
 
   const generateAndAddPost = async (prompt, postText) => {
     const data = await fetchImageForMessage(prompt + postText);
-    alert(data.trials);
     if (data.trials <= 0) {
       if(data.credits)
       {
@@ -684,7 +682,6 @@ export const addPost = async (post, category, option) => {
   };
 
 export const updateUserData = async (credits) => {
-  alert(credits);
   try {
     const uid=localStorage.getItem("uid");
     const userRef = doc(db, "users", uid);
@@ -705,7 +702,6 @@ export const updateUserData = async (credits) => {
       credits: credits,
     });
   }
-    alert("Credits updated successfully");
     console.log("User data updated successfully.");
   } catch (error) {
     console.error("Error updating user data:", error);
