@@ -37,8 +37,6 @@ type ProfileData = {
   email: string;
   wallet: string;
   photo: string;
-  amount: number;
-  usdc: number;
   credits: number;
 };
 
@@ -74,8 +72,8 @@ export default function Profile() {
       }
     };
 
-    const storedProfileData = localStorage.getItem('profileData');
-    const storedTransactionData = localStorage.getItem('transactionData');
+    const storedProfileData = localStorage.getItem('profileData') || '';
+    const storedTransactionData = localStorage.getItem('transactionData') || '';
 
     if (storedProfileData) {
       const parsedProfileData = JSON.parse(storedProfileData);

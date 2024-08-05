@@ -70,22 +70,21 @@ export const getProfile = async () => {
     const uid =localStorage.getItem("uid");
     console.log('uid:', uid); 
     console.log("kishore");
-    const response = await fetch(`${walletApiUrl}/profile?uid=${uid}`);
-    const credits = await fetchCredits();
-    const data = await response.json();
-    console.log('data:', data);
-    const userData={ ...data, credits: credits }; 
-    const activities = doc(db, "users", uid);
-    const activitiesSnapshot = await getDoc(activities);
-    const activitiesData = activitiesSnapshot.data();
-    console.log('userData:', userData);
-    console.log('activitiesData:', activitiesData);
-    return { user: userData ,transactions: activitiesData.activities };
+    const user = doc(db, "users", uid);
+    const activitiesSnapshot = await getDoc(user);
+    const userData = activitiesSnapshot.data();
+    const cred = await fetchCredits();
+    const data={name:userData.displayName,photo:userData.photo,credits:cred,wallet:userData.wallet,email:userData.email};
+    if(userData.activities){
+      return { user: data ,transactions: userData.activities};
+    }
+    return { user: data ,transactions: []};
   } catch (error) {
     console.error("Error fetching profile data:", error);
     return null;
   }
 };
+
 
 export const addUserToFirestore = async (user) => {
     // console.log("add user to firebase");

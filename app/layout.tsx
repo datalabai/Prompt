@@ -68,7 +68,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
                 </div>
                 {currentPath !== '/profile' && showRightPanel && <RightPanel />}                
               </div>
-              <SiteFooter />
+              {/* <SiteFooter /> */}
               <TailwindIndicator />
               <ThemeSwitcher />
             </ThemeProvider>
