@@ -16,16 +16,6 @@ export default function RightPanel() {
       <div className={`transition-all ${isMaximized ? 'h-screen' : ''} overflow-auto`}>
         <RightNotifications />
       </div>
-      {/* <button
-        onClick={togglePanel}
-        className="absolute top-2 right-3 p-2 "
-      >
-        {isMaximized ? (
-          <Minimize2  /> 
-        ) : (
-          <Maximize2  /> 
-        )}
-      </button> */}
     </div>
   );
 }

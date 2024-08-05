@@ -1,5 +1,5 @@
 "use client";
-import { ReactNode } from "react";
+import { ReactNode, use } from "react";
 import "@/config/globals.css";
 import { Metadata, Viewport } from "next";
 import 'react-toastify/dist/ReactToastify.css';
@@ -17,6 +17,7 @@ import { AuthContextProvider } from "./context/AuthContext";
 import GoogleAnalytics from "./GoogleAnalytics";
 import RightPanel from "@/components/rightPanel";
 import { useState } from "react";
+import { usePathname } from 'next/navigation'
 
 
 // export const metadata: Metadata = {
@@ -85,6 +86,8 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
 
   const [showRightPanel, setShowRightPanel] = useState(true);
+  const currentPath = usePathname();
+
 
   const toggleRightPanel = () => {
     setShowRightPanel(prev => !prev);
@@ -114,8 +117,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
                 <div className="relative flex min-h-screen flex-col bg-background mt-2 w-full">
                   {children}
                 </div>
-                {showRightPanel && <RightPanel />}
-                
+                {currentPath !== '/profile' && showRightPanel && <RightPanel />}                
               </div>
               <SiteFooter />
               <TailwindIndicator />

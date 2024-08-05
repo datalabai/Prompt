@@ -161,73 +161,56 @@ export default function Profile() {
         <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
           <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
             <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
-            <Card className="flex flex-col sm:flex-row sm:col-span-2 p-4 shadow-md">
-      <Avatar className="m-3 w-24 h-24">
-        <AvatarImage src={profileData.photo} />
-        <AvatarFallback>SR</AvatarFallback>
-      </Avatar>
-      <CardHeader className="ml-0 flex-1">
-        <CardTitle className="text-xl font-bold">{capitalizeWords(profileData.name)}</CardTitle>
-        <CardDescription className="text-gray-600 max-w-lg text-balance leading-relaxed">
-          {profileData.email}
-        </CardDescription>
-        <div className="mt-4 flex flex-row items-center">
-          <div className="flex items-center ">
-            <p className="inline mr-2 text-xs">{profileData.wallet}</p>
-            <CopyToClipboard
-              text={profileData.wallet}
-              onCopy={() => setCopied(true)}
-            >
-              <button className="ml-2 p-1 border rounded hover:bg-gray-200 flex items-center">
-                {copied ? <FiCheck className="text-green-500" /> : <FiCopy />}
-                <span className="ml-1">{copied ? '' : ''}</span>
-              </button>
-            </CopyToClipboard>
-          </div>
-          <div className="relative ml-4">
-          <Popover>
-  <PopoverTrigger><MdQrCodeScanner/></PopoverTrigger>
-  <PopoverContent>
-    <div ref={qrRef} className="p-2 bg-white border rounded hover:bg-gray-200  rounded shadow-lg">
-      <Canvas
-        text={profileData.wallet}
-        options={{
-          errorCorrectionLevel: 'M',
-          margin: 3,
-          scale: 12,
-          width: 200,
-          color: {
-            dark: '#000000FF',
-            light: '#FFFFFFFF',
-          },
-        }}
-      />  
+           <Card className="flex flex-col sm:flex-row sm:col-span-2 p-4 shadow-md max-w-full sm:max-w-2xl lg:max-w-3xl overflow-y-auto">
+  <Avatar className="m-3 w-24 h-24">
+    <AvatarImage src={profileData.photo} />
+    <AvatarFallback>SR</AvatarFallback>
+  </Avatar>
+  <CardHeader className="ml-0 flex-1">
+    <CardTitle className="text-xl font-bold">{capitalizeWords(profileData.name)}</CardTitle>
+    <CardDescription className="text-gray-600 max-w-lg text-balance leading-relaxed">
+      {profileData.email}
+    </CardDescription>
+    <div className="mt-4 flex flex-row items-center">
+      <div className="flex items-center ">
+        <p className="inline mr-2 text-xs">{profileData.wallet}</p>
+        <CopyToClipboard
+          text={profileData.wallet}
+          onCopy={() => setCopied(true)}
+        >
+          <button className="ml-2 p-1 border rounded hover:bg-gray-200 flex items-center">
+            {copied ? <FiCheck className="text-green-500" /> : <FiCopy />}
+            <span className="ml-1">{copied ? '' : ''}</span>
+          </button>
+        </CopyToClipboard>
+      </div>
+      <div className="relative ml-4">
+        <Popover>
+          <PopoverTrigger><MdQrCodeScanner /></PopoverTrigger>
+          <PopoverContent>
+            <div ref={qrRef} className="p-2 bg-white border rounded hover:bg-gray-200 rounded shadow-lg">
+              <Canvas
+                text={profileData.wallet}
+                options={{
+                  errorCorrectionLevel: 'M',
+                  margin: 3,
+                  scale: 12,
+                  width: 200,
+                  color: {
+                    dark: '#000000FF',
+                    light: '#FFFFFFFF',
+                  },
+                }}
+              />  
+            </div>
+          </PopoverContent>
+        </Popover>
+      </div>
     </div>
-  </PopoverContent>
-</Popover>
-            {/* {showQR && (
-              <div className="absolute top-full mt-2 left-1/2 transform -translate-x-1/2 p-2 bg-white border rounded shadow-lg">
-                <Canvas
-                  text={profileData.wallet}
-                  options={{
-                    errorCorrectionLevel: 'M',
-                    margin: 3,
-                    scale: 12,
-                    width: 200,
-                    color: {
-                      dark: '#000000FF',
-                      light: '#FFFFFFFF',
-                    },
-                  }}
-                />
-              </div>
-            )} */}
-          </div>
-        </div>
-        <Modal></Modal>
-      </CardHeader>
-      <CardFooter></CardFooter>
-    </Card>
+    <Modal></Modal>
+  </CardHeader>
+  <CardFooter></CardFooter>
+</Card>
               <Card>
                 <CardHeader>
                   <CardDescription></CardDescription>
