@@ -26,7 +26,7 @@ export default function MailPage() {
 
   return (
     <>
-      <div className="md:hidden">
+      <div className="md:hidden border-4 border-red-400">
         <Image
           src="/examples/mail-dark.png"
           width={1280}
@@ -42,7 +42,7 @@ export default function MailPage() {
           className="block dark:hidden"
         />
       </div>
-      <div className="hidden flex-col md:flex">
+      <div className="hidden flex-col md:flex ">
         <Mail
           mails={mails}
           defaultLayout={defaultLayout}

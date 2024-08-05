@@ -24,8 +24,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-
-
+import { Timestamp } from "firebase/firestore"; // Add this import if you are using Firebase
 
 type ProfileData = {
   name: string;
@@ -38,10 +37,10 @@ type ProfileData = {
 };
 
 type TransactionData = {
-  sig: string;
-  type: string;
+  timestamp: Timestamp; // Adjust the type to match the actual data type
+  activity: string;
+  creditsDeducted: number;
   prompt: string;
-  time: number;
 };
 
 export default function Profile() {
@@ -60,9 +59,9 @@ export default function Profile() {
         if (data) {
           console.log(data);
           setProfileData(data.user);
-          // setTransactionData(data.transactions);
+          setTransactionData(data.transactions);
           localStorage.setItem('profileData', JSON.stringify(data.user));
-          // localStorage.setItem('transactionData', JSON.stringify(data.transactions));
+          localStorage.setItem('transactionData', JSON.stringify(data.transactions));
         }
       } catch (error) {
         console.error("Error fetching profile data:", error);
@@ -70,14 +69,14 @@ export default function Profile() {
     };
 
     const storedProfileData = localStorage.getItem('profileData');
-    // const storedTransactionData = localStorage.getItem('transactionData');
+    const storedTransactionData = localStorage.getItem('transactionData');
 
     if (storedProfileData) {
       const parsedProfileData = JSON.parse(storedProfileData);
-      // const parsedTransactionData = JSON.parse(storedTransactionData);
+      const parsedTransactionData = JSON.parse(storedTransactionData || '[]');
       console.log("Parsed profile data:", parsedProfileData);
       setProfileData(parsedProfileData);
-      // setTransactionData(parsedTransactionData);
+      setTransactionData(parsedTransactionData);
 
       // Fetch new data to ensure it is up-to-date
       fetchProfileData();
@@ -108,7 +107,17 @@ export default function Profile() {
     return str.replace(/\b\w/g, (char) => char.toUpperCase());
   };
 
-  const formatTimestamp = (timestamp: number) => {
+  const formatTimestamp = (timestamp: any) => {
+    // Convert Firebase Timestamp to JavaScript Date object
+    if (timestamp instanceof Timestamp) {
+      timestamp = timestamp.toDate();
+    } else if (!(timestamp instanceof Date)) {
+      timestamp = new Date(timestamp);
+    }
+    if (isNaN(timestamp.getTime())) {
+      return "Invalid Date";
+    }
+
     const date = new Date(timestamp);
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const year = date.getFullYear();
@@ -131,15 +140,14 @@ export default function Profile() {
     return <div>Loading...</div>;
   }
 
-  // const rows = transactionData.map((transaction) =>
-  //   ({
-  //     transactionId: transaction.sig,
-  //     type: transaction.type,
-  //     prompt: transaction.prompt,
-  //     date: formatTimestamp(transaction.time),
-  //     amount: 0.1 
-  //   })
-  // );
+  const rows = transactionData.map((transaction) =>
+    ({
+      date: formatTimestamp(transaction.timestamp),
+      activity: transaction.activity,
+      credits: transaction.creditsDeducted,
+      prompt: transaction.prompt,
+    })
+  );
 
   return (
     <ScrollArea className="h-screen">
@@ -239,71 +247,31 @@ export default function Profile() {
                 </CardFooter>
               </Card>
             </div>
-            {/* <Tabs defaultValue="Transactions">
               <div className="flex items-center">
-                <TabsList>
-                  <TabsTrigger value="Transactions">Transactions</TabsTrigger>
-                  <TabsTrigger value="Rewards">Rewards</TabsTrigger>
-                </TabsList>
               </div>
-              <TabsContent value="Transactions">
                 <Card>
                   <CardHeader className="px-7"></CardHeader>
                   <CardContent>
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead>Transaction ID</TableHead>
-                          <TableHead className="hidden sm:table-cell">Prompt</TableHead>
-                          <TableHead className="hidden sm:table-cell">Type</TableHead>
-                          <TableHead className="hidden md:table-cell">Date</TableHead>
-                          <TableHead className="hidden md:table-cell">Suggested</TableHead>
-                          <TableHead className="text-right">Amount</TableHead>
+                          <TableHead>Date</TableHead>
+                          <TableHead className="hidden sm:table-cell">Activity</TableHead>
+                          <TableHead className="hidden sm:table-cell">Credits</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {rows.map((transaction, index) => (
                           <TableRow key={index}>
-                            <TableCell>
-                              <div className="font-medium">{sliceTransactionId(transaction.transactionId)}</div>
-                            </TableCell>
-                            <TableCell>
-                              <div className="font-medium">{transaction.prompt}</div>
-                            </TableCell>
-                            <TableCell className="font-medium">{transaction.type}</TableCell>
                             <TableCell className="font-medium">{transaction.date}</TableCell>
-                            <TableCell className="font-medium">{transaction.prompt}</TableCell>
-                            <TableCell className="font-medium text-right">1.10 USDC</TableCell>
+                            <TableCell className="font-medium">{transaction.activity}</TableCell>
+                            <TableCell className="font-medium">{transaction.credits}</TableCell>
                           </TableRow>
                         ))}
                       </TableBody>
                     </Table>
                   </CardContent>
                 </Card>
-              </TabsContent>
-              <TabsContent value="Rewards">
-                <Card>
-                  <CardHeader className="px-7"></CardHeader>
-                  <CardContent>
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Transaction ID</TableHead>
-                          <TableHead className="hidden sm:table-cell">Prompt</TableHead>
-                          <TableHead className="hidden sm:table-cell">Type</TableHead>
-                          <TableHead className="hidden md:table-cell">Date</TableHead>
-                          <TableHead className="hidden md:table-cell">Suggested</TableHead>
-                          <TableHead className="text-right">Amount</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {/* Add table rows with static rewards data here */}
-                      {/* </TableBody>
-                    </Table>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs> */} 
           </div>
         </div>
       </div>

@@ -75,14 +75,13 @@ export const getProfile = async () => {
     const data = await response.json();
     console.log('data:', data);
     const userData={ ...data, credits: credits }; 
+    const activities = doc(db, "users", uid);
+    const activitiesSnapshot = await getDoc(activities);
+    const activitiesData = activitiesSnapshot.data();
+    alert(activitiesData.activities);
     console.log('userData:', userData);
-
-    // const rewards = await fetch(`${walletApiUrl}/rewards?uid=${uid}`).then(res => res.json());
-    // const transactions = await fetch(`${walletApiUrl}/trans?uid=${uid}`).then(res => res.json());
-    // console.log('rewards:', rewards);
-    // console.log('transactions:', transactions);
-
-    return { user: userData, rewards: [], transactions: [] };
+    console.log('activitiesData:', activitiesData);
+    return { user: userData ,transactions: activitiesData.activities };
   } catch (error) {
     console.error("Error fetching profile data:", error);
     return null;
@@ -281,7 +280,8 @@ export const addPost = async (post, category, option) => {
 
   const generateAndAddPost = async (prompt, postText) => {
     const data = await fetchImageForMessage(prompt + postText);
-    if (data.trails <= 0) {
+    alert(data.trials);
+    if (data.trials <= 0) {
       if(data.credits)
       {
         if(data.credits<10)
@@ -324,7 +324,7 @@ export const addPost = async (post, category, option) => {
         option: option,
       });
       console.log("Document written with ID: ", docRef.id);
-      return `You have ${data.trails} free trails left`;
+      return `You have ${data.trials} free trails left`;
     } catch (e) {
       console.error("Error adding document: ", e);
       return "Error adding document";
@@ -514,21 +514,26 @@ export const addPost = async (post, category, option) => {
     const userDoc = userDocSnap.data();
     let freeTrials = await resetFreeTrials(userRef, userDoc);
   
-    if (freeTrials <= 0 ) {
-      if(userDoc.credits)
-      {
-        if(userDoc.credits<10)
-        {
-          return {image:"",trails:0,credits:userDoc.credits}
+    if (freeTrials <= 0) {
+      if (userDoc.credits) {
+        if (userDoc.credits < 10) {
+          return { image: "", trials: 0, credits: userDoc.credits };
         }
         const response = await fetch(`${sandboxApiUrl}/?prompt=${message}`);
         const data = await response.text();
         await updateDoc(userRef, {
           credits: userDoc.credits - 10,
+          activities: arrayUnion({
+            activity: "Prompt Generation",
+            prompt: message,
+            timestamp: new Date(),
+            creditsDeducted: 10,
+          }),
         });
-        return {image:data,trails:freeTrials,credits:userDoc.credits-10}
+  
+        return { image: data, trials: freeTrials, credits: userDoc.credits - 10 };
       }
-      return {image:"",trails:freeTrials,credits:0}
+      return { image: "", trials: freeTrials, credits: 0 };
     }
   
     try {
@@ -537,21 +542,30 @@ export const addPost = async (post, category, option) => {
       // Decrement free trials
       await updateDoc(userRef, {
         freeTrials: freeTrials - 1,
+        activities: arrayUnion({
+          activity: "Prompt Generation",
+          prompt: message,
+          timestamp: new Date(),
+          creditsDeducted: 0,
+        }),
       });
-  
-      return {image:data,trails:freeTrials,credits:userDoc.credits}
+      console.log(freeTrials-1);
+      return { image: data, trials: freeTrials - 1, credits: userDoc.credits };
     } catch (error) {
       console.error("Error fetching image:", error);
       return "Failed to generate image. Please try again later.";
     }
   };
+  
+
+
   export const addReply = async (postId,category,reply,option) => {
     // console.log("Adding reply:", reply);
     try {
       if(option === "prompt" && category !=="Text"){
         console.log(reply);
         const data= await fetchImageForMessage(reply.text); 
-        if(data.freeTrials<=0)
+        if(data.trails<=0)
           {
             return "You have no freeTrails left";
           }
