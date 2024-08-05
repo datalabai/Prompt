@@ -25,16 +25,6 @@ const Texts: React.FC<TextsProps> = ({ generatedText,post,category }) => {
         })
         .catch((error) => console.error('Failed to copy: ', error));
     }
-    // toast.info('Text copied to clipboard', {
-    //   position: "top-right",
-    //   autoClose: 100,
-    //   hideProgressBar: false,
-    //   closeOnClick: true,
-    //   pauseOnHover: true,
-    //   draggable: true,
-    //   progress: undefined,
-    // }
-    // );
   };
 
   const handlePostLike = async (postId: string) => {
@@ -50,8 +40,8 @@ const Texts: React.FC<TextsProps> = ({ generatedText,post,category }) => {
       <div ref={textContentRef} className="w-fit  text-content whitespace-pre-wrap text-left">
         {generatedText}
       </div>
-      <div className="flex gap-64 justify-between">
-                        <Badge variant="stone">
+      <div className="flex gap-8 ml-0">
+                        <Badge variant="stone" className='pl-0'>
                           <button onClick={() => handlePostLike(post.id)}>
                             <ThumbsUp strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-blue-500 mr-2" />
                           </button>

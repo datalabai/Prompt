@@ -3,17 +3,18 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow } from 'date-fns';
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Mail } from "../data";
 import { useMail } from "../use-mail";
 import { MessageSquare } from "lucide-react";
 import { addReply, listenForReplies, auth, likeReply, dislikeReply, likePost, dislikePost } from "@/app/firebase";
 import { ChatBubbleIcon, MagicWandIcon, PlusCircledIcon } from '@radix-ui/react-icons';
-import { ThumbsUp, ThumbsDown, ArrowDownToLine } from "lucide-react";
+import { ThumbsUp, ThumbsDown, ArrowDownToLine,Dot } from "lucide-react";
 import { UserAuth } from "@/app/context/AuthContext";
 import { toast } from "react-toastify";
 import Texts from "./text";
 import { CopyIcon } from '@radix-ui/react-icons';
+import MaskedText from "@/components/MaskedText";
+import { Crown } from 'lucide-react';
 
 interface MailListProps {
   items: Mail[];
@@ -38,7 +39,7 @@ export function MailList({ items, category }: MailListProps) {
 
   const toggleInput = (itemId: string) => {
     setShowInputItemId(showInputItemId === itemId ? null : itemId);
-    // setReplyVisible(!replyVisible);
+    //setReplyVisible(!replyVisible);
   };
 
   const handleMagicPrompt = async (message: string, itemId: any) => {
@@ -191,183 +192,210 @@ export function MailList({ items, category }: MailListProps) {
   
 
   return (
-    <ScrollArea className="h-[600px]">
-        <div className="flex flex-col gap-2 p-4 pt-0">
-          {items.map((item) => (
-            <button
-              key={item.id}
-              className={cn(
-                "flex items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent",
-                mail.selected === item.id && "bg-muted"
-              )}
-              // onClick={() =>
-              //   setMail({
-              //     ...mail,
-              //     selected: item.id,
-              //   })
+    <div className="h-[600px] overflow-y-auto">
+      <div className="flex flex-col gap-2 p-4 pt-0">
+        {items.map((item) => (
+          <button
+            key={item.id}
+            className={cn(
+              "flex items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent",
+              mail.selected === item.id && "bg-muted"
+            )}
+            // onClick={() =>
+            //   setMail({
+            //     ...mail,
+            //     selected: item.id,
+            //   })
+
+            // }
+            //onClick={() => toggleInput(item.id)}
+          >
+            <Avatar className="hidden h-9 w-9 sm:flex">
+              <AvatarImage src={item.photo || fallbackImageUrl} alt="Avatar" />
+              <AvatarFallback>KS</AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col w-full gap-1">
+            <div className="flex justify-between">
+              <div className="flex items-center w-full">
+                <div className="flex items-center gap-2">
+                  <div className="font-semibold">{capitalizeWords(item.name)} </div>
+                  {!item.read && (
+                    <span className="flex h-2 w-2 rounded-full bg-blue-600" />
+                  )}
+                </div>
+                <Dot/>
+                <div className={cn("text-xs", mail.selected === item.id ? "text-foreground" : "text-muted-foreground")}>
+                   {formatDistanceToNow(new Date(item.date), { addSuffix: true })}
+                </div>
                 
-              // }
-              // onClick={() => toggleInput(item.id)}
-            >
-              <Avatar className="hidden h-9 w-9 sm:flex">
-                <AvatarImage src={item.photo || fallbackImageUrl} alt="Avatar" />
-                <AvatarFallback>KS</AvatarFallback>
-              </Avatar>
-              <div className="flex flex-col w-full gap-1">
-                <div className="flex items-center justify-between w-full">
-                  <div className="flex items-center gap-2">
-                  <div className="font-semibold">{capitalizeWords(item.name)}</div>
-                    {!item.read && (
-                      <span className="flex h-2 w-2 rounded-full bg-blue-600" />
-                    )}
-                  </div>
-                  <div className={cn("text-xs", mail.selected === item.id ? "text-foreground" : "text-muted-foreground")}>
-                    {formatDistanceToNow(new Date(item.date), { addSuffix: true })}
-                  </div>
+              </div>
+              <div className="flex items-center gap-1">
+                  <MessageSquare strokeWidth="1.5" size="24" onClick={() => toggleInput(item.id)} />
+                  <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
+                    {replies[item.id] ? replies[item.id].length : 0}
+                  </Badge>
                 </div>
-                <div className="flex justify-between line-clamp-2 text-xs text-muted-foreground">
-                  {item.text.substring(0, 300)}
-                  <div className="flex items-center gap-1">
-                    <MessageSquare strokeWidth="1.5" size="24" onClick={() => toggleInput(item.id)} />
-                    <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                      {replies[item.id] ? replies[item.id].length : 0}
+            </div>  
+              <div className="flex justify-between line-clamp-2 text-xs text-muted-foreground">
+                {item.text.substring(0, 300)}
+                
+              </div>
+              {item.image && category !== 'Text' && item.option !== 'text' && category !== 'Resumes' && item.option !== 'resumes' && (
+                <>
+                  <img src={item.image} alt="Image" width={300} height={550} className="mt-4 mb-2 rounded-lg" />
+                  <div className="flex gap-20 mt-2 ">
+                    <Badge variant="stone">
+                      <button onClick={() => handlePostLike(item.id)}>
+                        <ThumbsUp strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-blue-500 mr-2" />
+                      </button>
+                      <span>{item.likes?.length || 0}</span>
                     </Badge>
-                  </div>
-                </div>
-                {item.image && category !== 'Text' && item.option !== 'text' && category!=='Resumes' &&  item.option!=='resumes' &&(
-  <>
-    <img src={item.image} alt="Image" width={300} height={550} className="mt-4 mb-2 rounded-lg" />
-    <div className="flex gap-20 mt-2 ">
-      <Badge variant="stone">
-        <button onClick={() => handlePostLike(item.id)}>
-          <ThumbsUp strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-blue-500 mr-2" />
-        </button>
-        <span>{item.likes?.length || 0}</span>
-      </Badge>
-      <Badge variant="stone">
-        <button onClick={() => handlePostDislike(item.id)}>
-          <ThumbsDown strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-red-500 mr-2" />
-        </button>
-        <span>{item.dislikes?.length || 0}</span>
-      </Badge>
-      {/* {item.name !== auth.currentUser?.displayName && (
+                    <Badge variant="stone">
+                      <button onClick={() => handlePostDislike(item.id)}>
+                        <ThumbsDown strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-red-500 mr-2" />
+                      </button>
+                      <span>{item.dislikes?.length || 0}</span>
+                    </Badge>
+                    {/* {item.name !== auth.currentUser?.displayName && (
         <Badge variant="stone">
           <MagicWandIcon className="h-4 w-4 cursor-pointer hover:text-purple-500" onClick={() => handleMagicPrompt(item.text, item.id)} />
         </Badge>
       )} */}
-      {item.image && (
-        <Badge variant="stone">
-          <ArrowDownToLine strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-purple-500" onClick={() => Download(item.image)} />
-        </Badge>
-      )}
-    </div>
-  </>
-)}
+                    {item.image && (
+                      <Badge variant="stone">
+                        <ArrowDownToLine strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-purple-500" onClick={() => Download(item.image)} />
+                      </Badge>
+                    )}
+                  </div>
+                </>
+              )}
 
-{(category === 'Text' || item.option === 'text' || category === 'Resumes' || item.option === 'resumes') && (
-  item.image === './loading.gif' ? (
-    <img src={item.image} alt="Image" width={300} height={550} className="mt-4 mb-2 rounded-lg" />
-  ) : (
-    item.image !== '' && (
-      <div>
-        <Texts generatedText={item.image} post={item} category={category} />
-      </div>
-    )
-  )
-)}
-
-                {replyVisible && (
-                  <>
+              {(category === 'Text' || item.option === 'text' || category === 'Resumes' || item.option === 'resumes') && (
+                item.image === './loading.gif' ? (
+                  <img src={item.image} alt="Image" width={300} height={550} className="mt-4 mb-2 rounded-lg" />
+                ) : (
+                  item.image !== '' && (
                     <div className="gap-2 mb-2">
-                      {replies[item.id] && replies[item.id].length > 0 && (
-                        <>
-                          {replies[item.id].map((reply, index) => (
-                            <div key={index} className="flex mt-2">
+                      <Texts generatedText={item.image} post={item} category={category} />
+                    </div>
+                  )
+                )
+              )}
+
+              {replyVisible && (
+                <>
+                  <div className="gap-2 mb-2">
+                    {replies[item.id] && replies[item.id].length > 0 && (
+                      <>
+                        {replies[item.id].map((reply, index) => (
+                          <div key={index} className="flex mt-2">
+                           {reply.image  ? (
+                            <div className="flex-col -space-y-3">
+                            {/* <Crown  strokeWidth={1.25} className="h-6 w-6 pb-2 pl-2 icon-red" color="orange" /> */}
+                            <Avatar className="h-8 w-8">
+                              <AvatarImage src="https://lh3.googleusercontent.com/a/ACg8ocKFM9tQaWu56LVff7pMGiAp9WmIpAbfO34DdO2zKf1R_wH5SPfM7Q=s96-c" alt="Avatar" />
+                              <AvatarFallback>N R</AvatarFallback>
+                            </Avatar>
+                            <Avatar className="h-8 w-8">
+                              <AvatarImage src={reply.photo} alt="Avatar" />
+                              <AvatarFallback>N R</AvatarFallback>
+                            </Avatar>
+                            </div>
+                             ):(
                               <Avatar className="h-8 w-8">
-                                <AvatarImage src={reply.photo} alt="Avatar" />
-                                <AvatarFallback>N R</AvatarFallback>
-                              </Avatar>
-                              <div className="flex flex-col ml-2">
-                                <div className="font-semibold">{capitalizeWords(reply.name)}</div>
-                                <div className="flex justify-between line-clamp-2 text-xs text-muted-foreground">                          
-                                   {reply.option === 'prompt' ? (
-                                      <><div className="cursor-pointer">{reply.text}</div><Badge variant="stone">
-                                      <MagicWandIcon className="h-4 w-4 cursor-pointer hover:text-purple-500" onClick={() => handleMagicPrompt(reply.text, item.id)} />
-                                    </Badge></>
-                                    ):(
-                                      <div className="cursor-pointer">{reply.text}</div>
-                                    )
-                                    }
-                                </div>
-                                {reply.image && (
-                                  <>
-                                    <img src={reply.image} alt="Image" width={300} height={550} className="mt-2 mb-2 rounded lg" />
-                                    <div className="flex gap-9 mt-2">
-                                      <Badge variant="stone">
-                                        <button onClick={() => handleLike(item.id, reply.id)}>
-                                          <ThumbsUp strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-blue-500 mr-2" />
-                                        </button>
-                                        <span>{reply.likes?.length || 0}</span>
-                                      </Badge>
-                                      <Badge variant="stone">
-                                        <button onClick={() => handleDislike(item.id, reply.id)}>
-                                          <ThumbsDown strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-red-500 mr-2" />
-                                        </button>
-                                        <span>{reply.dislikes?.length || 0}</span>
-                                      </Badge>
-                                      <Badge variant="stone">
-                                        <ArrowDownToLine strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-purple-500" onClick={() => Download(reply.image)} />
-                                      </Badge>
-                                    </div>
-                                  </>
+                              <AvatarImage src={reply.photo} alt="Avatar" />
+                              <AvatarFallback>N R</AvatarFallback>
+                            </Avatar>
+                             )}
+                            <div className="flex flex-col ml-2">
+                            {reply.image  ? (
+                              <div className="flex"><div className="font-text-sm text-muted-foreground"><span className="font-semibold">Obulapathi N Challa</span> authored the prompt and <span className="font-semibold">{capitalizeWords(reply.name)}</span> generated the content below</div></div>
+                            ):(
+                              <div className="font-semibold">{capitalizeWords(reply.name)}</div>
+                            )}
+                              <div className="flex justify-between line-clamp-2 text-xs text-muted-foreground">
+                                
+                                {reply.option === 'prompt' ? (
+                                  // <MaskedText key={index} text={reply.text} />
+                                  <div>{reply.text}</div>
+                                ) : (
+                                  <span>{reply.text}</span>
+                                )}
+                                {reply.option === 'prompt' && (
+                                  <Badge variant="stone">
+                                    <MagicWandIcon className="h-4 w-4 cursor-pointer hover:text-purple-500" onClick={() => handleMagicPrompt(reply.text, item.id)} />
+                                  </Badge>
                                 )}
                               </div>
+                              {reply.image && (
+                                <>
+                                  <img src={reply.image} alt="Image" width={300} height={550} className="mt-2 mb-2 rounded lg" />
+                                  <div className="flex gap-9 mt-2">
+                                    <Badge variant="stone">
+                                      <button onClick={() => handleLike(item.id, reply.id)}>
+                                        <ThumbsUp strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-blue-500 mr-2" />
+                                      </button>
+                                      <span>{reply.likes?.length || 0}</span>
+                                    </Badge>
+                                    <Badge variant="stone">
+                                      <button onClick={() => handleDislike(item.id, reply.id)}>
+                                        <ThumbsDown strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-red-500 mr-2" />
+                                      </button>
+                                      <span>{reply.dislikes?.length || 0}</span>
+                                    </Badge>
+                                    <Badge variant="stone">
+                                      <ArrowDownToLine strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-purple-500" onClick={() => Download(reply.image)} />
+                                    </Badge>
+                                  </div>
+                                </>
+                              )}
                             </div>
-                          ))}
-                        </>
-                      )}
-                    </div>
-                    </>
+                          </div>
+                        ))}
+                      </>
                     )}
-                    {showInputItemId === item.id && (
-                    <div className="relative w-full">
-                      <input
-                        type="text"
-                        className="w-full border rounded-lg pl-12 p-2 mt-2"
-                        placeholder="Type your message here..."
-                        value={postText}
-                        onChange={(e) => setPostText(e.target.value)}
-                        onKeyDown={(e) => handleKeyDown(e, item.id)}
-                      />
-                      <div
-                        className="absolute left-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
-                        onClick={handleIconClick}
+                  </div>
+                </>
+              )}
+              {showInputItemId === item.id && (
+                <div className="relative w-full">
+                  <input
+                    type="text"
+                    className="w-full border rounded-lg pl-12 p-2 mt-2"
+                    placeholder="Type your message here..."
+                    value={postText}
+                    onChange={(e) => setPostText(e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(e, item.id)}
+                  />
+                  <div
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
+                    onClick={handleIconClick}
+                  >
+                    {renderSelectedIcon()}
+                  </div>
+                  {menuVisible && (
+                    <div className="absolute bottom-full bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                      <button
+                        className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left"
+                        onClick={() => handleMenuOptionClick('chat')}
                       >
-                        {renderSelectedIcon()}
-                      </div>
-                      {menuVisible && (
-                        <div className="absolute bottom-full bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-                          <button
-                            className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left"
-                            onClick={() => handleMenuOptionClick('chat')}
-                          >
-                            <ChatBubbleIcon style={{ width: '15px', height: '15px' }} /> <span className="ml-2">Chat</span>
-                          </button>
-                          <button
-                            className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left"
-                            onClick={() => handleMenuOptionClick('prompt')}
-                          >
-                            <MagicWandIcon style={{ width: '15px', height: '15px' }} /> <span className="ml-2">Prompt</span>
-                          </button>
-                        </div>
-                      )}
+                        <ChatBubbleIcon style={{ width: '15px', height: '15px' }} /> <span className="ml-2">Chat</span>
+                      </button>
+                      <button
+                        className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left"
+                        onClick={() => handleMenuOptionClick('prompt')}
+                      >
+                        <MagicWandIcon style={{ width: '15px', height: '15px' }} /> <span className="ml-2">Prompt</span>
+                      </button>
                     </div>
-                  
-                )}
-              </div>
-            </button>
-          ))}
-        </div>
-    </ScrollArea>
+                  )}
+                </div>
+
+              )}
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }

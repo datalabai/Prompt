@@ -1,31 +1,77 @@
 import Image from "next/image"
+
+
+
+
 import MailPage from "./mail/page"
+import { siteConfig } from "@/config/site";
+import { Metadata, Viewport } from "next";
+
+export const metadata: Metadata = {
+  title: {
+    default: siteConfig.name,
+    template: `%s - ${siteConfig.name}`,
+  },
+  metadataBase: new URL(siteConfig.url),
+  description: siteConfig.description,
+  keywords: [
+    "prompt",
+    "expert",
+    "image",
+    "resume",
+    "text",
+    "logo",
+    "design",
+    "writing",
+    "writing prompt",
+    "memes",
+    "meme generator",
+    "generator",
+    "text generator",
+  ],
+  authors: [
+    {
+      name: "prompt",
+      url: "https://prompt.fun/",
+    },
+  ],
+  creator: "prompt",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: siteConfig.url,
+    title: siteConfig.name,
+    description: siteConfig.description,
+    siteName: siteConfig.name,
+    images: [
+      {
+        url: siteConfig.ogImage,
+        width: 1200,
+        height: 630,
+        alt: siteConfig.name,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteConfig.name,
+    description: siteConfig.description,
+    images: [siteConfig.ogImage],
+    creator: "@prompt",
+  },
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon-16x16.png",
+    apple: "/apple-touch-icon.png",
+  },
+  manifest: `${siteConfig.url}`,
+};
 
 export default function IndexPage() {
   return (
-    <div className="container relative">
-      
-     
-      <section className="overflow-hidden rounded-lg border bg-background shadow-md md:hidden md:shadow-xl">
-        <Image
-          src="/mobileview.png"
-          width={1280}
-          height={727}
-          alt="Mail"
-          className="hidden dark:block"
-        />
-        <Image
-          src="/mobileview.png"
-          width={1280}
-          height={727}
-          alt="Mail"
-          className="block dark:hidden"
-        />
-      </section>
-      <section className="hidden md:block">
-        <div className="overflow-hidden rounded-lg border bg-background shadow">
-          <MailPage />
-        </div>
+    <div className="container relative pr-0">
+       <section className="overflow-hidden rounded-lg border bg-background shadow-md md:shadow-xl">
+        <MailPage />
       </section>
     </div>
   )

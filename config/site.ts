@@ -1,12 +1,12 @@
 export const siteConfig = {
   name: "PROMPT",
-  url: "https://promptexpert.xyz/",
+  url: "https://prompt.fun/",
   ogImage: "./mobileview.png",
   description:
-    "Beautifully designed components that you can copy and paste into your apps. Accessible. Customizable. Open Source.",
+    "This website or platform designed to help writers generate ideas, prompts, or exercises to inspire creative writing. This website often provide writing prompts, tips, and sometimes communities where writers can share their work or get feedback.",
   links: {
-    twitter: "https://promptexpert.xyz/",
-    github: "https://promptexpert.xyz/",
+    twitter: "https://x.com/obulpathi/status/1816704504232051162",
+    github: "https://github.com/datalabai/Prompt.git",
   },
 }
 
