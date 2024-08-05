@@ -31,7 +31,6 @@ import { useEffect, useState, useCallback } from "react";
 import { addMessageToPrivateChannel, addPost, auth,getPosts} from "@/app/firebase";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { PromptModeToggle } from "@/components/prompt-dropmenu";
-import Profile from "./profile";
 import { Notifications } from "./notifications";
 import { Mail as MailType } from '../data';
 import { UserAuth } from "@/app/context/AuthContext";

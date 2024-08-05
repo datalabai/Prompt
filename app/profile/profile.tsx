@@ -9,6 +9,12 @@ import {
   CardFooter,
   CardContent
 } from "@/components/ui/card";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { Progress } from "@/components/ui/progress";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -261,14 +267,61 @@ export default function Profile() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {rows.map((transaction, index) => (
-                          <TableRow key={index}>
-                            <TableCell className="font-medium">{transaction.date}</TableCell>
-                            <TableCell className="font-medium">{transaction.activity}</TableCell>
-                            <TableCell className="font-medium">{transaction.credits}</TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
+  {rows.map((transaction, index) => (
+    <TableRow key={index}>
+      <TableCell className="font-medium">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              {transaction.date}
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Transaction Date: {formatTimestamp(transaction.date)}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </TableCell>
+      <TableCell className="font-medium">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              {transaction.activity}
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{transaction.prompt}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </TableCell>
+      <TableCell className="font-medium">
+        {transaction.credits === 0 ? (
+          <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              {transaction.credits}
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>you have Free Trials</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        ) : (
+            <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <span>-</span>
+                {transaction.credits}
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Credits Deducted: {transaction.credits}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
+      </TableCell>
+    </TableRow>
+  ))}
+</TableBody>
                     </Table>
                   </CardContent>
                 </Card>
