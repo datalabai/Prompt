@@ -1,3 +1,5 @@
+"use client";
+import { ReactNode } from "react";
 import "@/config/globals.css";
 import { Metadata, Viewport } from "next";
 import 'react-toastify/dist/ReactToastify.css';
@@ -13,58 +15,61 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { AuthContextProvider } from "./context/AuthContext";
 import GoogleAnalytics from "./GoogleAnalytics";
+import RightPanel from "@/components/rightPanel";
+import { useState } from "react";
 
-export const metadata: Metadata = {
-  title: {
-    default: siteConfig.name,
-    template: `%s - ${siteConfig.name}`,
-  },
-  metadataBase: new URL(siteConfig.url),
-  description: siteConfig.description,
-  keywords: [
-    "Next.js",
-    "React",
-    "Tailwind CSS",
-    "Server Components",
-    "Radix UI",
-  ],
-  authors: [
-    {
-      name: "prompt",
-      url: "https://promptexpert.xyz/",
-    },
-  ],
-  creator: "prompt",
-  openGraph: {
-    type: "website",
-    locale: "en_US",
-    url: siteConfig.url,
-    title: siteConfig.name,
-    description: siteConfig.description,
-    siteName: siteConfig.name,
-    images: [
-      {
-        url: siteConfig.ogImage,
-        width: 1200,
-        height: 630,
-        alt: siteConfig.name,
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: siteConfig.name,
-    description: siteConfig.description,
-    images: [siteConfig.ogImage],
-    creator: "@prompt",
-  },
-  icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon-16x16.png",
-    apple: "/apple-touch-icon.png",
-  },
-  manifest: `${siteConfig.url}`,
-};
+
+// export const metadata: Metadata = {
+//   title: {
+//     default: siteConfig.name,
+//     template: `%s - ${siteConfig.name}`,
+//   },
+//   metadataBase: new URL(siteConfig.url),
+//   description: siteConfig.description,
+//   keywords: [
+//     "Next.js",
+//     "React",
+//     "Tailwind CSS",
+//     "Server Components",
+//     "Radix UI",
+//   ],
+//   authors: [
+//     {
+//       name: "prompt",
+//       url: "https://promptexpert.xyz/",
+//     },
+//   ],
+//   creator: "prompt",
+//   openGraph: {
+//     type: "website",
+//     locale: "en_US",
+//     url: siteConfig.url,
+//     title: siteConfig.name,
+//     description: siteConfig.description,
+//     siteName: siteConfig.name,
+//     images: [
+//       {
+//         url: siteConfig.ogImage,
+//         width: 1200,
+//         height: 630,
+//         alt: siteConfig.name,
+//       },
+//     ],
+//   },
+//   twitter: {
+//     card: "summary_large_image",
+//     title: siteConfig.name,
+//     description: siteConfig.description,
+//     images: [siteConfig.ogImage],
+//     creator: "@prompt",
+//   },
+//   icons: {
+//     icon: "/favicon.ico",
+//     shortcut: "/favicon-16x16.png",
+//     apple: "/apple-touch-icon.png",
+//   },
+//   manifest: `${siteConfig.url}`,
+// };
 
 export const viewport: Viewport = {
   themeColor: [
@@ -78,6 +83,12 @@ interface RootLayoutProps {
 }
 
 export default function RootLayout({ children }: RootLayoutProps) {
+
+  const [showRightPanel, setShowRightPanel] = useState(true);
+
+  const toggleRightPanel = () => {
+    setShowRightPanel(prev => !prev);
+  };
   return (
     <>
       <html lang="en" suppressHydrationWarning>
@@ -97,13 +108,16 @@ export default function RootLayout({ children }: RootLayoutProps) {
               enableSystem
               disableTransitionOnChange
             >
-              <div vaul-drawer-wrapper="">
-                <SiteHeader />
-                <div className="relative flex min-h-screen flex-col bg-background mt-2">
+               <SiteHeader toggleRightPanel={toggleRightPanel} />
+             <div vaul-drawer-wrapper="" className="flex justify-between mt-2">
+             
+                <div className="relative flex min-h-screen flex-col bg-background mt-2 w-full">
                   {children}
                 </div>
-                <SiteFooter />
+                {showRightPanel && <RightPanel />}
+                
               </div>
+              <SiteFooter />
               <TailwindIndicator />
               <ThemeSwitcher />
             </ThemeProvider>

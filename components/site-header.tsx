@@ -4,8 +4,7 @@ import Link from "next/link"
 
 import { siteConfig } from "@/config/site"
 import { cn } from "@/lib/utils"
-import { CommandMenu } from "@/components/command-menu"
-import { Icons } from "@/components/icons"
+import { Crown } from 'lucide-react';
 import { MainNav } from "@/components/main-nav"
 import { MobileNav } from "@/components/mobile-nav"
 import { ModeToggle } from "@/components/mode-toggle"
@@ -13,9 +12,12 @@ import { buttonVariants } from "@/components/ui/button"
 import { ProfileAvator } from "./profileavator"
 import { UserAuth } from "../app/context/AuthContext"
 import { addUserToFirestore } from '../app/firebase'
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 
-export function SiteHeader() {
+interface SiteHeaderProps {
+  toggleRightPanel: () => void;
+}
+export const SiteHeader: React.FC<SiteHeaderProps> = ({ toggleRightPanel }) => {
   const { user, googleSignIn, logOut } = UserAuth();
 
   useEffect(() => {
@@ -41,6 +43,8 @@ export function SiteHeader() {
         <MobileNav />
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
           <nav className="flex items-center">
+          
+            <Crown strokeWidth={1.25} className="h-6 w-6 text-primary mr-2" onClick={toggleRightPanel}  />
             <ModeToggle />
             {user ? (
               <ProfileAvator enableProfile={function (): void {

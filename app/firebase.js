@@ -2,7 +2,7 @@ import { Avatar } from "@radix-ui/react-avatar";
 import { add } from "date-fns";
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { query,where,getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc,setDoc,orderBy,onSnapshot, getCountFromServer,serverTimestamp,Firestore,arrayUnion, arrayRemove} from "firebase/firestore";
+import { query,where,getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc,setDoc,orderBy,onSnapshot, getCountFromServer,serverTimestamp,Firestore,arrayUnion, arrayRemove, limit, deleteDoc } from "firebase/firestore";
 import { get } from "http";
 import { format } from "date-fns";
 import dotenv from 'dotenv';
@@ -273,6 +273,29 @@ export const FetchText = async (text) => {
   }
 };
 
+
+const updateRecentPosts = async (newPost) => {
+  const recentPostsRef = collection(db, "recentPosts");
+  
+  // Get the current recent posts
+  const recentPostsQuery = query(recentPostsRef, orderBy("createdAt", "desc"), limit(5));
+  const recentPostsSnapshot = await getDocs(recentPostsQuery);
+  const recentPosts = recentPostsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+  // Add the new post to the beginning of the array
+  recentPosts.unshift(newPost);
+
+  // Ensure the array does not exceed 5 elements
+  if (recentPosts.length > 5) {
+    const oldestPost = recentPosts.pop();
+    await deleteDoc(doc(db, "recentPosts", oldestPost.id));
+  }
+
+  // Add the new post to the recentPosts collection
+  await addDoc(recentPostsRef, newPost);
+};
+
+
 // addPost function to add a post to Firebase
 export const addPost = async (post, category, option) => {
   console.log("Adding post:", post);
@@ -286,7 +309,7 @@ export const addPost = async (post, category, option) => {
         {
           return "You have no freeTrails or Credits left ! Please buy credits";
         }
-        const docRef = await addDoc(collection(db, category), {
+        const newPost = {
           name: post.name,
           email: post.email,
           text: prompt + postText,
@@ -298,8 +321,10 @@ export const addPost = async (post, category, option) => {
           image: data.image,
           createdAt: serverTimestamp(),
           option: option,
-        });
+        };
+        const docRef = await addDoc(collection(db, category), newPost);
         console.log("Document written with ID: ", docRef.id);
+        await updateRecentPosts(newPost);
         return `You have ${data.credits} credits left`;
       }
       return "You have no free trails or Credits left ! Please buy credits";
@@ -308,7 +333,7 @@ export const addPost = async (post, category, option) => {
       return "Fail to generate image. Please try again later.";
     }
     try {
-      const docRef = await addDoc(collection(db, category), {
+      const newPost = {
         name: post.name,
         email: post.email,
         text: prompt + postText,
@@ -320,8 +345,10 @@ export const addPost = async (post, category, option) => {
         image: data.image,
         createdAt: serverTimestamp(),
         option: option,
-      });
+      };
+      const docRef = await addDoc(collection(db, category), newPost);
       console.log("Document written with ID: ", docRef.id);
+      await updateRecentPosts(newPost);
       return `You have ${data.trials} free trails left`;
     } catch (e) {
       console.error("Error adding document: ", e);
