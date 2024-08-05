@@ -165,7 +165,7 @@ export const addUserToFirestore = async (user) => {
   
     const generateAndAddMessage = async (prompt, postText) => {
       const data = await fetchImageForMessage(prompt + postText);
-      if (data.trails <= 0) {
+      if (data.trials <= 0) {
         return "You have no free trails left";
       }
       if (data.image === 'Failed to generate image. Please try again later.') {
@@ -294,7 +294,6 @@ const updateRecentPosts = async (newPost) => {
   // Add the new post to the recentPosts collection
   await addDoc(recentPostsRef, newPost);
 };
-
 
 // addPost function to add a post to Firebase
 export const addPost = async (post, category, option) => {
@@ -439,8 +438,32 @@ export const addPost = async (post, category, option) => {
         }
       } else {
         const data = await fetchImageForMessage(post.text);
-        if (data.trails <= 0) {
-          return "You have no free trails left";
+        if (data.trials <= 0) {
+          if(data.credits)
+          {
+            if(data.credits<10)
+            {
+              return "You have no freeTrails or Credits left ! Please buy credits";
+            }
+            const newPost = {
+              name: post.name,
+              email: post.email,
+              text: post.text,
+              date: post.date,
+              photo: post.photo,
+              likes: [],
+              dislikes: [],
+              read: true,
+              image: data.image,
+              createdAt: serverTimestamp(),
+              option: option,
+            };
+            const docRef = await addDoc(collection(db, category), newPost);
+            console.log("Document written with ID: ", docRef.id);
+            await updateRecentPosts(newPost);
+            return `You have ${data.credits} credits left`;
+          }
+          return "You have no free trails or Credits left ! Please buy credits";
         }
         if (data.image === 'Failed to generate image. Please try again later.') {
           return "fail";
@@ -458,8 +481,8 @@ export const addPost = async (post, category, option) => {
             image: data.image,
             createdAt: serverTimestamp(),
           });
-          console.log("Document written with ID: ", docRef.id);
-          return `You have ${data.trails} free trails left`;
+          console.log("Document writcten with ID: ", docRef.id);
+          return `You have ${data.trials} free trails left`;
         } catch (e) {
           console.error("Error adding document: ", e);
           return "Error adding document";
