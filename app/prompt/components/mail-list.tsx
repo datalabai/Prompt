@@ -292,10 +292,10 @@ export function MailList({ items, category }: MailListProps) {
                            {reply.image  ? (
                             <div className="flex-col -space-y-3">
                             {/* <Crown  strokeWidth={1.25} className="h-6 w-6 pb-2 pl-2 icon-red" color="orange" /> */}
-                            <Avatar className="h-8 w-8">
+                            {/* <Avatar className="h-8 w-8">
                               <AvatarImage src="https://lh3.googleusercontent.com/a/ACg8ocKFM9tQaWu56LVff7pMGiAp9WmIpAbfO34DdO2zKf1R_wH5SPfM7Q=s96-c" alt="Avatar" />
                               <AvatarFallback>N R</AvatarFallback>
-                            </Avatar>
+                            </Avatar> */}
                             <Avatar className="h-8 w-8">
                               <AvatarImage src={reply.photo} alt="Avatar" />
                               <AvatarFallback>N R</AvatarFallback>
@@ -308,11 +308,11 @@ export function MailList({ items, category }: MailListProps) {
                             </Avatar>
                              )}
                             <div className="flex flex-col ml-2">
-                            {reply.image  ? (
+                            {/* {reply.image  ? (
                               <div className="flex"><div className="font-text-sm text-muted-foreground"><span className="font-semibold">Obulapathi N Challa</span> authored the prompt and <span className="font-semibold">{capitalizeWords(reply.name)}</span> generated the content below</div></div>
                             ):(
                               <div className="font-semibold">{capitalizeWords(reply.name)}</div>
-                            )}
+                            )} */}
                               <div className="flex justify-between line-clamp-2 text-xs text-muted-foreground">
                                 
                                 {reply.option === 'prompt' ? (
