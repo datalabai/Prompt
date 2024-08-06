@@ -230,10 +230,10 @@ export function MailList({ items, category }: MailListProps) {
                 
               </div>
               <div className="flex items-center gap-1">
-                  <MessageSquare strokeWidth="1.5" size="24" onClick={() => toggleInput(item.id)} />
-                  <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
+                  <MessageSquare strokeWidth="1.5" size="32" onClick={() => toggleInput(item.id)} />
+                  {/* <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
                     {replies[item.id] ? replies[item.id].length : 0}
-                  </Badge>
+                  </Badge> */}
                 </div>
             </div>  
               <div className="flex justify-between line-clamp-2 text-xs text-muted-foreground">
@@ -323,7 +323,7 @@ export function MailList({ items, category }: MailListProps) {
                                 )}
                                 {reply.option === 'prompt' && (
                                   <Badge variant="stone">
-                                    <MagicWandIcon className="h-4 w-4 cursor-pointer hover:text-purple-500" onClick={() => handleMagicPrompt(reply.text, item.id)} />
+                                    <MagicWandIcon className="h-8 w-8 cursor-pointer hover:text-purple-500" onClick={() => handleMagicPrompt(reply.text, item.id)} />
                                   </Badge>
                                 )}
                               </div>
