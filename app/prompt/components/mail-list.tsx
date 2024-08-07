@@ -313,6 +313,7 @@ export function MailList({ items, category }: MailListProps) {
                             ):(
                               <div className="font-semibold">{capitalizeWords(reply.name)}</div>
                             )} */}
+                            <div className="font-semibold">{capitalizeWords(reply.name)}</div>
                               <div className="flex justify-between line-clamp-2 text-xs text-muted-foreground">
                                 
                                 {reply.option === 'prompt' ? (
