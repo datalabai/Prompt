@@ -6,6 +6,7 @@ import Image from "next/image"
 import MailPage from "./prompt/page"
 import { siteConfig } from "@/config/site";
 import { Metadata, Viewport } from "next";
+import { Landing } from "@/components/landing";
 
 export const metadata: Metadata = {
   title: {
@@ -70,8 +71,8 @@ export const metadata: Metadata = {
 export default function IndexPage() {
   return (
     <div className="container relative pr-0">
-       <section className="overflow-hidden rounded-lg border bg-background shadow-md md:shadow-xl">
-        <MailPage />
+       <section >
+        <Landing />
       </section>
     </div>
   )
