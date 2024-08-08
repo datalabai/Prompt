@@ -38,6 +38,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Spinner } from "@/components/ui/spinner";
 import { set } from "date-fns";
+import { RightNotifications } from "@/components/rightpanel-notification";
 
 
 interface MailProps {
@@ -183,7 +184,7 @@ export function Mail({
         onLayout={(sizes: number[]) => {
           document.cookie = `react-resizable-panels:layout=${JSON.stringify(sizes)}`;
         }}
-        className="h-full max-h-[800px] items-stretch"
+        className="min-h-screen "
       >
         <ResizablePanel
           defaultSize={defaultLayout[0]}
@@ -199,7 +200,7 @@ export function Mail({
             setIsCollapsed(false);
             document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(false)}`;
           }}
-          className={cn(isCollapsed && "min-w-[50px] md:min-w-[70px] transition-all duration-300 ease-in-out")}
+          className={cn(isCollapsed && "min-w-[50px] md:min-w-[70px] transition-all duration-300 ease-in-out ¯")}
         >
          
           <Nav
@@ -234,7 +235,7 @@ export function Mail({
                 </div>
               </form>
             </div>
-            <TabsContent value="all" className="m-0 h-[600px]">
+            <TabsContent value="all" className="m-0 h-screen">
               {isLoading ? (
                 <div className="flex items-center justify-center mt-72 gap-12">
                   <Spinner size="medium">Loading...</Spinner>
@@ -248,12 +249,9 @@ export function Mail({
             </TabsContent>
           </Tabs>
         </ResizablePanel>
-        {/* <ResizableHandle withHandle />
         <ResizablePanel defaultSize={defaultLayout[2]}>
-          {activeCategory === "Expert" && (
-            <MailDisplay mail={mails.find((item) => item.id === mail.selected) || null} />
-          )}
-        </ResizablePanel> */}
+              <RightNotifications/>
+        </ResizablePanel>
       </ResizablePanelGroup>
     </TooltipProvider>
   );

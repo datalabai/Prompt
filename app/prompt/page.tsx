@@ -5,6 +5,7 @@ import Image from "next/image";
 
 import { Mail } from "./components/mail";
 import { mails } from "./data";
+import { RightNotifications } from "@/components/rightpanel-notification";
 
 export default function MailPage() {
   const layout = cookies().get("react-resizable-panels:layout");
@@ -26,7 +27,7 @@ export default function MailPage() {
 
   return (
     <>
-      <div className=" flex-col flex">
+      <div className=" flex-col flex border  min-h-screen  overflow-y-auto">
         <Mail
           mails={mails}
           defaultLayout={defaultLayout}

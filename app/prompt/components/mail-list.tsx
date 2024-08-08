@@ -192,8 +192,8 @@ export function MailList({ items, category }: MailListProps) {
   
 
   return (
-    <div className="h-[600px] overflow-y-auto">
-      <div className="flex flex-col gap-2 p-4 pt-0">
+    <div className="h-full overflow-y-auto">
+      <div className="flex flex-col gap-2 p-4 pt-0 lg:w-full">
         {items.map((item) => (
           <button
             key={item.id}
@@ -396,6 +396,8 @@ export function MailList({ items, category }: MailListProps) {
             </div>
           </button>
         ))}
+                      <div className="w-[200px] h-[200px]"></div>
+
       </div>
     </div>
   );

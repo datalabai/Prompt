@@ -1,3 +1,4 @@
+"use client";
 import {
     Card,
     CardContent,
@@ -59,7 +60,7 @@ import {
     }, []);
   
     return (
-      <div className="h-[685px] overflow-y-auto">
+      <div className="h-screen overflow-y-auto fixed">
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-lg font-large">Recent Posts</CardTitle>
@@ -67,7 +68,7 @@ import {
               {/* You can add some tag line for recent prompts here */}
             </CardDescription>
           </CardHeader>
-          <CardContent className="grid gap-1">
+          <CardContent className="grid gap-1 ">
             {recentPosts.map(post => (
               <div key={post.id} className="-mx-2 flex items-start space-x-4 rounded-md p-2 transition-all hover:bg-accent hover:text-accent-foreground">
                 <Avatar className="hidden h-9 w-9 sm:flex">
@@ -84,6 +85,7 @@ import {
               </div>
             ))}
           </CardContent>
+          <div className="w-[200px] h-[200px]"></div>
         </Card>
       </div>
     );

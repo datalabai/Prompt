@@ -47,7 +47,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <head />
         <body
           className={cn(
-            "min-h-screen bg-background font-sans antialiased",
+            " bg-background font-sans antialiased overflow-hidden",
             fontSans.variable
           )}
         >
@@ -61,12 +61,11 @@ export default function RootLayout({ children }: RootLayoutProps) {
               disableTransitionOnChange
             >
                <SiteHeader toggleRightPanel={toggleRightPanel} />
-             <div vaul-drawer-wrapper="" className="flex justify-between mt-2">
+             <div vaul-drawer-wrapper="" className="flex justify-between mt-2 h-dvh max-w-screen">
              
                 <div className="relative flex min-h-screen flex-col bg-background mt-2 w-full">
                   {children}
                 </div>
-                {currentPath !== '/profile' && showRightPanel && <RightPanel />}                
               </div>
               {/* <SiteFooter /> */}
               <TailwindIndicator />
