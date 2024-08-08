@@ -7,7 +7,7 @@ export const Landing = () => {
         <main className="text-5xl md:text-6xl font-bold">
           <h1 className="inline">
             <span className="inline bg-gradient-to-r from-[#16aad3]  to-[#07bc0c] text-transparent bg-clip-text">
-              Prompt
+              PROMPTing
             </span>{" "}
             made fun!
           </h1>{" "}
