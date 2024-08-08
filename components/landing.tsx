@@ -27,7 +27,7 @@ export const Landing = () => {
       </div>
 
       
-      <div className="z-10 border rounded-lg">
+      <div className="z-10 border-2 rounded-lg">
       <img src="/prompt.gif" alt="Image"  />
       </div>
 
