@@ -15,7 +15,7 @@ export const Landing = () => {
         </main>
 
         <p className="text-xl text-muted-foreground md:w-10/12 mx-auto lg:mx-0">
-        Prompt.fun unlock's your creativity with help of prompt experts to generate prompts for you.
+        Prompt.fun unlocks your creativity with help of prompt experts to generate prompts for you.
         </p>
 
         <div className="space-y-4 md:space-y-0 md:space-x-4">
