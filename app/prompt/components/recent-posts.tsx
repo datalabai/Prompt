@@ -24,7 +24,7 @@ import {
     read: boolean;
   }
   
-  export function RightNotifications() {
+  export function RecentPosts() {
     const [recentPosts, setRecentPosts] = useState<RecentPost[]>([]);
   
     useEffect(() => {
@@ -60,13 +60,12 @@ import {
     }, []);
   
     return (
-        <Card>
+        <div>
+        <Card className="border-none shadow-none" >
           <CardHeader className="pb-3">
             <CardTitle className="text-lg font-large">Recent Posts</CardTitle>
-            <CardDescription>
-              {/* You can add some tag line for recent prompts here */}
-            </CardDescription>
           </CardHeader>
+          <div className="overflow-y-auto max-h-screen">
           <CardContent className="grid gap-1 ">
             {recentPosts.map(post => (
               <div key={post.id} className="-mx-2 flex items-start space-x-4  p-2 transition-all hover:bg-accent hover:text-accent-foreground">
@@ -83,9 +82,12 @@ import {
                 </div>
               </div>
             ))}
+            <div className="w-[200px] h-[200px]"></div>
           </CardContent>
+          </div>
           <div className="w-[200px] h-[200px]"></div>
         </Card>
+        </div>
     );
   }
   

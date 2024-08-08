@@ -39,6 +39,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Spinner } from "@/components/ui/spinner";
 import { set } from "date-fns";
 import { RightNotifications } from "@/components/rightpanel-notification";
+import { RecentPosts } from "./recent-posts";
 
 
 interface MailProps {
@@ -65,7 +66,7 @@ const CACHE_KEY_PREFIX = "posts-cache-";
 
 export function Mail({
   mails: MailType,
-  defaultLayout = [265, 440, 655],
+  defaultLayout = [200, 600, 200], // Modified layout sizes: left, middle, right
   defaultCollapsed = false,
   navCollapsedSize,
 }: MailProps) {
@@ -184,14 +185,14 @@ export function Mail({
         onLayout={(sizes: number[]) => {
           document.cookie = `react-resizable-panels:layout=${JSON.stringify(sizes)}`;
         }}
-        className="min-h-screen "
+        className="min-h-screen container relative pr-0"
       >
         <ResizablePanel
-          defaultSize={defaultLayout[0]}
+          defaultSize={defaultLayout[200]}
           collapsedSize={navCollapsedSize}
           collapsible={true}
-          minSize={15}
-          maxSize={20}
+          minSize={20}
+          maxSize={23}
           onCollapse={() => {
             setIsCollapsed(true);
             document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(true)}`;
@@ -218,8 +219,8 @@ export function Mail({
           />
         </ResizablePanel>
         <ResizableHandle  />
-        <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
-          <Tabs defaultValue="all">
+        <ResizablePanel defaultSize={defaultLayout[1600]} minSize={30}>
+          <Tabs defaultValue="all" className="border-r-2">
             <div className="bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60">
               <form>
                 <div className="relative w-full">
@@ -235,7 +236,7 @@ export function Mail({
                 </div>
               </form>
             </div>
-            <TabsContent value="all" className="m-0 h-screen">
+            <TabsContent value="all" className="m-0 h-screen ">
               {isLoading ? (
                 <div className="flex items-center justify-center mt-72 gap-12">
                   <Spinner size="medium">Loading...</Spinner>
@@ -249,8 +250,12 @@ export function Mail({
             </TabsContent>
           </Tabs>
         </ResizablePanel>
-        <ResizablePanel defaultSize={defaultLayout[2]}>
-              <RightNotifications/>
+        <ResizablePanel defaultSize={defaultLayout[1]} minSize={25} maxSize={30}>
+          <Tabs defaultValue="all" className="">
+          <TabsContent value="all" className="m-0 h-screen">
+            <RecentPosts />
+          </TabsContent>
+          </Tabs>
         </ResizablePanel>
       </ResizablePanelGroup>
     </TooltipProvider>
