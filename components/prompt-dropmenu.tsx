@@ -83,18 +83,18 @@ export function PromptModeToggle({ onIconSelect, category }: PromptModeTogglePro
               <Images className="mr-2 h-4 w-4" />
               Images
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleMenuItemClick(Biohazard, 'logos')}>
+            {/* <DropdownMenuItem onClick={() => handleMenuItemClick(Biohazard, 'logos')}>
               <Biohazard className="mr-2 h-4 w-4" />
               Logos
-            </DropdownMenuItem>
+            </DropdownMenuItem> */}
             <DropdownMenuItem onClick={() => handleMenuItemClick(Palette, 'memes')}>
               <Palette className="mr-2 h-4 w-4" />
               Memes
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleMenuItemClick(ClipboardList, 'resumes')}>
+            {/* <DropdownMenuItem onClick={() => handleMenuItemClick(ClipboardList, 'resumes')}>
               <ClipboardList className="mr-2 h-4 w-4" />
               Resumes
-            </DropdownMenuItem>
+            </DropdownMenuItem> */}
            
           </>
         );
