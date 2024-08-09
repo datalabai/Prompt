@@ -191,8 +191,8 @@ export function Mail({
           defaultSize={defaultLayout[200]}
           collapsedSize={navCollapsedSize}
           collapsible={true}
-          minSize={20}
-          maxSize={23}
+          minSize={18}
+          maxSize={20}
           onCollapse={() => {
             setIsCollapsed(true);
             document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(true)}`;

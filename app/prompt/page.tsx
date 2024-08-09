@@ -27,7 +27,7 @@ export default function MailPage() {
 
   return (
     <>
-      <div className=" flex-col flex border  min-h-screen  overflow-y-auto">
+      <div className=" flex-col flex  min-h-screen  overflow-y-auto  -mt-3">
         <Mail
           mails={mails}
           defaultLayout={defaultLayout}
