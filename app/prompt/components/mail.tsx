@@ -81,6 +81,20 @@ export function Mail({
   const [showProfile, setShowProfile] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [trails, setTrails] = useState<number | null>(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   
   const fetchPosts = useCallback(async (category: string) => {
     setIsLoading(true);
@@ -187,6 +201,7 @@ export function Mail({
         }}
         className="min-h-screen container relative pr-0"
       >
+      {!isMobile &&
         <ResizablePanel
           defaultSize={defaultLayout[200]}
           collapsedSize={navCollapsedSize}
@@ -218,46 +233,49 @@ export function Mail({
             onLinkClick={handleCategoryChange}
           />
         </ResizablePanel>
+        }
         <ResizableHandle  />
         <ResizablePanel defaultSize={defaultLayout[1600]} minSize={30}>
-          <Tabs defaultValue="all" className="border-r-2">
-            <div className="bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-              <form>
-                <div className="relative w-full">
-                  <input
-                    type="text"
-                    className="w-full border rounded-lg pl-12 p-2 mt-2"
-                    placeholder="I would like to..."
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                  />
-                  <PromptModeToggle onIconSelect={handleIconSelect} category={activeCategory} />
+              <Tabs defaultValue="all" className="border-r-2">
+                <div className="bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+                  <form>
+                    <div className="relative w-full">
+                      <input
+                        type="text"
+                        className="w-full border rounded-lg pl-12 p-2 mt-2"
+                        placeholder="I would like to..."
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        onKeyDown={handleKeyDown} />
+                      <PromptModeToggle onIconSelect={handleIconSelect} category={activeCategory} />
+                    </div>
+                  </form>
                 </div>
-              </form>
-            </div>
-            <TabsContent value="all" className="m-0 h-screen ">
-              {isLoading ? (
-                <div className="flex items-center justify-center mt-72 gap-12">
-                  <Spinner size="medium">Loading...</Spinner>
-                </div>
-              ) : (
-                <MailList items={mails} category={activeCategory} />
-              )}
-            </TabsContent>
-            <TabsContent value="unread" className="m-0">
-              <MailList items={mails.filter((item) => !item.read)} category={activeCategory} />
-            </TabsContent>
-          </Tabs>
-        </ResizablePanel>
-        <ResizablePanel defaultSize={defaultLayout[1]} minSize={25} maxSize={30}>
-          <Tabs defaultValue="all" className="">
-          <TabsContent value="all" className="m-0 h-screen">
-            <RecentPosts />
-          </TabsContent>
-          </Tabs>
-        </ResizablePanel>
+                <TabsContent value="all" className="m-0 h-screen ">
+                  {isLoading ? (
+                    <div className="flex items-center justify-center mt-72 gap-12">
+                      <Spinner size="medium">Loading...</Spinner>
+                    </div>
+                  ) : (
+                    <MailList items={mails} category={activeCategory} />
+                  )}
+                </TabsContent>
+                <TabsContent value="unread" className="m-0">
+                  <MailList items={mails.filter((item) => !item.read)} category={activeCategory} />
+                </TabsContent>
+              </Tabs>
+            </ResizablePanel>
+            {!isMobile &&
+            <ResizablePanel defaultSize={defaultLayout[1]} minSize={25} maxSize={30}>
+            <Tabs defaultValue="all" className="">
+              <TabsContent value="all" className="m-0 h-screen">
+                <RecentPosts />
+              </TabsContent>
+            </Tabs>
+          </ResizablePanel>
+            }
       </ResizablePanelGroup>
     </TooltipProvider>
   );
 }
+

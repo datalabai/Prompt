@@ -1,4 +1,6 @@
+import { AspectRatio } from "./ui/aspect-ratio";
 import { Button } from "./ui/button";
+import Image from "next/image"
 
 export const Landing = () => {
   return (
@@ -27,10 +29,12 @@ export const Landing = () => {
       </div>
 
       
-      <div className="z-10 border-2 rounded-lg">
-      <img src="/prompt.gif" alt="Image"  />
+      <div className="z-10 w-[550px]">
+      <AspectRatio ratio={16 / 9} className="bg-muted">
+  <Image src="/prompt.gif" alt="Image" className="rounded-md object-cover border"  fill/>
+  </AspectRatio>
       </div>
-
+      
       <div className="shadow"></div>
     </section>
   );
