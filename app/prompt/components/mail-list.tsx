@@ -236,7 +236,7 @@ export function MailList({ items, category }: MailListProps) {
                   </Badge> */}
                 </div>
             </div>  
-              <div className="flex justify-between line-clamp-2 text-xs text-muted-foreground">
+              <div className="flex justify-between line-clamp-2 text-xs text-muted-foreground -m-2 ml-1">
                 {item.text.substring(0, 300)}
                 
               </div>
