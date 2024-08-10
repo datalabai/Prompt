@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow } from 'date-fns';
 import { cn } from "@/lib/utils";
@@ -26,6 +26,7 @@ const IconWrapper = styled.div`
   }
 `;
 
+
 interface MailListProps {
   items: Mail[];
   category: string;
@@ -42,6 +43,7 @@ export function MailList({ items, category }: MailListProps) {
   const { user } = UserAuth();
   const fallbackImageUrl = `/avatars/01.png`; // Replace with your fallback image URL
   const [replyVisible, setReplyVisible] = useState<boolean>(true);
+  const inputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
 
   const toggleTextArea = (itemId: string) => {
     setOpenTextAreaId(openTextAreaId === itemId ? null : itemId);
@@ -50,6 +52,7 @@ export function MailList({ items, category }: MailListProps) {
   const toggleInput = (itemId: string) => {
     setShowInputItemId(showInputItemId === itemId ? null : itemId);
     //setReplyVisible(!replyVisible);
+    
   };
 
   const handleMagicPrompt = async (message: string, itemId: any) => {
@@ -184,6 +187,13 @@ export function MailList({ items, category }: MailListProps) {
       unsubscribes.forEach((unsubscribe) => unsubscribe());
     };
   }, [items, category]);
+
+  useEffect(() => {
+    // Focus the input field when `showInputItemId` changes
+    if (showInputItemId && inputRefs.current[showInputItemId]) {
+      inputRefs.current[showInputItemId]?.focus();
+    }
+  }, [showInputItemId]);
 
   const renderSelectedIcon = () => {
     switch (selectedOption) {
@@ -370,14 +380,20 @@ export function MailList({ items, category }: MailListProps) {
               )}
               {showInputItemId === item.id && (
                 <div className="relative w-full">
-                  <input
+                   <input
                     type="text"
                     className="w-full border rounded-lg pl-12 p-2 mt-2"
                     placeholder="Type your message here..."
                     value={postText}
                     onChange={(e) => setPostText(e.target.value)}
                     onKeyDown={(e) => handleKeyDown(e, item.id)}
+                    ref={(el) => {
+                      if (el) {
+                        inputRefs.current[item.id] = el;
+                      }
+                    }}
                   />
+                  
                   <div
                     className="absolute left-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
                     onClick={handleIconClick}
