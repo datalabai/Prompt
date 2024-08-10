@@ -58,7 +58,7 @@ export function PromptModeToggle({ onIconSelect, category }: PromptModeTogglePro
         return <List className="h-6 w-6 text-muted-foreground cursor-pointer" />;
       }
     }
-    return <PlusCircledIcon className="h-6 w-6 text-muted-foreground cursor-pointer" />;
+    return <PlusCircledIcon className="h-6 w-6 cursor-pointer" />;
   };
 
   const renderDropdownItems = () => {
@@ -180,10 +180,10 @@ export function PromptModeToggle({ onIconSelect, category }: PromptModeTogglePro
   };
 
   return (
-    <div className="absolute top-2 left-2">
+    <div className="absolute top-2 left">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="w-9 px-0 mr-2">
+          <Button variant="default" className="w-9 px-0 mr-2 ">
             {renderIcon()}
           </Button>
         </DropdownMenuTrigger>

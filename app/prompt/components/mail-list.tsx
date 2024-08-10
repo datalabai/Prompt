@@ -15,6 +15,16 @@ import Texts from "./text";
 import { CopyIcon } from '@radix-ui/react-icons';
 import MaskedText from "@/components/MaskedText";
 import { Crown } from 'lucide-react';
+import styled from 'styled-components';
+
+const IconWrapper = styled.div`
+  color: ""; /* Default color */
+  transition: color 0.3s;
+
+  &:hover {
+    color: #2463eb /* Color on hover */
+  }
+`;
 
 interface MailListProps {
   items: Mail[];
@@ -178,11 +188,11 @@ export function MailList({ items, category }: MailListProps) {
   const renderSelectedIcon = () => {
     switch (selectedOption) {
       case 'chat':
-        return <ChatBubbleIcon className="text-primary pt-2" style={{ width: '25px', height: '25px' }} />;
+        return <IconWrapper><ChatBubbleIcon className="text-primary pt-2" style={{ width: '25px', height: '25px' }} /></IconWrapper>;
       case 'prompt':
-        return <MagicWandIcon className="text-primary pt-2" style={{ width: '25px', height: '25px' }} />;
+        return <IconWrapper><MagicWandIcon className=" pt-2" style={{ width: '25px', height: '25px' }} /></IconWrapper>;
       default:
-        return <PlusCircledIcon className="text-gray-400 pt-2" style={{ width: '30px', height: '30px' }} />;
+        return <IconWrapper><PlusCircledIcon className="pt-2" style={{ width: '30px', height: '30px' }} /></IconWrapper>;
     }
   };
 
@@ -230,7 +240,7 @@ export function MailList({ items, category }: MailListProps) {
                 
               </div>
               <div className="flex items-center gap-1">
-                  <MessageSquare strokeWidth="1.5" size="32" onClick={() => toggleInput(item.id)} />
+              <IconWrapper><MessageSquare strokeWidth="1.5" size="32" onClick={() => toggleInput(item.id)} /></IconWrapper>
                   {/* <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
                     {replies[item.id] ? replies[item.id].length : 0}
                   </Badge> */}
@@ -246,24 +256,24 @@ export function MailList({ items, category }: MailListProps) {
                   <div className="flex gap-20 mt-2 ">
                     <Badge variant="stone">
                       <button onClick={() => handlePostLike(item.id)}>
-                        <ThumbsUp strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-blue-500 mr-2" />
+                      <IconWrapper><ThumbsUp strokeWidth={1.5} className="h-4 w-4 cursor-pointer mr-2" /></IconWrapper>
                       </button>
                       <span>{item.likes?.length || 0}</span>
                     </Badge>
                     <Badge variant="stone">
                       <button onClick={() => handlePostDislike(item.id)}>
-                        <ThumbsDown strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-red-500 mr-2" />
+                      <IconWrapper><ThumbsDown strokeWidth={1.5} className="h-4 w-4 cursor-pointer mr-2" /></IconWrapper>
                       </button>
                       <span>{item.dislikes?.length || 0}</span>
                     </Badge>
                     {/* {item.name !== auth.currentUser?.displayName && (
         <Badge variant="stone">
-          <MagicWandIcon className="h-4 w-4 cursor-pointer hover:text-purple-500" onClick={() => handleMagicPrompt(item.text, item.id)} />
+          <MagicWandIcon className="h-4 w-4 cursor-pointer " onClick={() => handleMagicPrompt(item.text, item.id)} />
         </Badge>
       )} */}
                     {item.image && (
                       <Badge variant="stone">
-                        <ArrowDownToLine strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-purple-500" onClick={() => Download(item.image)} />
+                        <IconWrapper><ArrowDownToLine strokeWidth={1.5} className="h-4 w-4 cursor-pointer " onClick={() => Download(item.image)} /></IconWrapper>
                       </Badge>
                     )}
                   </div>
@@ -324,7 +334,7 @@ export function MailList({ items, category }: MailListProps) {
                                 )}
                                 {reply.option === 'prompt' && (
                                   <Badge variant="stone">
-                                    <MagicWandIcon className="h-8 w-8 cursor-pointer hover:text-purple-500" onClick={() => handleMagicPrompt(reply.text, item.id)} />
+                                    <IconWrapper><MagicWandIcon className="h-8 w-8 cursor-pointer " onClick={() => handleMagicPrompt(reply.text, item.id)} /></IconWrapper>
                                   </Badge>
                                 )}
                               </div>
@@ -334,18 +344,18 @@ export function MailList({ items, category }: MailListProps) {
                                   <div className="flex gap-9 mt-2">
                                     <Badge variant="stone">
                                       <button onClick={() => handleLike(item.id, reply.id)}>
-                                        <ThumbsUp strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-blue-500 mr-2" />
+                                      <IconWrapper><ThumbsUp strokeWidth={1.5} className="h-4 w-4 cursor-pointer mr-2" /></IconWrapper>
                                       </button>
                                       <span>{reply.likes?.length || 0}</span>
                                     </Badge>
                                     <Badge variant="stone">
                                       <button onClick={() => handleDislike(item.id, reply.id)}>
-                                        <ThumbsDown strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-red-500 mr-2" />
+                                      <IconWrapper><ThumbsDown strokeWidth={1.5} className="h-4 w-4 cursor-pointer mr-2" /></IconWrapper>
                                       </button>
                                       <span>{reply.dislikes?.length || 0}</span>
                                     </Badge>
                                     <Badge variant="stone">
-                                      <ArrowDownToLine strokeWidth={1.5} className="h-4 w-4 cursor-pointer hover:text-purple-500" onClick={() => Download(reply.image)} />
+                                    <IconWrapper><ArrowDownToLine strokeWidth={1.5} className="h-4 w-4 cursor-pointer " onClick={() => Download(reply.image)} /></IconWrapper>
                                     </Badge>
                                   </div>
                                 </>
