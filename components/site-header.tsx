@@ -34,7 +34,7 @@ interface SiteHeaderProps {
 export const SiteHeader: React.FC<SiteHeaderProps> = ({ toggleRightPanel }) => {
   const { user, googleSignIn, logOut } = UserAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [isMobile, setIsMobile] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [activeCategory, setActiveCategory] = useState("General");
   useEffect(() => {

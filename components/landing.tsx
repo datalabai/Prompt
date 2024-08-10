@@ -31,7 +31,7 @@ export const Landing = () => {
       
       <div className="z-10 w-[550px]">
       <AspectRatio ratio={16 / 9} className="bg-muted">
-  <Image src="/prompt.gif" alt="Image" className="rounded-md object-cover border"  fill/>
+  <img src="/prompt.gif" alt="Image" className="rounded-md object-cover border"/>
   </AspectRatio>
       </div>
       
