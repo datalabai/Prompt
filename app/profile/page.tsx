@@ -1,8 +1,4 @@
-import Image from "next/image"
-
-
-
-
+ import Image from "next/image"
 import Profile from "./profile"
 import Link from "next/link"
 import { House } from "lucide-react"
@@ -12,7 +8,7 @@ export default function IndexPage() {
     <div className="container relative">
       
      
-      <section className="overflow-hidden rounded-lg border bg-background shadow-md md:hidden md:shadow-xl">
+      {/* <section className="overflow-hidden rounded-lg border bg-background shadow-md md:hidden md:shadow-xl">
         <Image
           src="/mobileview.png"
           width={1280}
@@ -27,8 +23,8 @@ export default function IndexPage() {
           alt="Mail"
           className="block dark:hidden"
         />
-      </section>
-      <section className="hidden md:block">
+      </section> */}
+      <section>
         <div className="flex overflow-hidden rounded-lg border bg-background shadow">
         <Link href="/" className="p-4 ">
           <House />

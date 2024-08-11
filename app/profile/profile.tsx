@@ -236,76 +236,78 @@ export default function Profile() {
             </div>
               <div className="flex items-center">
               </div>
-                <Card>
-                  <CardHeader className="px-7"></CardHeader>
-                  <CardContent>
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Date</TableHead>
-                          <TableHead className="hidden sm:table-cell">Activity</TableHead>
-                          <TableHead className="hidden sm:table-cell">Credits</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-  {rows.map((transaction, index) => (
-    <TableRow key={index}>
-      <TableCell className="font-medium">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger>
-              {transaction.date}
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Transaction Date: {formatTimestamp(transaction.date)}</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </TableCell>
-      <TableCell className="font-medium">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger>
-              {transaction.activity}
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>{transaction.prompt}</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </TableCell>
-      <TableCell className="font-medium">
-        {transaction.credits === 0 ? (
-          <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger>
-              {transaction.credits}
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>you have Free Trials</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-        ) : (
-            <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <span>-</span>
-                {transaction.credits}
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Credits Deducted: {transaction.credits}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        )}
-      </TableCell>
-    </TableRow>
-  ))}
-</TableBody>
-                    </Table>
-                  </CardContent>
-                </Card>
+              <Card>
+  <CardHeader className="px-7"></CardHeader>
+  <CardContent>
+    <div className="overflow-x-auto">
+      <Table className="min-w-full">
+        <TableHeader>
+          <TableRow>
+            <TableHead className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</TableHead>
+            <TableHead className="hidden sm:table-cell px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Activity</TableHead>
+            <TableHead className="hidden sm:table-cell px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Credits</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {rows.map((transaction, index) => (
+            <TableRow key={index} className="border-t border-gray-200">
+              <TableCell className="px-4 py-2 text-sm font-medium text-gray-900">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      {transaction.date}
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Transaction Date: {formatTimestamp(transaction.date)}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </TableCell>
+              <TableCell className="hidden sm:table-cell px-4 py-2 text-sm font-medium text-gray-900">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      {transaction.activity}
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{transaction.prompt}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </TableCell>
+              <TableCell className="px-4 py-2 text-sm font-medium text-gray-900">
+                {transaction.credits === 0 ? (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        {transaction.credits}
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>You have Free Trials</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                ) : (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <span>-</span>
+                        {transaction.credits}
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Credits Deducted: {transaction.credits}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  </CardContent>
+</Card>
           </div>
         </div>
       </div>
