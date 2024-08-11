@@ -1,5 +1,4 @@
-"use client";
-
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Menu } from 'lucide-react';
@@ -9,13 +8,14 @@ import { buttonVariants } from "@/components/ui/button";
 import { ProfileAvator } from "./profileavator";
 import { UserAuth } from "../app/context/AuthContext";
 import { addUserToFirestore } from '../app/firebase';
-import { useEffect, useState ,useRef} from "react";
 import { Nav } from "@/app/prompt/components/nav";
-import { Sheet, SheetContent, SheetFooter, SheetTrigger ,SheetClose} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetFooter, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { House, List, Images, Palette } from 'lucide-react';
 import { useCategory } from "@/app/context/CategoryContext";
-import { siteConfig } from "@/config/site"
-import { Icons } from "@/components/icons"
+import { siteConfig } from "@/config/site";
+import { Icons } from "@/components/icons";
+import debounce from 'lodash/debounce';
+
 interface SiteHeaderProps {
   toggleRightPanel: () => void;
 }
@@ -46,17 +46,19 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({ toggleRightPanel }) => {
     }
   };
 
+  const handleResize = debounce(() => {
+    // Adjust the media query to fit mobile and tablet sizes
+    const mobileOrTablet = window.matchMedia("(max-width: 1024px)").matches;
+    setIsMobile(mobileOrTablet);
+  }, 300);
+
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 600);
-    };
+    // Initial check
+    handleResize();
 
     window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [handleResize]);
 
   const handleCategoryChange = (newCategory: string) => {
     setCategory(newCategory);
@@ -89,12 +91,12 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({ toggleRightPanel }) => {
               </button>
             </SheetTrigger>
             <SheetContent className="w-[250px] sm:w-[300px] mx-auto justify-center" side={'left'}>
-      <Link href="/" className="flex items-start space-x-2  -ml-3 mt-4">
-        <Icons.logo className="h-6 w-6" />
-        <span className="font-bold sm:inline-block inline bg-gradient-to-r from-[#16aad3]  to-[#07bc0c] text-transparent bg-clip-text">
-          {siteConfig.name}
-        </span>
-      </Link>
+              <Link href="/" className="flex items-start space-x-2 -ml-3 mt-4">
+                <Icons.logo className="h-6 w-6" />
+                <span className="font-bold sm:inline-block inline bg-gradient-to-r from-[#16aad3] to-[#07bc0c] text-transparent bg-clip-text">
+                  {siteConfig.name}
+                </span>
+              </Link>
               <SheetFooter className="mt-4">
                 <SheetClose asChild>
                   <Nav

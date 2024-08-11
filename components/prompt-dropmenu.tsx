@@ -37,25 +37,25 @@ export function PromptModeToggle({ onIconSelect, category }: PromptModeTogglePro
   const renderIcon = () => {
     if (selectedIcon) {
       if(selectedIcon === ChatBubbleIcon) {
-        return <ChatBubbleIcon className="h-6 w-6 text-muted-foreground cursor-pointer" />; 
+        return <ChatBubbleIcon className="h-6 w-6  cursor-pointer" />; 
       }
       if(selectedIcon === MagicWandIcon) {
-        return <MagicWandIcon className="h-6 w-6 text-muted-foreground cursor-pointer" />;
+        return <MagicWandIcon className="h-6 w-6  cursor-pointer" />;
       }
       if(selectedIcon === Palette) {
-        return <Palette className="h-6 w-6 text-muted-foreground cursor-pointer" />;
+        return <Palette className="h-6 w-6  cursor-pointer" />;
       }
       if(selectedIcon === Biohazard) {
-        return <Biohazard className="h-6 w-6 text-muted-foreground cursor-pointer" />;
+        return <Biohazard className="h-6 w-6  cursor-pointer" />;
       }
       if(selectedIcon === Images) {
-        return <Images className="h-6 w-6 text-muted-foreground cursor-pointer" />;
+        return <Images className="h-6 w-6  cursor-pointer" />;
       }
       if(selectedIcon === ClipboardList) {
-        return <ClipboardList className="h-6 w-6 text-muted-foreground cursor-pointer" />;
+        return <ClipboardList className="h-6 w-6 cursor-pointer" />;
       }
       if(selectedIcon === List) {
-        return <List className="h-6 w-6 text-muted-foreground cursor-pointer" />;
+        return <List className="h-6 w-6  cursor-pointer" />;
       }
     }
     return <PlusCircledIcon className="h-6 w-6 cursor-pointer" />;
