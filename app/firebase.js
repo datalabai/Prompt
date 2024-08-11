@@ -74,7 +74,6 @@ export const getProfile = async () => {
     const user = doc(db, "users", uid);
     const activitiesSnapshot = await getDoc(user);
     const userData = activitiesSnapshot.data();
-    console.log('activitiesData:', activitiesData);
     const cred = await fetchCredits();
     const data={name:userData.displayName,photo:userData.photo,credits:cred,wallet:userData.wallet,email:userData.email};
     if(userData.activities){
