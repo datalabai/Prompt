@@ -40,7 +40,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { set } from "date-fns";
 import { RightNotifications } from "@/components/rightpanel-notification";
 import { RecentPosts } from "./recent-posts";
-
+import { useCategory } from "@/app/context/CategoryContext";
 
 interface MailProps {
   mails: MailType[];
@@ -71,7 +71,7 @@ export function Mail({
   navCollapsedSize,
 }: MailProps) {
   const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
-  const [activeCategory, setActiveCategory] = useState("General");
+  const { category, setCategory } = useCategory();
   const [mail] = useMail();
   const { user } = UserAuth();
   const [inputValue, setInputValue] = useState("");
@@ -85,7 +85,7 @@ export function Mail({
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
+      setIsMobile(window.innerWidth <= 600);
     };
 
     window.addEventListener('resize', handleResize);
@@ -120,15 +120,15 @@ export function Mail({
   
 
   useEffect(() => {
-    fetchPosts(activeCategory);
-  }, [activeCategory, fetchPosts]);
+    fetchPosts(category);
+  }, [category, fetchPosts]);
 
   const enableProfile = () => {
     setShowProfile(true);
   };
 
   const handleCategoryChange = (category: string) => {
-    setActiveCategory(category);
+    setCategory(category);
     fetchPosts(category); // Ensure posts are fetched immediately on category change
   };
 
@@ -161,19 +161,19 @@ export function Mail({
     setMails((prevMails) => [newPost, ...prevMails]);
   
     // Clear cache for the active category to ensure it will be refetched
-    localStorage.removeItem(`${CACHE_KEY_PREFIX}${activeCategory}`);
+    localStorage.removeItem(`${CACHE_KEY_PREFIX}${category}`);
   
     try {
-      if (activeCategory === "Private") {
+      if (category === "Private") {
         await addMessageToPrivateChannel(newPost, selectedIconName);
       } else {
-        const trailsCount = await addPost(newPost, activeCategory, selectedIconName);
+        const trailsCount = await addPost(newPost, category, selectedIconName);
         if (trailsCount !== undefined) {
           toast.info(trailsCount);
         }
       }
       // Re-fetch posts to update with the latest data
-      fetchPosts(activeCategory);
+      fetchPosts(category);
     } catch (error) {
       console.error("Error adding post:", error);
       // Optionally, handle the error by removing the temporary post or showing an error message
@@ -247,7 +247,7 @@ export function Mail({
                         value={inputValue}
                         onChange={(e) => setInputValue(e.target.value)}
                         onKeyDown={handleKeyDown} />
-                      <PromptModeToggle onIconSelect={handleIconSelect} category={activeCategory} />
+                      <PromptModeToggle onIconSelect={handleIconSelect} category={category} />
                     </div>
                   </form>
                 </div>
@@ -257,11 +257,11 @@ export function Mail({
                       <Spinner size="medium">Loading...</Spinner>
                     </div>
                   ) : (
-                    <MailList items={mails} category={activeCategory} />
+                    <MailList items={mails} category={category} />
                   )}
                 </TabsContent>
                 <TabsContent value="unread" className="m-0">
-                  <MailList items={mails.filter((item) => !item.read)} category={activeCategory} />
+                  <MailList items={mails.filter((item) => !item.read)} category={category} />
                 </TabsContent>
               </Tabs>
             </ResizablePanel>

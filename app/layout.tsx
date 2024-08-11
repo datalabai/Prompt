@@ -17,7 +17,8 @@ import { AuthContextProvider } from "./context/AuthContext";
 import GoogleAnalytics from "./GoogleAnalytics";
 import RightPanel from "@/components/rightPanel";
 import { useState } from "react";
-import { usePathname } from 'next/navigation'
+import { usePathname } from 'next/navigation';
+import { CategoryProvider } from './context/CategoryContext';
 
 
 
@@ -53,6 +54,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         >
           <GoogleAnalytics />
           <AuthContextProvider>
+            <CategoryProvider>
             <ToastContainer />
             <ThemeProvider
               attribute="class"
@@ -71,6 +73,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
               <TailwindIndicator />
               <ThemeSwitcher />
             </ThemeProvider>
+            </CategoryProvider>
           </AuthContextProvider>
         </body>
       </html>
