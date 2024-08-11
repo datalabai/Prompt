@@ -102,4 +102,14 @@
     @apply px-4;
   }
 }
+.table-container {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table {
+  min-width: 600px; /* Adjust the minimum width as needed */
+}
+
+
 
