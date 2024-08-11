@@ -41,6 +41,8 @@ import { set } from "date-fns";
 import { RightNotifications } from "@/components/rightpanel-notification";
 import { RecentPosts } from "./recent-posts";
 import { useCategory } from "@/app/context/CategoryContext";
+import debounce from 'lodash/debounce';
+
 
 interface MailProps {
   mails: MailType[];
@@ -81,20 +83,16 @@ export function Mail({
   const [showProfile, setShowProfile] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [trails, setTrails] = useState<number | null>(null);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.matchMedia("(max-width: 700px)").matches);
+
+  const handleResize = debounce(() => {
+    setIsMobile(window.matchMedia("(max-width: 700px)").matches);
+  }, 300);
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 600);
-    };
-
     window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
-
+    return () => window.removeEventListener('resize', handleResize);
+  }, [handleResize]);
   
   const fetchPosts = useCallback(async (category: string) => {
     setIsLoading(true);
