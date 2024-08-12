@@ -33,8 +33,6 @@ import {
 import { Timestamp } from "firebase/firestore"; // Add this import if you are using Firebase
 import { buttonVariants } from '@/components/ui/button';
 import { Linkedin, TwitterIcon, Wallet, XIcon } from 'lucide-react';
-import { TwitterLogoIcon } from '@radix-ui/react-icons';
-import { TableDemo } from './transactionTable';
 
 type ProfileData = {
   name: string;
