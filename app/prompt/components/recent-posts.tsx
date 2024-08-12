@@ -63,7 +63,7 @@ export function RecentPosts() {
     <div className="flex flex-col h-full">
       <Card className="border-none shadow-none">
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg font-large">Recent Posts</CardTitle>
+          <CardTitle className="text-lg font-large">What&lsquo;s happening</CardTitle>
         </CardHeader>
         <CardContent className="overflow-y-auto max-h-[calc(100vh-150px)]">
           {recentPosts.map(post => (
