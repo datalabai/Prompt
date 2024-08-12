@@ -56,7 +56,7 @@ const ReplyList: React.FC<ReplyListProps> = ({
           <div key={index} className="flex mt-2">
             
             {reply.image ? (
-              <div className="flex-col -space-y-3">
+              <div className="flex-col">
                 <Avatar className="h-8 w-8">
                   <AvatarImage src={reply.photo} alt="Avatar" />
                   <AvatarFallback> {reply.name
@@ -93,7 +93,7 @@ const ReplyList: React.FC<ReplyListProps> = ({
                     height={550}
                     className="mt-2 mb-2 rounded lg"
                   />
-                  <div className="flex gap-20 mt-2">
+                  <div className="flex gap-9 mt-2">
                     <Badge variant="stone">
                       <button onClick={() => handleLike(item.id, reply.id)}>
                         <IconWrapper>
