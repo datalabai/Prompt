@@ -8,7 +8,7 @@ import { useMail } from "../use-mail";
 import { MessageSquare } from "lucide-react";
 import { addReply, listenForReplies, auth, likeReply, dislikeReply, likePost, dislikePost } from "@/app/firebase";
 import { ChatBubbleIcon, MagicWandIcon, PlusCircledIcon } from '@radix-ui/react-icons';
-import { ThumbsUp, ThumbsDown, ArrowDownToLine,Dot } from "lucide-react";
+import { ThumbsUp, ThumbsDown, ArrowDownToLine, Dot } from "lucide-react";
 import { UserAuth } from "@/app/context/AuthContext";
 import { toast } from "react-toastify";
 import Texts from "./text";
@@ -16,6 +16,7 @@ import { CopyIcon } from '@radix-ui/react-icons';
 import MaskedText from "@/components/MaskedText";
 import { Crown } from 'lucide-react';
 import styled from 'styled-components';
+import ReplyList from "./prompt-reply-list";
 
 const IconWrapper = styled.div`
   color: ""; /* Default color */
@@ -52,13 +53,12 @@ export function MailList({ items, category }: MailListProps) {
   const toggleInput = (itemId: string) => {
     setShowInputItemId(showInputItemId === itemId ? null : itemId);
     //setReplyVisible(!replyVisible);
-    
+
   };
 
   const handleMagicPrompt = async (message: string, itemId: any) => {
     setPostText("");
-    if(!user)
-    {
+    if (!user) {
       toast.error('Please Login to continue');
       return;
     }
@@ -75,8 +75,8 @@ export function MailList({ items, category }: MailListProps) {
       ...prevReplies,
       [itemId]: [...(prevReplies[itemId] || []), reply],
     }));
-    const count= await addReply(itemId, category, reply, 'prompt');
-    if(count!==undefined){
+    const count = await addReply(itemId, category, reply, 'prompt');
+    if (count !== undefined) {
       toast.info(count);
     }
   }
@@ -110,8 +110,7 @@ export function MailList({ items, category }: MailListProps) {
 
   const handlePostSubmit = async (itemId: any) => {
     setPostText("");
-    if(!user)
-    {
+    if (!user) {
       toast.error('Please Login to continue');
       return;
     }
@@ -129,7 +128,7 @@ export function MailList({ items, category }: MailListProps) {
         ...prevReplies,
         [itemId]: [...(prevReplies[itemId] || []), reply],
       }));
-      await addReply(itemId, category, reply,'chat');
+      await addReply(itemId, category, reply, 'chat');
     }
   };
 
@@ -171,7 +170,7 @@ export function MailList({ items, category }: MailListProps) {
   useEffect(() => {
     if (items.length === 0) {
       setReplies({});
-      return () => {};
+      return () => { };
     }
 
     const unsubscribes = items.map((item) => {
@@ -209,7 +208,7 @@ export function MailList({ items, category }: MailListProps) {
   const capitalizeWords = (str: string) => {
     return str.replace(/\b\w/g, (char) => char.toUpperCase());
   };
-  
+
 
   return (
     <div className="h-full overflow-y-auto">
@@ -221,166 +220,101 @@ export function MailList({ items, category }: MailListProps) {
               "flex items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent",
               mail.selected === item.id && "bg-muted"
             )}
-            // onClick={() =>
-            //   setMail({
-            //     ...mail,
-            //     selected: item.id,
-            //   })
 
-            // }
-            //onClick={() => toggleInput(item.id)}
           >
-            <Avatar className="hidden h-9 w-9 sm:flex">
-              <AvatarImage src={item.photo || fallbackImageUrl} alt="Avatar" />
-              <AvatarFallback>KS</AvatarFallback>
-            </Avatar>
+
             <div className="flex flex-col w-full gap-1">
-            <div className="flex justify-between">
-              <div className="flex items-center w-full">
-                <div className="flex items-center gap-2">
-                  <div className="font-semibold">{capitalizeWords(item.name)} </div>
-                  {!item.read && (
-                    <span className="flex h-2 w-2 rounded-full bg-blue-600" />
-                  )}
-                </div>
-                <Dot/>
-                <div className={cn("text-xs", mail.selected === item.id ? "text-foreground" : "text-muted-foreground")}>
-                   {formatDistanceToNow(new Date(item.date), { addSuffix: true })}
-                </div>
-                
-              </div>
-              <div className="flex items-center gap-1">
-              <IconWrapper><MessageSquare strokeWidth="1.5" size="32" onClick={() => toggleInput(item.id)} /></IconWrapper>
-                  {/* <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                    {replies[item.id] ? replies[item.id].length : 0}
-                  </Badge> */}
-                </div>
-            </div>  
-              <div className="flex justify-between line-clamp-2 text-xs text-muted-foreground -m-2 ml-1">
-                {item.text.substring(0, 300)}
-                
-              </div>
-              {item.image && category !== 'Text' && item.option !== 'text' && category !== 'Resumes' && item.option !== 'resumes' && (
-                <>
-                  <img src={item.image} alt="Image" width={300} height={550} className="mt-4 mb-2 rounded-lg" />
-                  <div className="flex gap-20 mt-2 ">
-                    <Badge variant="stone">
-                      <button onClick={() => handlePostLike(item.id)}>
-                      <IconWrapper><ThumbsUp strokeWidth={1.5} className="h-4 w-4 cursor-pointer mr-2" /></IconWrapper>
-                      </button>
-                      <span>{item.likes?.length || 0}</span>
-                    </Badge>
-                    <Badge variant="stone">
-                      <button onClick={() => handlePostDislike(item.id)}>
-                      <IconWrapper><ThumbsDown strokeWidth={1.5} className="h-4 w-4 cursor-pointer mr-2" /></IconWrapper>
-                      </button>
-                      <span>{item.dislikes?.length || 0}</span>
-                    </Badge>
-                    {/* {item.name !== auth.currentUser?.displayName && (
+            
+              <div className="flex justify-between">
+             
+                <div className="flex items-center w-full">
+                  <div className="flex items-start p-4">
+                    <div className="flex items-start gap-4 text-sm">
+                      <Avatar>
+                        <AvatarImage src={item.photo || fallbackImageUrl} alt={item.name} />
+                        <AvatarFallback>
+                          {item.name
+                            .split(" ")
+                            .map((chunk) => chunk[0])
+                            .join("")}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="grid">
+                        <div className="font-semibold flex">{capitalizeWords(item.name)}
+                          <Dot />
+                          {item.date && (
+                            <div className="text-xs text-muted-foreground">
+                              {formatDistanceToNow(new Date(item.date), { addSuffix: true })}
+                            </div>
+                          )}
+                        </div>
+                        <div className="line-clamp-1 text-xs">{item.text.substring(0, 300)}</div>
+                        <div className="line-clamp-1 text-xs">
+                          {item.image && category !== 'Text' && item.option !== 'text' && category !== 'Resumes' && item.option !== 'resumes' && (
+                            <>
+                              <img src={item.image} alt="Image" width={300} height={550} className="mt-4 mb-2 rounded-lg" />
+                              <div className="flex gap-20 mt-2 ">
+                                <Badge variant="stone">
+                                  <button onClick={() => handlePostLike(item.id)}>
+                                    <IconWrapper><ThumbsUp strokeWidth={1.5} className="h-4 w-4 cursor-pointer mr-2" /></IconWrapper>
+                                  </button>
+                                  <span>{item.likes?.length || 0}</span>
+                                </Badge>
+                                <Badge variant="stone">
+                                  <button onClick={() => handlePostDislike(item.id)}>
+                                    <IconWrapper><ThumbsDown strokeWidth={1.5} className="h-4 w-4 cursor-pointer mr-2" /></IconWrapper>
+                                  </button>
+                                  <span>{item.dislikes?.length || 0}</span>
+                                </Badge>
+                                {/* {item.name !== auth.currentUser?.displayName && (
         <Badge variant="stone">
           <MagicWandIcon className="h-4 w-4 cursor-pointer " onClick={() => handleMagicPrompt(item.text, item.id)} />
         </Badge>
       )} */}
-                    {item.image && (
-                      <Badge variant="stone">
-                        <IconWrapper><ArrowDownToLine strokeWidth={1.5} className="h-4 w-4 cursor-pointer " onClick={() => Download(item.image)} /></IconWrapper>
-                      </Badge>
-                    )}
-                  </div>
-                </>
-              )}
-
-              {(category === 'Text' || item.option === 'text' || category === 'Resumes' || item.option === 'resumes') && (
-                item.image === './loading.gif' ? (
-                  <img src={item.image} alt="Image" width={300} height={550} className="mt-4 mb-2 rounded-lg" />
-                ) : (
-                  item.image !== '' && (
-                    <div className="gap-2 mb-2">
-                      <Texts generatedText={item.image} post={item} category={category} />
-                    </div>
-                  )
-                )
-              )}
-
-              {replyVisible && (
-                <>
-                  <div className="gap-2 mb-2">
-                    {replies[item.id] && replies[item.id].length > 0 && (
-                      <>
-                        {replies[item.id].map((reply, index) => (
-                          <div key={index} className="flex mt-2">
-                           {reply.image  ? (
-                            <div className="flex-col -space-y-3">
-                            {/* <Crown  strokeWidth={1.25} className="h-6 w-6 pb-2 pl-2 icon-red" color="orange" /> */}
-                            {/* <Avatar className="h-8 w-8">
-                              <AvatarImage src="https://lh3.googleusercontent.com/a/ACg8ocKFM9tQaWu56LVff7pMGiAp9WmIpAbfO34DdO2zKf1R_wH5SPfM7Q=s96-c" alt="Avatar" />
-                              <AvatarFallback>N R</AvatarFallback>
-                            </Avatar> */}
-                            <Avatar className="h-8 w-8">
-                              <AvatarImage src={reply.photo} alt="Avatar" />
-                              <AvatarFallback>N R</AvatarFallback>
-                            </Avatar>
-                            </div>
-                             ):(
-                              <Avatar className="h-8 w-8">
-                              <AvatarImage src={reply.photo} alt="Avatar" />
-                              <AvatarFallback>N R</AvatarFallback>
-                            </Avatar>
-                             )}
-                            <div className="flex flex-col ml-2">
-                            {/* {reply.image  ? (
-                              <div className="flex"><div className="font-text-sm text-muted-foreground"><span className="font-semibold">Obulapathi N Challa</span> authored the prompt and <span className="font-semibold">{capitalizeWords(reply.name)}</span> generated the content below</div></div>
-                            ):(
-                              <div className="font-semibold">{capitalizeWords(reply.name)}</div>
-                            )} */}
-                            <div className="font-semibold">{capitalizeWords(reply.name)}</div>
-                              <div className="flex justify-between line-clamp-2 text-xs text-muted-foreground">
-                                
-                                {reply.option === 'prompt' ? (
-                                  // <MaskedText key={index} text={reply.text} />
-                                  <div>{reply.text}</div>
-                                ) : (
-                                  <span>{reply.text}</span>
-                                )}
-                                {reply.option === 'prompt' && (
+                                {item.image && (
                                   <Badge variant="stone">
-                                    <IconWrapper><MagicWandIcon className="h-8 w-8 cursor-pointer " onClick={() => handleMagicPrompt(reply.text, item.id)} /></IconWrapper>
+                                    <IconWrapper><ArrowDownToLine strokeWidth={1.5} className="h-4 w-4 cursor-pointer " onClick={() => Download(item.image)} /></IconWrapper>
                                   </Badge>
                                 )}
                               </div>
-                              {reply.image && (
-                                <>
-                                  <img src={reply.image} alt="Image" width={300} height={550} className="mt-2 mb-2 rounded lg" />
-                                  <div className="flex gap-9 mt-2">
-                                    <Badge variant="stone">
-                                      <button onClick={() => handleLike(item.id, reply.id)}>
-                                      <IconWrapper><ThumbsUp strokeWidth={1.5} className="h-4 w-4 cursor-pointer mr-2" /></IconWrapper>
-                                      </button>
-                                      <span>{reply.likes?.length || 0}</span>
-                                    </Badge>
-                                    <Badge variant="stone">
-                                      <button onClick={() => handleDislike(item.id, reply.id)}>
-                                      <IconWrapper><ThumbsDown strokeWidth={1.5} className="h-4 w-4 cursor-pointer mr-2" /></IconWrapper>
-                                      </button>
-                                      <span>{reply.dislikes?.length || 0}</span>
-                                    </Badge>
-                                    <Badge variant="stone">
-                                    <IconWrapper><ArrowDownToLine strokeWidth={1.5} className="h-4 w-4 cursor-pointer " onClick={() => Download(reply.image)} /></IconWrapper>
-                                    </Badge>
-                                  </div>
-                                </>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </>
-                    )}
+                            </>
+                          )}
+
+                          {(category === 'Text' || item.option === 'text' || category === 'Resumes' || item.option === 'resumes') && (
+                            item.image === './loading.gif' ? (
+                              <img src={item.image} alt="Image" width={300} height={550} className="mt-4 mb-2 rounded-lg" />
+                            ) : (
+                              item.image !== '' && (
+                                <div className="gap-2 mb-2">
+                                  <Texts generatedText={item.image} post={item} category={category} />
+                                </div>
+                              )
+                            )
+                          )}
+
+                          <ReplyList
+                              replies={replies}
+                              item={item}
+                              replyVisible={replyVisible}
+                              handleMagicPrompt={handleMagicPrompt}
+                              handleLike={handleLike}
+                              handleDislike={handleDislike}
+                              Download={Download}
+                            />
+                        </div>
+                      </div>
+                    </div>
+
+                    
                   </div>
-                </>
-              )}
+                </div>
+                <IconWrapper><MessageSquare className="mt-2" strokeWidth="1.5" size="32" onClick={() => toggleInput(item.id)} /></IconWrapper>
+              </div>
+
+
               {showInputItemId === item.id && (
                 <div className="relative w-full">
-                   <input
+                  <input
                     type="text"
                     className="w-full border rounded-lg pl-12 p-2 mt-2"
                     placeholder="Type your message here..."
@@ -393,7 +327,7 @@ export function MailList({ items, category }: MailListProps) {
                       }
                     }}
                   />
-                  
+
                   <div
                     className="absolute left-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
                     onClick={handleIconClick}
@@ -422,7 +356,7 @@ export function MailList({ items, category }: MailListProps) {
             </div>
           </button>
         ))}
-                      <div className="w-[200px] h-[200px]"></div>
+        <div className="w-[200px] h-[200px]"></div>
 
       </div>
     </div>
