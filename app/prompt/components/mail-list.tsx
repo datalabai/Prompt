@@ -228,7 +228,7 @@ export function MailList({ items, category }: MailListProps) {
               <div className="flex justify-between">
              
                 <div className="flex items-center w-full">
-                  <div className="flex items-start p-4">
+                  <div className="flex items-start p-4 pl-0">
                     <div className="flex items-start gap-4 text-sm">
                       <Avatar>
                         <AvatarImage src={item.photo || fallbackImageUrl} alt={item.name} />
@@ -244,7 +244,7 @@ export function MailList({ items, category }: MailListProps) {
                           <Dot />
                           {item.date && (
                             <div className="text-xs text-muted-foreground">
-                              {formatDistanceToNow(new Date(item.date), { addSuffix: true })}
+                              {formatDistanceToNow(new Date(item.date), { addSuffix: false })}
                             </div>
                           )}
                         </div>
