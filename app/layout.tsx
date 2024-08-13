@@ -15,6 +15,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { AuthContextProvider } from "./context/AuthContext";
 import GoogleAnalytics from "./GoogleAnalytics";
+import HotjarSnippet from "./Hotjar";
 import RightPanel from "@/components/rightPanel";
 import { useState } from "react";
 import { usePathname } from 'next/navigation';
@@ -69,10 +70,10 @@ export default function RootLayout({ children }: RootLayoutProps) {
                   {children}
                 </div>
               </div>
-              {/* <SiteFooter /> */}
               <TailwindIndicator />
               <ThemeSwitcher />
             </ThemeProvider>
+            <HotjarSnippet/>
             </CategoryProvider>
           </AuthContextProvider>
         </body>
