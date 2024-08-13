@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect, useRef } from 'react';
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Card,
   CardHeader,
@@ -15,11 +14,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { Progress } from "@/components/ui/progress";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { auth, getProfile } from "../firebase";
+import { getProfile } from "../firebase";
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useQRCode } from 'next-qrcode';
 import { FiCheck, FiCopy } from 'react-icons/fi';
@@ -32,7 +28,6 @@ import {
 } from "@/components/ui/popover"
 import { Timestamp } from "firebase/firestore"; // Add this import if you are using Firebase
 import { buttonVariants } from '@/components/ui/button';
-import { Linkedin, TwitterIcon, Wallet, XIcon } from 'lucide-react';
 
 type ProfileData = {
   name: string;
@@ -175,70 +170,56 @@ export default function Profile() {
             </CardHeader>
             <CardContent className="flex-col break-all text-center pb-2">
               <p >{profileData.wallet}</p>
-              <div className="flex ">
-                <div className='ml-24 m-2'> <CopyToClipboard
+              <div className="flex justify-center w-full p-4">
+      <div className="flex items-center space-x-4">
+        <div>
+          <CopyToClipboard
+            text={profileData.wallet}
+            onCopy={() => setCopied(true)}
+          >
+            <button className="flex items-center space-x-1">
+              {copied ? (
+                <FiCheck className="text-green-500" />
+              ) : (
+                <FiCopy />
+              )}
+              <span>{copied ? 'Copied!' : ''}</span>
+            </button>
+          </CopyToClipboard>
+        </div>
+        <div>
+          <Popover>
+            <PopoverTrigger>
+              <MdQrCodeScanner className="text-xl" />
+            </PopoverTrigger>
+            <PopoverContent>
+              <div ref={qrRef} className="text-center">
+                <Canvas
                   text={profileData.wallet}
-                  onCopy={() => setCopied(true)}
-                >
-                  <button>
-                    {copied ? <FiCheck className="text-green-500" /> : <FiCopy />}
-                    <span className="ml-1">{copied ? '' : ''}</span>
-                  </button>
-                </CopyToClipboard> </div>
-                <div className='m-2'> <Popover>
-                  <PopoverTrigger><MdQrCodeScanner /></PopoverTrigger>
-                  <PopoverContent>
-                    <div ref={qrRef} className="text-center ml-8">
-                      <Canvas
-                        text={profileData.wallet}
-                        options={{
-                          errorCorrectionLevel: 'M',
-                          margin: 3,
-                          scale: 12,
-                          width: 200,
-                          color: {
-                            dark: '#000000FF',
-                            light: '#FFFFFFFF',
-                          },
-                        }}
-                      />
-                    </div>
-                  </PopoverContent>
-                </Popover>  </div>
+                  options={{
+                    errorCorrectionLevel: 'M',
+                    margin: 3,
+                    scale: 12,
+                    width: 200,
+                    color: {
+                      dark: '#000000FF',
+                      light: '#FFFFFFFF',
+                    },
+                  }}
+                />
               </div>
+            </PopoverContent>
+          </Popover>
+        </div>
+      </div>
+    </div>
             </CardContent>
             <Modal></Modal>
 
 
 
-            <CardFooter> <div >
-              <a
-                rel="noreferrer noopener"
-                href={profileData.photo}
-                target="_blank"
-                className={buttonVariants({
-                  variant: "ghost",
-                  size: "sm",
-                })}
-              >
-                <span className="sr-only">In icon</span>
-                <Linkedin size="20" />
-              </a>
-            </div>
-              <div >
-                <a
-                  rel="noreferrer noopener"
-                  href={profileData.photo}
-                  target="_blank"
-                  className={buttonVariants({
-                    variant: "ghost",
-                    size: "sm",
-                  })}
-                >
-                  <span className="sr-only">X icon</span>
-                  <TwitterIcon size={20} />
-                </a>
-              </div>
+            <CardFooter> 
+             
             </CardFooter>
           </Card>
           <Card className="bg-muted/50 relative mt-8 flex flex-col justify-center items-center">

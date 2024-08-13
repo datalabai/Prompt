@@ -1,4 +1,4 @@
-"use client"; // This directive is used to indicate that this component uses client-side rendering.
+"use client"; 
 
 import {
   Card,
@@ -10,12 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useState, useEffect } from "react";
 import { db } from '@/app/firebase';
 import { collection, query, orderBy, limit, getDocs, onSnapshot } from "firebase/firestore";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+
 
 interface RecentPost {
   id: string;
