@@ -240,7 +240,7 @@ export function MailList({ items, category }: MailListProps) {
                         </AvatarFallback>
                       </Avatar>
                       <div className="grid">
-                        <div className="font-semibold flex">{capitalizeWords(item.name)}
+                        <div className="font-semibold ">{capitalizeWords(item.name)} <span className="text-xs text-muted-foreground">{formatDistanceToNow(new Date(item.date), { addSuffix: false })}</span> 
                           {/* <Dot />
                           {item.date && (
                             <div className="text-xs text-muted-foreground">
