@@ -76,7 +76,7 @@ export function RecentPosts() {
         </CardHeader>
         <CardContent className="overflow-y-auto max-h-[calc(100vh-150px)]">
           {recentPosts.map(post => (
-            <div key={post.id} className="flex items-start space-x-4 p-2 transition-all hover:bg-accent hover:text-accent-foreground">
+            <div key={post.id} className="max-h-40 overflow-hidden flex items-start space-x-4 p-2 mb-2 transition-all hover:bg-accent hover:text-accent-foreground border rounded-lg">
               <Avatar className="hidden h-9 w-9 sm:flex">
                 <AvatarImage src={post.photo || "default-avatar-url"} alt="Avatar" />
                 <AvatarFallback>KS</AvatarFallback>
