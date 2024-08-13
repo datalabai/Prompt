@@ -1,4 +1,5 @@
 "use client";
+import Script from 'next/script';
 
 const HotjarSnippet = () => {
   const HOTJAR_ID = 5092224;
