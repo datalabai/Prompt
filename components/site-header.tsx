@@ -8,7 +8,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { ProfileAvator } from "./profileavator";
 import { UserAuth } from "../app/context/AuthContext";
 import { addUserToFirestore } from '../app/firebase';
-import { Nav } from "@/app/prompt/components/nav";
+import { Nav } from "@/app/home/components/nav";
 import { Sheet, SheetContent, SheetFooter, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { House, List, Images, Palette } from 'lucide-react';
 import { useCategory } from "@/app/context/CategoryContext";

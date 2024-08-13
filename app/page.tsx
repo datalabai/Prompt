@@ -3,7 +3,7 @@ import Image from "next/image"
 
 
 
-import MailPage from "./prompt/page"
+import MailPage from "./home/page"
 import { siteConfig } from "@/config/site";
 import { Metadata, Viewport } from "next";
 import { Landing } from "@/components/landing";

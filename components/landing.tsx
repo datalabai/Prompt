@@ -21,7 +21,7 @@ export const Landing = () => {
 
         <div className="space-y-4 md:space-y-0 md:space-x-4">
           <Button className="w-full md:w-auto">
-            <a href="/prompt">Try it out</a>
+            <a href="/home">Try it out</a>
           </Button>
         </div>
       </div>
