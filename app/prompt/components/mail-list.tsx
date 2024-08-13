@@ -228,8 +228,8 @@ export function MailList({ items, category }: MailListProps) {
               <div className="flex justify-between">
              
                 <div className="flex items-center w-full">
-                  <div className="flex items-start p-4 pl-0">
-                    <div className="flex items-start gap-4 text-sm">
+                  <div className="flex items-start p-2 pl-0 py-0">
+                    <div className="flex items-start gap-3 text-sm">
                       <Avatar>
                         <AvatarImage src={item.photo || fallbackImageUrl} alt={item.name} />
                         <AvatarFallback>
@@ -241,18 +241,18 @@ export function MailList({ items, category }: MailListProps) {
                       </Avatar>
                       <div className="grid">
                         <div className="font-semibold flex">{capitalizeWords(item.name)}
-                          <Dot />
+                          {/* <Dot />
                           {item.date && (
                             <div className="text-xs text-muted-foreground">
                               {formatDistanceToNow(new Date(item.date), { addSuffix: false })}
                             </div>
-                          )}
+                          )} */}
                         </div>
                         <div className="line-clamp-1 text-xs">{item.text.substring(0, 300)}</div>
                         <div className="line-clamp-1 text-xs">
                           {item.image && category !== 'Text' && item.option !== 'text' && category !== 'Resumes' && item.option !== 'resumes' && (
                             <>
-                              <img src={item.image} alt="Image" width={300} height={550} className="mt-4 mb-2 rounded-lg" />
+                              <img src={item.image} alt="Image" width={525} className="mt-4 mb-2 rounded-lg" />
                               <div className="flex gap-20 mt-2 ">
                                 <Badge variant="stone">
                                   <button onClick={() => handlePostLike(item.id)}>
@@ -282,7 +282,7 @@ export function MailList({ items, category }: MailListProps) {
 
                           {(category === 'Text' || item.option === 'text' || category === 'Resumes' || item.option === 'resumes') && (
                             item.image === './loading.gif' ? (
-                              <img src={item.image} alt="Image" width={300} height={550} className="mt-4 mb-2 rounded-lg" />
+                              <img src={item.image} alt="Image" width={525} height={550} className="mt-4 mb-2 rounded-lg" />
                             ) : (
                               item.image !== '' && (
                                 <div className="gap-2 mb-2">
@@ -308,7 +308,7 @@ export function MailList({ items, category }: MailListProps) {
                     
                   </div>
                 </div>
-                <IconWrapper><MessageSquare className="mt-2" strokeWidth="1.5" size="32" onClick={() => toggleInput(item.id)} /></IconWrapper>
+                <IconWrapper><MessageSquare className="" strokeWidth="1.5" size="32" onClick={() => toggleInput(item.id)} /></IconWrapper>
               </div>
 
 
