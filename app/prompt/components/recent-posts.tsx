@@ -1,8 +1,8 @@
-"use client";
+"use client"; // This directive is used to indicate that this component uses client-side rendering.
+
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -10,6 +10,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useState, useEffect } from "react";
 import { db } from '@/app/firebase';
 import { collection, query, orderBy, limit, getDocs, onSnapshot } from "firebase/firestore";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 interface RecentPost {
   id: string;
@@ -26,6 +32,7 @@ interface RecentPost {
 
 export function RecentPosts() {
   const [recentPosts, setRecentPosts] = useState<RecentPost[]>([]);
+  const [showFullImage, setShowFullImage] = useState<{ [key: string]: boolean }>({});
 
   useEffect(() => {
     const fetchRecentPosts = async () => {
@@ -59,11 +66,18 @@ export function RecentPosts() {
     return () => unsubscribe();
   }, []);
 
+  const handleShowMore = (postId: string) => {
+    setShowFullImage(prevState => ({
+      ...prevState,
+      [postId]: true
+    }));
+  };
+
   return (
     <div className="flex flex-col h-full">
       <Card className="border-none shadow-none">
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg font-large">What&lsquo;s happening</CardTitle>
+          <CardTitle className="text-lg font-large">What&rsquo;s happening</CardTitle>
         </CardHeader>
         <CardContent className="overflow-y-auto max-h-[calc(100vh-150px)]">
           {recentPosts.map(post => (
@@ -74,9 +88,24 @@ export function RecentPosts() {
               </Avatar>
               <div className="space-y-1">
                 <p className="text-sm font-medium leading-none">{post.name || "Unknown Author"}</p>
-                <p className="text-sm text-muted-foreground">{post.text || "No description available"}</p>
+                <p className="text-sm text-muted-foreground">{post.text.substring(0, 100) || "No description available"}...</p>
                 {post.image && (
-                  <img src={post.image} alt="Image" width={300} height={550} className="mt-4 mb-2 rounded-lg" />
+                  <div className="relative">
+                    <img 
+                      src={post.image} 
+                      alt="Image" 
+                      className={`mt-4 mb-2 rounded-lg ${showFullImage[post.id] ? 'h-auto' : 'h-[30%]'} transition-all`} 
+                      style={{ objectFit: 'cover' }}
+                    />
+                    {!showFullImage[post.id] && (
+                      <button 
+                        onClick={() => handleShowMore(post.id)} 
+                        className="absolute bottom-0 left-0 right-0 p-24 bg-black text-white text-center"
+                      >
+                        Show More
+                      </button>
+                    )}
+                  </div>
                 )}
               </div>
             </div>
