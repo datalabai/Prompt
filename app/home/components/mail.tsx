@@ -83,13 +83,16 @@ export function Mail({
   const [showProfile, setShowProfile] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [trails, setTrails] = useState<number | null>(null);
-  const [isMobile, setIsMobile] = useState(window.matchMedia("(max-width: 700px)").matches);
+  const [isMobile, setIsMobile] = useState(false);
 
   const handleResize = debounce(() => {
     setIsMobile(window.matchMedia("(max-width: 700px)").matches);
   }, 300);
 
+
   useEffect(() => {
+    // This effect runs only on the client side
+    setIsMobile(window.matchMedia("(max-width: 700px)").matches);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [handleResize]);
