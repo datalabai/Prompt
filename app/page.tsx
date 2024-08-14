@@ -60,11 +60,11 @@ export const metadata: Metadata = {
     images: [siteConfig.ogImage],
     creator: "@prompt",
   },
-  icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon-16x16.png",
-    apple: "/apple-touch-icon.png",
-  },
+  // icons: {
+  //   icon: "/favicon.ico",
+  //   shortcut: "/favicon-16x16.png",
+  //   apple: "/apple-touch-icon.png",
+  // },
   manifest: `${siteConfig.url}`,
 };
 
