@@ -128,6 +128,9 @@ export function MailList({ items, category }: MailListProps) {
         ...prevReplies,
         [itemId]: [...(prevReplies[itemId] || []), reply],
       }));
+      if(reply.option === 'prompt') {
+        toast.info('you have Earned 2 points');
+      }
       await addReply(itemId, category, reply, 'chat');
     }
   };

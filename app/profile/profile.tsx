@@ -35,6 +35,7 @@ type ProfileData = {
   wallet: string;
   photo: string;
   credits: number;
+  rewards: number;
 };
 
 type TransactionData = {
@@ -53,12 +54,13 @@ export default function Profile() {
   const qrRef = useRef<HTMLDivElement>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
         const data = await getProfile();
         if (data) {
-          console.log(data);
+          console.log("Fetched data:", data);
           setProfileData(data.user);
           setTransactionData(data.transactions);
           localStorage.setItem('profileData', JSON.stringify(data.user));
@@ -68,24 +70,10 @@ export default function Profile() {
         console.error("Error fetching profile data:", error);
       }
     };
-
-    const storedProfileData = localStorage.getItem('profileData') || '';
-    const storedTransactionData = localStorage.getItem('transactionData') || '';
-
-    if (storedProfileData) {
-      const parsedProfileData = JSON.parse(storedProfileData);
-      const parsedTransactionData = JSON.parse(storedTransactionData || '[]');
-      console.log("Parsed profile data:", parsedProfileData);
-      setProfileData(parsedProfileData);
-      setTransactionData(parsedTransactionData);
-
-      // Fetch new data to ensure it is up-to-date
-      fetchProfileData();
-    } else {
-      fetchProfileData();
-    }
+  
+    fetchProfileData();
   }, []);
-
+  
   useEffect(() => {
     const handleClickOutside = (event: any) => {
       if (qrRef.current && !qrRef.current.contains(event.target)) {
@@ -141,14 +129,13 @@ export default function Profile() {
     return <div>Loading...</div>;
   }
 
-  const rows = transactionData.map((transaction) =>
-  ({
+  const rows = transactionData.map((transaction) => ({
     date: formatTimestamp(transaction.timestamp),
     activity: transaction.activity,
     credits: transaction.creditsDeducted,
     prompt: transaction.prompt,
-  })
-  );
+  }));
+  
 
   return (
    
@@ -254,13 +241,13 @@ export default function Profile() {
               <CardTitle className="text-center">Rewards</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-7xl">0</div>
+              <div className="text-7xl">{profileData.rewards || 0}</div>
             </CardContent>
             <CardFooter>
             </CardFooter>
           </Card>
         </div>
-        <div className='table-container'>
+        <div className='table-container mt-10 overflow-y'>
             
               <Table className='overflow-y'>
               <TableHeader>
@@ -272,27 +259,20 @@ export default function Profile() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {rows.map((profilecredits) => (
-            <TableRow key={profilecredits.date}>
-              <TableCell className="font-medium">{formatTimestamp(profilecredits.date)}</TableCell>
-              <TableCell> <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger>
-                              {profilecredits.activity}
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>{profilecredits.prompt}</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider></TableCell>
-              <TableCell>{profilecredits.credits}</TableCell>
-              
-            </TableRow>
-          ))}
-        </TableBody>
+  {rows.map((profilecredits, index) => (
+    <TableRow key={index}> {/* Use a unique key */}
+      <TableCell className="font-medium">{profilecredits.date}</TableCell>
+      <TableCell>{profilecredits.prompt}</TableCell>
+      <TableCell>{profilecredits.activity}</TableCell>
+      <TableCell>{profilecredits.credits}</TableCell>
+    </TableRow>
+  ))}
+</TableBody>
+
         </Table>
         
             </div>
+            <div className='w-72 h-72'></div>
          
 
       </section>
