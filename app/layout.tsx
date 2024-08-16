@@ -1,6 +1,5 @@
 "use client";
 
-import { ReactNode, use } from "react";
 import "@/config/globals.css";
 import { Viewport } from "next";
 import 'react-toastify/dist/ReactToastify.css';
