@@ -168,6 +168,7 @@ export function Mail({
       if (category === "Private") {
         await addMessageToPrivateChannel(newPost, selectedIconName);
       } else {
+        toast.info("Congratulations! You've earned 1 point for your post.");
         const trailsCount = await addPost(newPost, category, selectedIconName);
         if (trailsCount !== undefined) {
           toast.info(trailsCount);

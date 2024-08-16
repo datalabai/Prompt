@@ -74,10 +74,12 @@ export const getProfile = async () => {
     const user = doc(db, "users", uid);
     const activitiesSnapshot = await getDoc(user);
     const userData = activitiesSnapshot.data();
+    console.log("userData");
+    console.log(userData);
     const cred = await fetchCredits();
-    const data={name:userData.displayName,photo:userData.photo,credits:cred,wallet:userData.wallet,email:userData.email};
-    if(userData.activities){
-      return { user: data ,transactions: userData.activities};
+    const data={name:userData.displayName,photo:userData.photo,credits:cred,wallet:userData.wallet,email:userData.email,rewards:userData.rewards};
+    if(userData.activities) {
+      return { user: data ,transactions: userData.activities.reverse()};
     }
     return { user: data ,transactions: []};
   } catch (error) {
@@ -85,6 +87,7 @@ export const getProfile = async () => {
     return null;
   }
 };
+
 
 
 export const addUserToFirestore = async (user) => {
@@ -295,10 +298,49 @@ const updateRecentPosts = async (newPost) => {
   await addDoc(recentPostsRef, newPost);
 };
 
+export const addRewards= async (postText,amount) => {
+  try {
+    const uid=localStorage.getItem("uid");
+    const userRef = doc(db, "users", uid);
+   //add a new field to the user document
+    const userDocSnap = await getDoc(userRef);
+    if (!userDocSnap.exists()) {
+      console.error("User document does not exist.");
+      return;
+    }
+    if(userDocSnap.data().rewards){
+    const total = userDocSnap.data().rewards + amount;
+    await updateDoc(userRef, {
+      rewards: total,
+      activities: arrayUnion({
+        activity: "Reward",
+        timestamp: new Date(),
+        creditsDeducted: amount,
+        prompt: postText,
+      }),
+    });
+  }
+  else{
+    await updateDoc(userRef, {
+      rewards: amount,
+      activities: arrayUnion({
+        activity: "Reward",
+        timestamp: new Date(),
+        creditsDeducted: amount,
+        prompt: postText,
+      }),
+    });
+  }
+    console.log("User data updated successfully.");
+  } catch (error) {
+    console.error("Error updating user data:", error);
+  }
+};
+
 // addPost function to add a post to Firebase
 export const addPost = async (post, category, option) => {
   console.log("Adding post:", post);
-
+  await addRewards(post.text,1);
   const generateAndAddPost = async (prompt, postText) => {
     const data = await fetchImageForMessage(prompt + postText);
     if (data.trials <= 0) {
@@ -655,6 +697,10 @@ export const addPost = async (post, category, option) => {
       }
       if(option === "chat")
       {
+        if(reply.option === "prompt")
+          {
+            await addRewards(reply.text,2);
+          }
       const postRef = doc(db, category, postId);
       await addDoc(collection(postRef, "replies"), {
         ...reply,
