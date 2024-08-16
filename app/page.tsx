@@ -70,7 +70,7 @@ export const metadata: Metadata = {
 
 export default function IndexPage() {
   return (
-    <div className="container relative pr-0">
+    <div className="container relative pr-0 overflow-y-auto ">
        <section >
         <Landing />
       </section>
