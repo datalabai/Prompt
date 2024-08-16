@@ -1,12 +1,11 @@
 export const siteConfig = {
   name: "PROMPT",
   url: "https://prompt.fun/",
-  ogImage: "./mobileview.png",
+  ogImage: "https://pub-f858c7e521464395920779af297fb1bd.r2.dev/Preview-image.png",
   description:
-    "This website or platform designed to help writers generate ideas, prompts, or exercises to inspire creative writing. This website often provide writing prompts, tips, and sometimes communities where writers can share their work or get feedback.",
+    "Discover our AI-powered platform offering a suite of creative tools including content creation, chatbot assistance, writing prompts, image generation, logo design, meme making, and resume building. Enhance your digital projects with hyper-realistic art, custom designs, and user-friendly editing tools. Perfect for artists, designers, and professionals seeking innovative solutions for their creative needs.",
   links: {
-    twitter: "https://x.com/obulpathi/status/1816704504232051162",
-    github: "https://github.com/datalabai/Prompt.git",
+    twitter: "https://x.com/PromptFun",
   },
 }
 
