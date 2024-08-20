@@ -26,7 +26,7 @@ export const Landing = () => {
       </div>
 
       <div className="w-full max-w-[550px] mx-auto lg:mx-0">
-          <img src="/prompt.webp" alt="Image" className="rounded-md object-cover border" />
+          <img src="/Landing.png" alt="Image" className="rounded-md object-cover border" />
       </div>
     </section>
   );
