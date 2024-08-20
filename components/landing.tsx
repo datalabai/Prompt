@@ -1,33 +1,32 @@
 import { Button } from "./ui/button";
-import Image from "next/image";
 
 export const Landing = () => {
   return (
-    <section className="container grid grid-cols-1 lg:grid-cols-2 place-items-center py-10 md:py-16 lg:py-20 gap-8 lg:gap-10">
-      <div className="text-center lg:text-left space-y-4 lg:space-y-6">
-        <main className="text-4xl md:text-5xl lg:text-6xl font-bold">
-          <h1 className="inline">
-            <span>
-              PROMPTing
-            </span>{" "}
-            made fun!
-          </h1>
-        </main>
+    <div className="text-center grid lg:grid-cols-2 place-items-center lg:gap-24 overflow-y-auto">
+      <div>
+        <h2 className="text-lg text-primary text-center tracking-wider">
+          <img 
+            src="/wc1.png" 
+            width="500" 
+            height="500" 
+            className="ml-8" 
+          />
+        </h2>
 
-        <p className="text-lg md:text-xl text-muted-foreground mx-auto lg:mx-0">
-          Prompt.fun unlocks your creativity with the help of prompt experts to generate prompts for you.
-        </p>
+        <h2 className="text-3xl md:text-4xl text-center mb-12">
+          Design your prompts with help of our experts!
+        </h2>
 
-        <div className="space-y-4 md:space-y-0 md:space-x-4">
+        <h3 className="md:w-1/2 mx-auto text-xl text-center text-muted-foreground mb-8">
           <Button className="w-full md:w-auto">
             <a href="/home">Try it out</a>
           </Button>
-        </div>
+        </h3>
       </div>
 
       <div className="w-full max-w-[550px] mx-auto lg:mx-0">
-          <img src="/Landing.png" alt="Image" className="rounded-md object-cover border" />
+        <img src="/Landing.png" alt="Image" className="rounded-md object-cover border" />
       </div>
-    </section>
+    </div>
   );
 };
