@@ -6,7 +6,7 @@ import { Button } from "./ui/button";
 
 export const Landing = () => {
   return (
-    <section id="features" className="container py-6 sm:py-12">
+    <section id="features" className="container py-2 sm:py-4">
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-2 gap-4">
 
@@ -16,12 +16,12 @@ export const Landing = () => {
               <div className=" mb-8">
                 <img
                   src="/wc1.png"
-                  width="500"
-                  height="500"
+                  width="600"
+                  height="600"
                   className="-ml-8" />
               </div>
 
-              <CardTitle className="text-3xl">Design your prompts with help of our experts!</CardTitle>
+              <h1 className="text-3xl text-center">Design your prompts <br/> with help of our experts!</h1>
             </CardHeader>
 
             <CardContent className="text-muted-foreground text-center">
@@ -37,8 +37,8 @@ export const Landing = () => {
              
                 <img
                   src="/lf.png"
-                  width="500"
-                  height="500"
+                  width="700"
+                  height="700"
                   className=" " />
               
             </CardHeader>
