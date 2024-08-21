@@ -28,7 +28,6 @@ import { Spinner } from "@/components/ui/spinner";
 import { RecentPosts } from "./recent-posts";
 import { useCategory } from "@/app/context/CategoryContext";
 import debounce from 'lodash/debounce';
-import PromptBulbIcon from "@/components/bulbicon";
 import { FaLightbulb } from "react-icons/fa";
 
 
