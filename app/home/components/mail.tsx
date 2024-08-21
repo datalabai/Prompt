@@ -3,45 +3,33 @@
 import * as React from "react";
 import {
   House,
-  GlobeLock,
-  BookOpenText,
   Images,
-  Biohazard,
   List,
   Palette,
-  ClipboardList,
 } from "lucide-react";
-import { PlusCircledIcon } from '@radix-ui/react-icons';
 import { cn } from "@/lib/utils";
-import { Input } from "@/components/ui/input";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { AccountSwitcher } from "./account-switcher";
-import { MailDisplay } from "./mail-display";
 import { MailList } from "./mail-list";
 import { Nav } from "./nav";
 import { useMail } from "../use-mail";
 import { useEffect, useState, useCallback } from "react";
 import { addMessageToPrivateChannel, addPost, auth,getPosts} from "@/app/firebase";
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { PromptModeToggle } from "@/components/prompt-dropmenu";
-import { Notifications } from "./notifications";
 import { Mail as MailType } from '../data';
 import { UserAuth } from "@/app/context/AuthContext";
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Spinner } from "@/components/ui/spinner";
-import { set } from "date-fns";
-import { RightNotifications } from "@/components/rightpanel-notification";
 import { RecentPosts } from "./recent-posts";
 import { useCategory } from "@/app/context/CategoryContext";
 import debounce from 'lodash/debounce';
+import { FaLightbulb } from "react-icons/fa";
+
 
 
 interface MailProps {
@@ -249,7 +237,13 @@ export function Mail({
                         value={inputValue}
                         onChange={(e) => setInputValue(e.target.value)}
                         onKeyDown={handleKeyDown} />
-                      <PromptModeToggle onIconSelect={handleIconSelect} category={category} />
+                      {/* <PromptModeToggle onIconSelect={handleIconSelect} category={category} /> */}
+                      <div className="absolute top-2  my-1 bg-gray">
+                      
+                      {/* <Lightbulb size={40} className="text-gray-500"/> */}
+                      <FaLightbulb color="blue" size={36} />
+                      </div>
+                      
                     </div>
                   </form>
                 </div>
