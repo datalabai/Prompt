@@ -240,7 +240,7 @@ export function Mail({
                       <div className="absolute top-2  my-1 bg-gray">
                       
                       {/* <Lightbulb size={40} className="text-gray-500"/> */}
-                      <FaLightbulb color="blue" size={36} />
+                      <FaLightbulb color="#2463eb" size={36} className="pb-1"/>
                       </div>
                       
                     </div>
