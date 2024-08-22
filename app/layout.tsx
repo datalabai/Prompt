@@ -12,12 +12,11 @@ import { ThemeSwitcher } from "@/components/theme-switcher";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { AuthContextProvider } from "./context/AuthContext";
-import HotjarSnippet from "./Hotjar";
 import RightPanel from "@/components/rightPanel";
 import { useState } from "react";
 import { usePathname } from 'next/navigation';
 import { CategoryProvider } from './context/CategoryContext';
-import Script from 'next/script'; // Import Script component
+import Script from 'next/script';
 
 export const viewport: Viewport = {
   themeColor: [
@@ -43,20 +42,32 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <>
       <html lang="en" suppressHydrationWarning>
         <head>
-          <Script async src="https://www.googletagmanager.com/gtag/js?id=G-6Q5GBJNP0V"></Script>
+         {/* Global site tag (gtag.js) - Google Analytics */}
+          <Script async src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID}`}></Script>
           <Script id="gtag-init" strategy="afterInteractive">
             {`window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
-              gtag('config', ${process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID});`}
+              gtag('config', '${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID}');`}
           </Script>
-
+          {/* Google Tag Manager */}
           <Script id="gtm-script" strategy="afterInteractive">
             {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
             new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
             j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-            })(window,document,'script','dataLayer',${process.env.NEXT_PUBLIC_GOOGLE_ANALYTIC_ID});`}
+            })(window,document,'script','dataLayer','${process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID}');`}
+          </Script>
+          {/* HOTJAR */}
+          <Script id="hotjar-script" strategy="afterInteractive">
+            {`(function(h,o,t,j,a,r){
+                h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+                h._hjSettings={hjid:${process.env.HOTJAR_ID},hjsv:6};
+                a=o.getElementsByTagName('head')[0];
+                r=o.createElement('script');r.async=1;
+                r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+                a.appendChild(r);
+            })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');`}
           </Script>
         </head>
         <body
@@ -68,7 +79,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           {/* Google Tag Manager (noscript) */}
           <noscript>
             <iframe
-              src={`https://www.googletagmanager.com/ns.html?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTIC_ID}`}
+              src={`https://www.googletagmanager.com/ns.html?id=${process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID}`}
               height="0"
               width="0"
               style={{ display: 'none', visibility: 'hidden' }}
@@ -94,7 +105,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
                 <TailwindIndicator />
                 <ThemeSwitcher />
               </ThemeProvider>
-              <HotjarSnippet />
             </CategoryProvider>
           </AuthContextProvider>
         </body>
