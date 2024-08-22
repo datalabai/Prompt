@@ -11,7 +11,7 @@ interface TypingAnimationProps {
 
 export const TypingAnimation: React.FC<TypingAnimationProps> = ({
   text,
-  speed = 100,
+  speed = 1000,
   loop = true,
   isPaused = false,
 }) => {
@@ -44,7 +44,7 @@ export const TypingAnimation: React.FC<TypingAnimationProps> = ({
 
   return (
     <motion.div
-      className="absolute top-2 left-4 text-gray-500 my-2 ml-4"
+      className="absolute top-2 left-4 text-gray-500 my-2 ml-8"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
