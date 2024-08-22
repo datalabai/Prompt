@@ -29,7 +29,7 @@ import { RecentPosts } from "./recent-posts";
 import { useCategory } from "@/app/context/CategoryContext";
 import debounce from 'lodash/debounce';
 import { FaLightbulb } from "react-icons/fa";
-
+import { TypingAnimation } from '@/components/animatedPlaceholder'; 
 
 
 interface MailProps {
@@ -72,6 +72,7 @@ export function Mail({
   const [isLoading, setIsLoading] = useState(false);
   const [trails, setTrails] = useState<number | null>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
 
   const handleResize = debounce(() => {
     setIsMobile(window.matchMedia("(max-width: 700px)").matches);
@@ -232,10 +233,18 @@ export function Mail({
                       <input
                         type="text"
                         className="w-full border rounded-lg pl-12 p-2 mt-2"
-                        placeholder="I would like to..."
+                        
                         value={inputValue}
                         onChange={(e) => setInputValue(e.target.value)}
-                        onKeyDown={handleKeyDown} />
+                        onKeyDown={handleKeyDown} 
+                        onFocus={() => setIsTyping(true)} // Set typing to true when input is focused
+                        onBlur={() => setIsTyping(false)}  // Set typing to false when input is blurred
+    
+                        />
+                        {/* <AnimatedPlaceholder /> */}
+                        {!isTyping && inputValue.length === 0 && (
+                        <TypingAnimation text="Create image of a flying Unicorn..." speed={100} loop={true} isPaused={isTyping} />
+                        )}
                       {/* <PromptModeToggle onIconSelect={handleIconSelect} category={category} /> */}
                       <div className="absolute top-2  my-1 bg-gray">
                       
