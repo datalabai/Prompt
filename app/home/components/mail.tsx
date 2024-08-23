@@ -244,13 +244,13 @@ export function Mail({
                         />
                         {/* <AnimatedPlaceholder /> */}
                         {!isTyping && inputValue.length === 0 && (
-                        <TypingAnimation text="Create image of a flying Unicorn..." speed={100} loop={true} isPaused={isTyping} />
+                        <TypingAnimation text="Create image of a flying Unicorn..." speed={300} loop={true} isPaused={isTyping} />
                         )}
                       {/* <PromptModeToggle onIconSelect={handleIconSelect} category={category} /> */}
                       <div className="absolute top-2  my-1 bg-gray">
                       
                       {/* <Lightbulb size={40} className="text-gray-500"/> */}
-                      <FaLightbulb color="#2463eb" size={36} className="pb-1"/>
+                      <FaLightbulb color="#2463eb" size={32} className=" ml-2"/>
                       </div>
                       
                     </div>
