@@ -69,17 +69,18 @@ export default function ExpertChat() {
             {/* Chat messages */}
             {/* Example message */}
             <div className="flex items-start gap-3">
-              <Avatar className="w-10 h-10">
-                <AvatarImage src="/placeholder-user.jpg" alt="Avatar" />
-                <AvatarFallback>JD</AvatarFallback>
-              </Avatar>
-              <div className="flex flex-col gap-2">
-                <div className="bg-muted rounded-lg p-3 max-w-[75%]">
-                  <p>Hey, how's it going?</p>
-                </div>
-                <div className="text-xs text-muted-foreground">2:34 PM</div>
-              </div>
-            </div>
+  <Avatar className="w-10 h-10">
+    <AvatarImage src="/placeholder-user.jpg" alt="Avatar" />
+    <AvatarFallback>JD</AvatarFallback>
+  </Avatar>
+  <div className="flex flex-col gap-2">
+    <div className="bg-muted rounded-lg p-3 max-w-[75%]">
+      <p>Hey, how&apos;s it going?</p>
+    </div>
+    <div className="text-xs text-muted-foreground">2:34 PM</div>
+  </div>
+</div>
+
             {/* Add more messages here */}
           </div>
 
