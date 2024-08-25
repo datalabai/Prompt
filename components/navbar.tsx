@@ -61,7 +61,7 @@ const Navbar: React.FC<NavbarProps> = ({ title, links }) => {
     return (
         <nav className="fixed top-0 left-0 right-0 z-50 flex flex-col sm:flex-row justify-between items-center py-4 px-6 bg-nav-lab shadow">
             <div className="flex mb-2 sm:mb-0 space-x-2 ml-2">
-                <Link href="/" passHref>
+                <Link href="/home" passHref>
                     <span className="text-2xl no-underline text-dlab-blue">
                         <img src="./prompt.png" width={130} height={35} alt="Logo" />
                     </span>

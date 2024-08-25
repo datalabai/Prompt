@@ -36,7 +36,7 @@ export const Landing = () => {
             <CardHeader className="flex justify-center items-center">
              
                 <img
-                  src="/lf.png"
+                  src="/landin-final.png"
                   width="700"
                   height="700"
                   className=" " />
