@@ -17,6 +17,8 @@ import { Icons } from "@/components/icons";
 import debounce from 'lodash/debounce';
 import NotificationBadge from "./notificationBadge";
 import { BellIcon } from "@radix-ui/react-icons"
+import { RiSparkling2Line } from "react-icons/ri";
+
 
 
 interface SiteHeaderProps {
@@ -96,8 +98,9 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({ toggleRightPanel }) => {
             </SheetTrigger>
             <SheetContent className="w-[250px] sm:w-[300px] mx-auto justify-center" side={'left'}>
               <Link href="/home" className="flex items-start space-x-2 -ml-3 mt-4">
-                <Icons.logo className="h-6 w-6" />
-                <span className="font-bold sm:inline-block inline bg-gradient-to-r from-[#16aad3] to-[#07bc0c] text-transparent bg-clip-text">
+                {/* <RiSparkling2Line className="h-8 w-8 ml-6 text-blue-500"/> */}
+                  <img src="./logo.png " className="h-9 w-9 ml-6"/>
+                  <span className="font-bold ml-0 mt-1 pl-0">
                   {siteConfig.name}
                 </span>
               </Link>
@@ -124,6 +127,8 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({ toggleRightPanel }) => {
         {/* Right-side actions (Mode Toggle, Profile, Login) */}
         <div className="flex items-center space-x-2 md:space-x-4">
           <nav className="flex items-center space-x-2 md:space-x-4">
+
+          {/* <FontAwesomeIcon icon="fa-regular fa-sparkles" flip="vertical" /> */}
             <ModeToggle />
             <Link href="/expert" >
               <BellIcon className="h-6 w-6" />
