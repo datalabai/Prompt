@@ -32,7 +32,7 @@ export default function ExpertChat() {
             </Avatar>
             <div className="flex-1 min-w-0">
               <h4 className="font-medium truncate">John Doe</h4>
-              <p className="text-sm text-muted-foreground truncate">Hey, how's it going?</p>
+              <p className="text-sm text-muted-foreground truncate">Hey, hows it going?</p>
             </div>
             <div className="text-xs text-muted-foreground">2:34 PM</div>
           </Link>
