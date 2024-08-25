@@ -91,7 +91,7 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({ toggleRightPanel }) => {
               </button>
             </SheetTrigger>
             <SheetContent className="w-[250px] sm:w-[300px] mx-auto justify-center" side={'left'}>
-              <Link href="/" className="flex items-start space-x-2 -ml-3 mt-4">
+              <Link href="/home" className="flex items-start space-x-2 -ml-3 mt-4">
                 <Icons.logo className="h-6 w-6" />
                 <span className="font-bold sm:inline-block inline bg-gradient-to-r from-[#16aad3] to-[#07bc0c] text-transparent bg-clip-text">
                   {siteConfig.name}
