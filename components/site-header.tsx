@@ -15,6 +15,9 @@ import { useCategory } from "@/app/context/CategoryContext";
 import { siteConfig } from "@/config/site";
 import { Icons } from "@/components/icons";
 import debounce from 'lodash/debounce';
+import NotificationBadge from "./notificationBadge";
+import { BellIcon } from "@radix-ui/react-icons"
+
 
 interface SiteHeaderProps {
   toggleRightPanel: () => void;
@@ -29,6 +32,7 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({ toggleRightPanel }) => {
 
   // Ref for the SheetTrigger
   const sheetTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const notifications = 5;
 
   useEffect(() => {
     if (user) {
@@ -121,6 +125,10 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({ toggleRightPanel }) => {
         <div className="flex items-center space-x-2 md:space-x-4">
           <nav className="flex items-center space-x-2 md:space-x-4">
             <ModeToggle />
+            <Link href="/expert" >
+              <BellIcon className="h-6 w-6" />
+            </Link>
+            <NotificationBadge count={notifications} />
             {user ? (
               <ProfileAvator enableProfile={() => { toggleRightPanel(); }} />
             ) : (
