@@ -538,7 +538,23 @@ export const addPost = async (post, category, option) => {
   
   export const getPosts = (category, callback) => {
     const user=auth.currentUser;
-
+    if(category === 'Expert')
+    {
+      const postsQuery = query(collection(db, "General"),
+      orderBy("date", "desc"));
+  
+      // Set up the real-time listener
+      const unsubscribe = onSnapshot(postsQuery, (querySnapshot) => {
+        const posts = [];
+        querySnapshot.forEach((doc) => {
+          posts.push({ id: doc.id, ...doc.data() });
+        });
+        callback(posts);
+      });
+    
+      // Return the unsubscribe function to allow for cleanup
+      return unsubscribe;
+    }
 
     if(category === 'Private')
       {

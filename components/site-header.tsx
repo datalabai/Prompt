@@ -133,7 +133,7 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({ toggleRightPanel }) => {
             <Link href="/expert" >
               <BellIcon className="h-6 w-6" />
             </Link>
-            <NotificationBadge count={notifications} />
+            {/* <NotificationBadge count={notifications} /> */}
             {user ? (
               <ProfileAvator enableProfile={() => { toggleRightPanel(); }} />
             ) : (

@@ -14,7 +14,7 @@ export default function MailPage() {
   return (
     <>
       
-      <div className="container border-0 overflow-y-auto flex-col md:flex">
+      <div className="container border-0 min-h-screen overflow-y-auto flex flex-col md:flex">
         <Mail
           accounts={accounts}
           mails={mails}
