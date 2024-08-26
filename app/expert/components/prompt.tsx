@@ -69,11 +69,11 @@ export function Mail({
 
   return (
     <TooltipProvider delayDuration={0}>
-      <div className="flex min-h-screen overflow-hidden">
+      <div className="flex min-h-screen overflow-hidden -mt-2">
         {/* Left Panel */}
         <div
           className={cn(
-            "flex-shrink-0 border-r",
+            "flex-shrink-0 ",
             isCollapsed && "min-w-[50px] transition-all duration-300 ease-in-out"
           )}
           style={{ width: 200 }}
@@ -88,18 +88,16 @@ export function Mail({
               <ArrowLeft />
             </Link>   
           </div>
-          <Separator />
         </div>
 
         {/* Main Content Panel */}
-        <div className="flex flex-1 flex-col overflow-hidden">
+        <div className="flex flex-1 flex-col overflow-hidden border-r">
           <div className="flex-1 flex overflow-hidden">
-            <div className="flex-1 border-r overflow-hidden">
+            <div className="flex-1  overflow-hidden mt-0">
               <Tabs defaultValue="all" className="h-full flex flex-col">
-                <div className="flex items-center px-4 py-3">
+                <div className="flex items-center px-4 py-3 ">
                   <h1 className="text-xl font-bold">Notifications</h1>
                 </div>
-                <Separator />
                 <TabsContent value="all" className="m-0 flex-1 overflow-auto">
                   <MailList items={mails} />
                 </TabsContent>

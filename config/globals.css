@@ -112,4 +112,13 @@
 }
 
 
+/* Add this to your global CSS file or Tailwind config */
+@media (max-width: 768px) {
+  .card-content {
+    max-height: calc(100vh - 8rem); /* Adjust for smaller screens */
+  }
+}
+
+
+
 
