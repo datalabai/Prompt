@@ -1,46 +1,17 @@
 export const mails = [
   {
-    id: "6c84fb90-12c4-11e1-840d-7b25c5ee775a",
-    name: "Bhautik Bavadiya",
-    email: "Bhautik@example.com",
-    subject: "Create an image of unicorn",
-    text: "Hi, I need an image of a unicorn for my project. Can you create one for me? I need it by the end of the week.\n\nLet me know if you need any more details.\n\nThanks, Bhautik",
-    date: "2023-10-22T09:00:00",
+    id: "6c9a7f94-8329-4d70-95d3-51f68c186ae1",
+    name: "Samuel Turner",
+    email: "samuelturner@example.com",
+    text: "Create a best meme on current crypto market",
+    date: new Date().getTime(),
+    photo: "./load-32_128.gif",
+    image: "./load-32_128.gif",
+    likes: [],
+    dislikes:[],
     read: true,
-    labels: ["Text", "Images", "Memes"],
+    option:"chat",
   },
-  {
-    id: "110e8400-e29b-11d4-a716-446655440000",
-    name: "Luffy Monkey D",
-    email: "Luffy@example.com",
-    subject: "Create Luffy image leader of Straw Hat Pirates",
-    text: "Hi, I need an image of Luffy, the leader of the Straw Hat Pirates, for my project. Can you create one for me? I need it by the end of the week.\n\nLet me know if you need any more details.\n\nThanks, Luffy",
-    date: "2023-10-22T10:30:00",
-    read: true,
-    labels: ["Text", "Images", "Memes"],
-  },
-  {
-    id: "3e7c3f6d-bdf5-46ae-8d90-171300f27ae2",
-    name: "Kishore Challapalli",
-    email: "Kishore@example.com",
-    subject: "create an image of a dragon",
-    text: "Hi, I need an image of a dragon for my project. Can you create one for me? I need it by the end of the week.\n\nLet me know if you need any more details.\n\nThanks, Kishore",
-    date: "2023-04-10T11:45:00",
-    read: true,
-    labels: ["Text", "Images", "Memes"],
-  },
-  {
-    id: "61c35085-72d7-42b4-8d62-738f700d4b92",
-    name: "Emily Davis",
-    email: "emilydavis@example.com",
-    subject: "create an image of a dog",
-    text: "Hi, I need an image of a dog for my project. Can you create one for me? I need it by the end of the week.\n\nLet me know if you need any more details.\n\nThanks, Emily",
-    date: "2023-03-25T13:15:00",
-    read: false,
-    labels: ["Text", "Images", "Memes"],
-  },
-  
-  
 ]
 
 export type Mail = (typeof mails)[number]
