@@ -243,7 +243,7 @@ export function Mail({
                         />
                         {/* <AnimatedPlaceholder /> */}
                         {!isTyping && inputValue.length === 0 && (
-                        <TypingAnimation text="Create image of a flying Unicorn..." speed={300} loop={true} isPaused={isTyping} />
+                        <TypingAnimation text="Create image of a flying Unicorn.." speed={120} loop={true} isPaused={isTyping} />
                         )}
                       {/* <PromptModeToggle onIconSelect={handleIconSelect} category={category} /> */}
                       <div className="absolute top-2  my-1 bg-gray">
