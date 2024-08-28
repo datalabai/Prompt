@@ -1,8 +1,6 @@
 "use client";
 
 import React, { useCallback, useState, useEffect, useRef } from "react";
-import { ToastContainer, toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
 import { Mail as MailType } from '../data';
 import { getPosts } from "@/app/firebase";
 import { ArrowLeft } from "lucide-react";
@@ -13,7 +11,6 @@ import { MailDisplay } from "./prompt-display";
 import { MailList } from "./prompt-list";
 import Link from "next/link";
 import { useMail } from "../use-mail";
-import  CustomToast  from "./CustomToast";
 
 interface MailProps {
   accounts: {
@@ -45,12 +42,9 @@ export function Mail({
   // Ref to store the previous mail IDs
   const previousMailIds = useRef(new Set<string>());
 
-  // Ref to handle the audio element
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-
   const fetchPosts = useCallback(async (category: string) => {
     setIsLoading(true);
-  
+
     // Fetch the latest posts from the database
     const unsubscribe = getPosts("Expert", async (posts: MailType[]) => {
       // Fetch the cached posts
@@ -59,59 +53,39 @@ export function Mail({
       if (cachedPosts) {
         cachedPostsArray = JSON.parse(cachedPosts);
       }
-  
+
       // Create a set of IDs from the latest posts and cached posts
       const latestPostIds = new Set(posts.map(post => post.id));
       const cachedPostIds = new Set(cachedPostsArray.map(post => post.id));
-  
+
       // Determine which cached posts are no longer in the latest posts
       const postsToRemove = cachedPostsArray.filter(post => !latestPostIds.has(post.id));
-  
+
       // Remove outdated cached posts
       const updatedCachedPosts = cachedPostsArray.filter(post => latestPostIds.has(post.id));
-  
+
       // Determine new posts that are not in the cache
       const newPosts = posts.filter(post => !cachedPostIds.has(post.id));
-  
-      if (newPosts.length > 0) {
-        newPosts.forEach(post => {
-          toast.success(<CustomToast item={post} />, {
-            icon: false,
-            autoClose: false,
-            closeButton: true,
-          });
-  
-          if (audioRef.current) {
-            const playPromise = audioRef.current.play();
-            if (playPromise !== undefined) {
-              playPromise.catch(error => {
-                console.error("Failed to play sound:", error);
-              });
-            }
-          }
-        });
-  
-        // Update the ref with the new post IDs
-        newPosts.forEach(post => previousMailIds.current.add(post.id));
-      }
-  
+
+      // Update the ref with the new post IDs
+      newPosts.forEach(post => previousMailIds.current.add(post.id));
+
       // Combine the new posts with the existing ones, removing outdated posts
       const allPosts = [...newPosts, ...updatedCachedPosts];
-  
+
       // Sort posts by date in descending order
       const sortedPosts = allPosts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  
+
       // Update local storage and state
       localStorage.setItem(`${CACHE_KEY_PREFIX}${category}`, JSON.stringify(sortedPosts));
       setMails(sortedPosts);
       previousMailIds.current = new Set(sortedPosts.map(post => post.id));
-  
+
       setIsLoading(false);
     });
-  
+
     return () => unsubscribe();
   }, []);
-  
   
   useEffect(() => {
     fetchPosts(category);
@@ -165,9 +139,7 @@ export function Mail({
           </div>
         </div>
       </div>
-      {/* Audio element for notification sound */}
-      <audio ref={audioRef} src="/notification.mp3" onCanPlay={() => console.log("Audio is ready to play")} />
-      <ToastContainer />
+      {/* Remove Audio element for notification sound */}
     </TooltipProvider>
   );
 }
