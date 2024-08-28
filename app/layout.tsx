@@ -16,6 +16,7 @@ import RightPanel from "@/components/rightPanel";
 import { useState } from "react";
 import { usePathname } from 'next/navigation';
 import { CategoryProvider } from './context/CategoryContext';
+import { NotificationProvider } from './context/NotificationContext';
 import Script from 'next/script';
 
 export const viewport: Viewport = {
@@ -88,6 +89,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           {/* End Google Tag Manager (noscript) */}
           
           <AuthContextProvider>
+            <NotificationProvider>
             <CategoryProvider>
               <ToastContainer />
               <ThemeProvider
@@ -106,6 +108,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
                 <ThemeSwitcher />
               </ThemeProvider>
             </CategoryProvider>
+            </NotificationProvider>
           </AuthContextProvider>
         </body>
       </html>

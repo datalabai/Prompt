@@ -13,6 +13,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
+
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { MailList } from "./mail-list";
@@ -244,7 +245,7 @@ export function Mail({
                         />
                         {/* <AnimatedPlaceholder /> */}
                         {!isTyping && inputValue.length === 0 && (
-                        <TypingAnimation text="Create image of a flying Unicorn.." speed={120} loop={true} isPaused={isTyping} />
+                        <TypingAnimation speed={50} loop={true} isPaused={isTyping} />
                         )}
                       {/* <PromptModeToggle onIconSelect={handleIconSelect} category={category} /> */}
                       <div className="absolute top-2  my-1 bg-gray">

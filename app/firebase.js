@@ -7,6 +7,8 @@ import { get } from "http";
 import { format } from "date-fns";
 import dotenv from 'dotenv';
 import { act } from "react";
+import { getFunctions } from 'firebase/functions';
+
 // import { getAnalytics,logEvent } from "firebase/analytics";
 
 
@@ -29,6 +31,7 @@ const app = initializeApp(firebaseConfig);
 
 const auth = getAuth(app);
 const db = getFirestore(app);
+const functions = getFunctions(app);
 
 // const analytics = getAnalytics(app); 
 
@@ -913,4 +916,4 @@ export const listenForMessages = (chatId, callback) => {
 };
 
 
-export { auth, db, query,where, collection, addDoc, getDocs, getDoc, doc, updateDoc,setDoc,orderBy,onSnapshot, getCountFromServer,serverTimestamp};
+export { auth, db, query,where, collection, addDoc, getDocs, getDoc, doc, updateDoc,setDoc,orderBy,onSnapshot, getCountFromServer,serverTimestamp,functions};
