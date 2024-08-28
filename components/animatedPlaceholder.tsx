@@ -9,7 +9,7 @@ interface TypingAnimationProps {
 }
 
 const typingTexts = [
-  "Create image of a flying Unicorn...",
+  "Create image of a flying Unicorn",
   "Create 3D NFT marketplace",
   "Generate image of Metaverse city",
   "Illustrate AI-powered robot assistant",
