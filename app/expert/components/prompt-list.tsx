@@ -1,21 +1,32 @@
-import { ComponentProps } from "react"
-import { cn } from "@/lib/utils"
-import { Badge } from "@/components/ui/badge"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Mail } from "../data"
-import { useMail } from "../use-mail"
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar"
+import { ComponentProps, useEffect } from "react";
+import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Mail } from "../data";
+import { useMail } from "../use-mail";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useSearchParams } from "next/navigation";
 
 interface MailListProps {
-  items: Mail[]
+  items: Mail[];
 }
 
 export function MailList({ items }: MailListProps) {
-  const [mail, setMail] = useMail()
+  const [mail, setMail] = useMail();
+  const searchParams = useSearchParams();
+  const idFromQuery = searchParams.get('id'); // Get the 'id' from the URL query parameters
+
+  useEffect(() => {
+    if (idFromQuery) {
+      // Check if the idFromQuery is different from the currently selected mail id
+      if (mail.selected !== idFromQuery) {
+        const activeMail = items.find((item) => item.id === idFromQuery);
+        if (activeMail) {
+          setMail({ ...mail, selected: activeMail.id });
+        }
+      }
+    }
+  }, [idFromQuery, items, mail.selected, setMail]);
 
   return (
     <ScrollArea className="h-full max-h-full">
@@ -24,8 +35,8 @@ export function MailList({ items }: MailListProps) {
           <button
             key={item.id}
             className={cn(
-              "flex flex-col items-start gap-2 rounded-lg  p-3 text-left text-sm transition-all hover:bg-accent",
-              mail.selected === item.id && "bg-muted"
+              "flex flex-col items-start gap-2 rounded-lg p-3 text-left text-sm transition-all hover:bg-accent",
+              mail.selected === item.id && "bg-muted" // Highlight the active item
             )}
             onClick={() =>
               setMail({
@@ -62,22 +73,22 @@ export function MailList({ items }: MailListProps) {
             </div>
           </button>
         ))}
-                <div className="w-[200px] h-[200px]"></div>
+        <div className="w-[200px] h-[200px]"></div>
       </div>
     </ScrollArea>
-  )
+  );
 }
 
 function getBadgeVariantFromLabel(
   label: string
 ): ComponentProps<typeof Badge>["variant"] {
   if (["Images"].includes(label)) {
-    return "default"
+    return "default";
   }
 
   if (["Memes"].includes(label)) {
-    return "outline"
+    return "outline";
   }
 
-  return "secondary"
+  return "secondary";
 }

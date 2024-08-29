@@ -37,7 +37,6 @@ export const NotificationProvider = ({ children }) => {
   useEffect(() => {
     if (!user || !isExpert) return;
 
-    // Load notified post IDs from localStorage
     const loadNotifiedPostIds = () => {
       const savedIds = localStorage.getItem('notifiedPostIds');
       return savedIds ? new Set(JSON.parse(savedIds)) : new Set();
@@ -45,7 +44,6 @@ export const NotificationProvider = ({ children }) => {
 
     const notifiedPostIds = loadNotifiedPostIds();
 
-    // Query for the latest post
     const postsQuery = query(collection(db, "General"), orderBy('date', 'desc'), limit(1));
     const unsubscribe = onSnapshot(postsQuery, (snapshot) => {
       snapshot.docChanges().forEach((change) => {
@@ -53,17 +51,16 @@ export const NotificationProvider = ({ children }) => {
           const post = change.doc.data();
           const postId = change.doc.id;
 
-          // Check if this post has already been notified
           if (!notifiedPostIds.has(postId)) {
-            // Show the notification
-            toast.success(<CustomToast item={post}/>, {
+            const toastId = toast.success(<CustomToast item={post} toastId={postId} />, {
               icon: false,
               autoClose: false,
               closeButton: true,
               className: 'rounded-xl shadow-lg p-4',
+              position: "bottom-right",
+              toastId: postId, // Ensure toastId is set here
             });
 
-            // Play the notification sound
             if (audioRef.current) {
               const playPromise = audioRef.current.play();
               if (playPromise !== undefined) {
@@ -73,7 +70,6 @@ export const NotificationProvider = ({ children }) => {
               }
             }
 
-            // Mark this post as notified and save to localStorage
             notifiedPostIds.add(postId);
             localStorage.setItem('notifiedPostIds', JSON.stringify(Array.from(notifiedPostIds)));
           }
