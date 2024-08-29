@@ -20,12 +20,7 @@ import { BellIcon } from "@radix-ui/react-icons"
 import { RiSparkling2Line } from "react-icons/ri";
 
 
-
-interface SiteHeaderProps {
-  toggleRightPanel: () => void;
-}
-
-export const SiteHeader: React.FC<SiteHeaderProps> = ({ toggleRightPanel }) => {
+export const SiteHeader = () => {
   const { user, googleSignIn } = UserAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -135,7 +130,7 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({ toggleRightPanel }) => {
             </Link>
             {/* <NotificationBadge count={notifications} /> */}
             {user ? (
-              <ProfileAvator enableProfile={() => { toggleRightPanel(); }} />
+              <ProfileAvator enableProfile={() => { }} />
             ) : (
               <button
                 onClick={handleSignIn}

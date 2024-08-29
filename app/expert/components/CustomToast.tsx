@@ -1,6 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'; // Adjust the import path as needed
+import { toast } from 'react-toastify';
 
 interface CustomToastProps {
   item: {
@@ -9,13 +10,15 @@ interface CustomToastProps {
     text: string;
     read: boolean;
   };
+  toastId: string; // Ensure this prop is passed correctly
 }
 
-const CustomToast: React.FC<CustomToastProps> = ({ item }) => {
+const CustomToast: React.FC<CustomToastProps> = ({ item, toastId }) => {
   const router = useRouter();
 
   const handleClick = () => {
-    router.push('/expert');
+    router.push(`/expert?id=${toastId}`);
+    toast.dismiss(toastId); // Dismiss the toast when clicked
   };
 
   return (

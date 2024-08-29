@@ -32,13 +32,6 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
 
-  const [showRightPanel, setShowRightPanel] = useState(true);
-  const currentPath = usePathname();
-
-  const toggleRightPanel = () => {
-    setShowRightPanel(prev => !prev);
-  };
-
   return (
     <>
       <html lang="en" suppressHydrationWarning>
@@ -98,7 +91,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
                 enableSystem
                 disableTransitionOnChange
               >
-                <SiteHeader toggleRightPanel={toggleRightPanel} />
+                <SiteHeader/>
                 <div vaul-drawer-wrapper="" className="flex justify-between mt-2 h-dvh max-w-screen">
                   <div className="relative flex min-h-screen flex-col bg-background mt-2 w-full">
                     {children}
