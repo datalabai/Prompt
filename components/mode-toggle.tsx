@@ -9,7 +9,7 @@ export const ModeToggle = () => {
       onClick={() => setTheme(theme === "light" ? "dark" : "light")}
       size="sm"
       variant="ghost"
-      className=" justify-start"
+      className="rounded-full justify-start"
     >
       <div className="flex gap-2 dark:hidden">
         <Moon className="size-6" />

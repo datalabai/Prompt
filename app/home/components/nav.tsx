@@ -48,19 +48,22 @@ export function Nav({ links: initialLinks, isCollapsed, onLinkClick }: NavProps)
       title: 'Twitter',
       icon: FaTwitter,
       variant: 'ghost',
-      href: 'https://x.com/promptdotfun', 
+      href: 'https://x.com/promptdotfun',
+      iconSize: 'h-4 w-4 mt-1'
     },
     {
       title: 'Linktree',
       icon: FaLink,
       variant: 'ghost',
-      href: 'https://links.prompt.fun/', 
+      href: 'https://links.prompt.fun/',
+      iconSize: 'h-4 w-4 mt-1'
     },
     {
-      title: 'PrductHunt',
+      title: 'ProductHunt',
       icon: FaProductHunt,
       variant: 'ghost',
-      href: 'https://www.producthunt.com/posts/prompt-fun?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-prompt&#0045;fun', // Replace with your Twitter handle
+      href: 'https://www.producthunt.com/posts/prompt-fun?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-prompt&#0045;fun',
+      iconSize: 'h-7 w-7'
     },
   ];
 
@@ -135,12 +138,13 @@ export function Nav({ links: initialLinks, isCollapsed, onLinkClick }: NavProps)
                 rel="noopener noreferrer"
                 className={cn(
                   buttonVariants({ variant: link.variant as "default" | "ghost" | "link" | "outline" | "secondary", size: "icon" }),
-                  "h-9 w-9",
+                  link.title === 'ProductHunt' ? "h-11 w-11" : "h-9 w-9",
+                  "rounded-full transition-colors hover:bg-gray-200 dark:hover:bg-gray-800",
                   link.variant === "default" &&
                     "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white"
                 )}
               >
-                <link.icon className="h-4 w-4" />
+                <link.icon className={link.iconSize} />
                 <span className="sr-only">{link.title}</span>
               </a>
             </TooltipTrigger>
