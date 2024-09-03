@@ -13,7 +13,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { AuthContextProvider } from "./context/AuthContext";
 import RightPanel from "@/components/rightPanel";
-import { useState } from "react";
+import { useEffect } from "react";
 import { usePathname } from 'next/navigation';
 import { CategoryProvider } from './context/CategoryContext';
 import { NotificationProvider } from './context/NotificationContext';

@@ -29,9 +29,8 @@ import { Spinner } from "@/components/ui/spinner";
 import { RecentPosts } from "./recent-posts";
 import { useCategory } from "@/app/context/CategoryContext";
 import debounce from 'lodash/debounce';
-import { FaLightbulb } from "react-icons/fa";
-import { TypingAnimation } from '@/components/animatedPlaceholder'; 
-
+import { FaLightbulb, FaRegGrinStars } from "react-icons/fa"; // Import sparkles icon
+import { TypingAnimation } from "@/components/animatedPlaceholder";
 
 interface MailProps {
   mails: MailType[];
@@ -74,6 +73,8 @@ export function Mail({
   const [trails, setTrails] = useState<number | null>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+  const [isLightbulb, setIsLightbulb] = useState(true); // State to toggle icons
+  const [isSparklesEnabled, setIsSparklesEnabled] = useState(false); // State for Sparkles button
 
   const handleResize = debounce(() => {
     setIsMobile(window.matchMedia("(max-width: 700px)").matches);
@@ -248,12 +249,13 @@ export function Mail({
                         <TypingAnimation speed={50} loop={true} isPaused={isTyping} />
                         )}
                       {/* <PromptModeToggle onIconSelect={handleIconSelect} category={category} /> */}
-                      <div className="absolute top-2  my-1 bg-gray">
-                      
-                      {/* <Lightbulb size={40} className="text-gray-500"/> */}
-                      <FaLightbulb color="#2463eb" size={32} className=" ml-2"/>
+                      <div className="absolute top-2 my-1 bg-gray" onClick={() => setIsLightbulb(!isLightbulb)}>
+                        {isLightbulb ? (
+                          <FaLightbulb color="#2463eb" size={32} className="ml-2" />
+                        ) : (
+                          <img src="/logo.png" alt="Logo" className="ml-2" width={32} height={32} />
+                        )}
                       </div>
-                      
                     </div>
                   </form>
                 </div>

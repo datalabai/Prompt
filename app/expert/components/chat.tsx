@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Send } from "lucide-react";
+import { Send, Sparkles } from "lucide-react"; // Import Sparkles icon
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
@@ -20,6 +20,7 @@ export function CardsChat({ initialMessage, currentUser }: CardsChatProps) {
     },
   ]);
   const [input, setInput] = useState("");
+  const [isSparklesEnabled, setIsSparklesEnabled] = useState(false); // State for Sparkles button
   const inputLength = input.trim().length;
 
   useEffect(() => {
@@ -30,30 +31,40 @@ export function CardsChat({ initialMessage, currentUser }: CardsChatProps) {
         content: initialMessage,
       },
     ]);
-
+  
     const unsubscribe = listenForReplies(currentUser.id, 'General', (newReplies: any[]) => {
       console.log('Received replies:', newReplies); // Debugging line
       setMessages((prevMessages) => {
-        // Filter out duplicates based on content if necessary
         const newMessages = newReplies.map((reply) => ({
           role: reply.name === auth.currentUser?.displayName ? "user" : "agent",
           content: reply.text,
         }));
-        return [...prevMessages, ...newMessages];
+        
+        // Filter out duplicates based on content
+        const filteredMessages = newMessages.filter(
+          (newMessage) =>
+            !prevMessages.some(
+              (prevMessage) =>
+                prevMessage.content === newMessage.content &&
+                prevMessage.role === newMessage.role
+            )
+        );
+        return [...prevMessages, ...filteredMessages];
       });
     });
-
+  
     return () => {
       if (unsubscribe) unsubscribe();
     };
   }, [currentUser.id, initialMessage]);
+  
 
   const handleSendMessage = async (event: React.FormEvent) => {
     event.preventDefault();
     if (inputLength === 0) return;
-
+  
     console.log('Sending message:', input); // Debugging line
-
+  
     // Add the new user message to the messages array
     setMessages((prevMessages) => [
       ...prevMessages,
@@ -62,20 +73,21 @@ export function CardsChat({ initialMessage, currentUser }: CardsChatProps) {
         content: input,
       },
     ]);
-
+  
     setInput("");
+    setIsSparklesEnabled(false); // Disable Sparkles button after sending message
 
     const reply = {
       name: auth.currentUser?.displayName,
       email: auth.currentUser?.email,
       text: input,
       date: new Date().getTime(),
-      option: 'prompt',
+      option: isSparklesEnabled ? 'prompt' : 'chat',
       photo: auth.currentUser?.photoURL,
     };
-
+  
     await addReply(currentUser.id, 'General', reply, 'chat');
-  };
+  };  
 
   return (
     <Card className="flex flex-col h-full border-0">
@@ -94,23 +106,30 @@ export function CardsChat({ initialMessage, currentUser }: CardsChatProps) {
           </div>
         ))}
       </CardContent>
-      <CardFooter className="p-4 border-t border-muted bg-white">
+      <CardFooter className="p-4  border-muted">
         <form
           onSubmit={handleSendMessage}
           className="flex w-full items-center space-x-2"
         >
-          <Input
-            id="message"
-            placeholder="Type your message..."
-            className="flex-1"
-            autoComplete="off"
-            value={input}
-            onChange={(event) => setInput(event.target.value)}
-          />
-          <Button type="submit" size="icon" disabled={inputLength === 0}>
-            <Send className="h-4 w-4" />
-            <span className="sr-only">Send</span>
-          </Button>
+          <div className="relative flex-1">
+            <img
+              src="/logo.png" // Path to the image in the public folder
+              alt="Logo"
+              onClick={() => setIsSparklesEnabled((prevState) => !prevState)} // Toggle button state on click
+              className="absolute left-0 top-1/2 transform -translate-y-1/2 ml-2 p-1 rounded-full w-10 h-10 flex items-center justify-center cursor-pointer" // Adjust padding, width, height, and make image rounded
+              style={{
+                opacity: isSparklesEnabled ? 1 : 0.5,
+              }}
+            />
+            <Input
+              id="message"
+              placeholder="Type your message..."
+              className="pl-12 bg-white dark:bg-gray-900 text-black dark:text-white" // Adjust padding to the left to make space for the image
+              autoComplete="off"
+              value={input}
+              onChange={(event) => setInput(event.target.value)}
+            />
+          </div>
         </form>
       </CardFooter>
     </Card>
