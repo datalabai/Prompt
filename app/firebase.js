@@ -835,7 +835,22 @@ export const fetchCredits = async () => {
     return 0;
   }
 }
-  
+
+export const checkUserRole = async (userName) => {
+  const usersRef = collection(db, "users");
+  const q = query(usersRef, where("email", "==", userName));
+  const querySnapshot = await getDocs(q);
+
+  if (!querySnapshot.empty) {
+    const userDoc = querySnapshot.docs[0];
+    const data = userDoc.data();
+    if (data.role) {
+      return "expert";
+    }
+  }
+  return "user";
+};
+
 export const listenForReplies = (postId, category, callback) => {
   if (!postId || !category) {
     console.warn("postId or category is empty. Exiting listenForReplies function.");
@@ -845,16 +860,17 @@ export const listenForReplies = (postId, category, callback) => {
   const postRef = doc(db, category, postId);
   const repliesQuery = query(collection(postRef, "replies"), orderBy("createdAt", "asc"));
 
-  return onSnapshot(repliesQuery, (snapshot) => {
+  return onSnapshot(repliesQuery, async (snapshot) => {
     const replies = [];
-    snapshot.forEach((doc) => {
+    for (const doc of snapshot.docs) {
       const data = doc.data();
       if (data) {
-        replies.push({ id: doc.id, ...data });
+        const userRole = await checkUserRole(data.email);
+        replies.push({ id: doc.id, ...data, role: userRole });
       } else {
         console.warn("Document with no data found:", doc.id);
       }
-    });
+    }
     console.log("Replies:", replies);
     callback(replies);
   }, (error) => {
