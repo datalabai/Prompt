@@ -123,7 +123,7 @@ export const SiteHeader = () => {
         <div className="flex items-center space-x-4">
           <nav className="flex items-center space-x-4">
             <ModeToggle />
-            <Link href="/expert">
+            <Link href="/expert" style={{ marginLeft: 0 }} className="ml-0">
               <div className="relative group">
                 <BellIcon className="h-10 w-10 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700" />
                 <div className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full dark:bg-red-400"></div>
