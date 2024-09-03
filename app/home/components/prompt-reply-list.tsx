@@ -2,7 +2,7 @@ import { auth, db, doc, getDoc } from '@/app/firebase'; // Import firestore
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { MagicWandIcon } from '@radix-ui/react-icons';
-import { ArrowDownToLine, ThumbsDown, ThumbsUp } from 'lucide-react';
+import { ArrowDownToLine, ThumbsDown, ThumbsUp, Star } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
@@ -25,6 +25,7 @@ interface Reply {
   likes?: string[];
   dislikes?: string[];
   option?: 'prompt' | 'response';
+  role?: string;
 }
 
 interface ReplyListProps {
@@ -46,49 +47,39 @@ const ReplyList: React.FC<ReplyListProps> = ({
   handleDislike,
   Download
 }) => {
+  const [userRoles, setUserRoles] = useState<Record<string, boolean>>({});
+
   const capitalizeWords = (str: string) => str.replace(/\b\w/g, char => char.toUpperCase());
 
   if (!replyVisible) return null;
-
-  const checkUserRole = async (userName: string) => {
-    const userDoc = await getDoc(doc(db, 'users', userName));
-    return userDoc.exists() && userDoc.data()?.role === 'expert';
-  };
 
   return (
     <div className="gap-2 mb-2">
       {replies[item.id] && replies[item.id].length > 0 && (
         replies[item.id].map((reply, index) => (
           <div key={index} className="flex mt-2">
-            
-            {reply.image ? (
-              <div className="flex-col">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={reply.photo} alt="Avatar" />
-                  <AvatarFallback> {reply.name
-                            .split(" ")
-                            .map((chunk) => chunk[0])
-                            .join("")}</AvatarFallback>
-                </Avatar>
-              </div>
-            ) : (
-              <Avatar className="h-8 w-8">
-                <AvatarImage src={reply.photo} alt="Avatar" />
-                <AvatarFallback> {reply.name
-                            .split(" ")
-                            .map((chunk) => chunk[0])
-                            .join("")}</AvatarFallback>
-              </Avatar>
-            )}
+            <Avatar className="h-8 w-8">
+              <AvatarImage src={reply.photo} alt="Avatar" />
+              <AvatarFallback>
+                {reply.name
+                  .split(" ")
+                  .map((chunk) => chunk[0])
+                  .join("")}
+              </AvatarFallback>
+            </Avatar>
             <div className="flex flex-col ml-2">
-              <div className="font-semibold">{capitalizeWords(reply.name)} </div>
+              <div className="font-semibold flex items-center">
+                {capitalizeWords(reply.name)} 
+                {reply.role === 'expert' && (
+                    <Star className="ml-2 h-4 w-4 text-blue-500" fill="currentColor" />
+                )}
+              </div>
               <div className="line-clamp-2 text-xs">
                 {reply.option === 'prompt' ? (
                   <div>{reply.text}</div>
                 ) : (
                   <span>{reply.text}</span>
                 )}
-               
               </div>
               {reply.image && (
                 <>
@@ -130,15 +121,15 @@ const ReplyList: React.FC<ReplyListProps> = ({
               )}
             </div>
             {reply.option === 'prompt' && (
-                  <Badge variant="stone">
-                    <IconWrapper>
-                      <MagicWandIcon
-                        className="h-6 w-6 cursor-pointer ml-12"
-                        onClick={() => handleMagicPrompt(reply.text, item.id)}
-                      />
-                    </IconWrapper>
-                  </Badge>
-                )}
+              <Badge variant="stone">
+                <IconWrapper>
+                  <MagicWandIcon
+                    className="h-6 w-6 cursor-pointer ml-12"
+                    onClick={() => handleMagicPrompt(reply.text, item.id)}
+                  />
+                </IconWrapper>
+              </Badge>
+            )}
           </div>
         ))
       )}
