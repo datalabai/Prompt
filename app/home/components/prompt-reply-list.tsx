@@ -1,8 +1,9 @@
+import { auth, db, doc, getDoc } from '@/app/firebase'; // Import firestore
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { MagicWandIcon } from '@radix-ui/react-icons';
 import { ArrowDownToLine, ThumbsDown, ThumbsUp } from 'lucide-react';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 const IconWrapper = styled.div`
@@ -48,6 +49,11 @@ const ReplyList: React.FC<ReplyListProps> = ({
   const capitalizeWords = (str: string) => str.replace(/\b\w/g, char => char.toUpperCase());
 
   if (!replyVisible) return null;
+
+  const checkUserRole = async (userName: string) => {
+    const userDoc = await getDoc(doc(db, 'users', userName));
+    return userDoc.exists() && userDoc.data()?.role === 'expert';
+  };
 
   return (
     <div className="gap-2 mb-2">

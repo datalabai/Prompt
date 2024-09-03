@@ -120,15 +120,15 @@ export const SiteHeader = () => {
           </Sheet>
         )}
         {/* Right-side actions (Mode Toggle, Profile, Login) */}
-        <div className="flex items-center space-x-2 md:space-x-4">
-          <nav className="flex items-center space-x-2 md:space-x-4">
-
-          {/* <FontAwesomeIcon icon="fa-regular fa-sparkles" flip="vertical" /> */}
+        <div className="flex items-center space-x-4">
+          <nav className="flex items-center space-x-4">
             <ModeToggle />
-            <Link href="/expert" >
-              <BellIcon className="h-6 w-6" />
+            <Link href="/expert">
+              <div className="relative group">
+                <BellIcon className="h-10 w-10 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700" />
+                <div className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full dark:bg-red-400"></div>
+              </div>
             </Link>
-            {/* <NotificationBadge count={notifications} /> */}
             {user ? (
               <ProfileAvator enableProfile={() => { }} />
             ) : (

@@ -9,8 +9,6 @@ import dotenv from 'dotenv';
 import { act } from "react";
 import { getFunctions } from 'firebase/functions';
 
-// import { getAnalytics,logEvent } from "firebase/analytics";
-
 
 dotenv.config();
 
@@ -916,4 +914,4 @@ export const listenForMessages = (chatId, callback) => {
 };
 
 
-export { auth, db, query,where, collection, addDoc, getDocs, getDoc, doc, updateDoc,setDoc,orderBy,onSnapshot, getCountFromServer,serverTimestamp,functions};
+export { auth, db, query,where, collection, addDoc, getDocs, getDoc, doc, updateDoc,setDoc,orderBy,onSnapshot, getCountFromServer,serverTimestamp,app};

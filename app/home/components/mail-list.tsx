@@ -17,6 +17,8 @@ import MaskedText from "@/components/MaskedText";
 import { Crown } from 'lucide-react';
 import styled from 'styled-components';
 import ReplyList from "./prompt-reply-list";
+import { Button } from "@/components/ui/button";
+import { Send, Sparkles } from "lucide-react"; // Import Sparkles icon
 
 const IconWrapper = styled.div`
   color: ""; /* Default color */
@@ -45,6 +47,7 @@ export function MailList({ items, category }: MailListProps) {
   const fallbackImageUrl = `/avatars/01.png`; // Replace with your fallback image URL
   const [replyVisible, setReplyVisible] = useState<boolean>(true);
   const inputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
+  const [isSparklesEnabled, setIsSparklesEnabled] = useState(false); // State for Sparkles button
 
   const toggleTextArea = (itemId: string) => {
     setOpenTextAreaId(openTextAreaId === itemId ? null : itemId);
@@ -120,7 +123,7 @@ export function MailList({ items, category }: MailListProps) {
         email: auth.currentUser?.email,
         text: postText,
         date: new Date().getTime(),
-        option: selectedOption === 'prompt' ? 'prompt' : 'chat',
+        option: isSparklesEnabled  ? 'prompt' : 'chat',
         photo: auth.currentUser?.photoURL
       };
       setPostText("");
@@ -197,16 +200,16 @@ export function MailList({ items, category }: MailListProps) {
     }
   }, [showInputItemId]);
 
-  const renderSelectedIcon = () => {
-    switch (selectedOption) {
-      case 'chat':
-        return <IconWrapper><ChatBubbleIcon className="text-primary pt-2" style={{ width: '25px', height: '25px' }} /></IconWrapper>;
-      case 'prompt':
-        return <IconWrapper><MagicWandIcon className=" pt-2" style={{ width: '25px', height: '25px' }} /></IconWrapper>;
-      default:
-        return <IconWrapper><PlusCircledIcon className="pt-2" style={{ width: '30px', height: '30px' }} /></IconWrapper>;
-    }
-  };
+  // const renderSelectedIcon = () => {
+  //   switch (selectedOption) {
+  //     case 'chat':
+  //       return <IconWrapper><ChatBubbleIcon className="text-primary pt-2" style={{ width: '25px', height: '25px' }} /></IconWrapper>;
+  //     case 'prompt':
+  //       return <IconWrapper><MagicWandIcon className=" pt-2" style={{ width: '25px', height: '25px' }} /></IconWrapper>;
+  //     default:
+  //       return <IconWrapper><PlusCircledIcon className="pt-2" style={{ width: '30px', height: '30px' }} /></IconWrapper>;
+  //   }
+  // };
 
   const capitalizeWords = (str: string) => {
     return str.replace(/\b\w/g, (char) => char.toUpperCase());
@@ -316,10 +319,20 @@ export function MailList({ items, category }: MailListProps) {
 
 
               {showInputItemId === item.id && (
+                <div className="relative w-full flex items-center mt-2">
                 <div className="relative w-full">
+                <img
+                    src="/logo.png" // Path to the image in the public folder
+                    alt="Logo"
+                    onClick={() => setIsSparklesEnabled((prevState) => !prevState)} // Toggle button state on click
+                    className="absolute left-2 top-1/2 transform -translate-y-1/2 p-1 rounded-full w-10 h-10 flex items-center justify-center cursor-pointer" // Position image inside input
+                    style={{
+                      opacity: isSparklesEnabled ? 1 : 0.5,
+                    }}
+                  />
                   <input
                     type="text"
-                    className="w-full border rounded-lg pl-12 p-2 mt-2"
+                    className="w-full border rounded-lg pl-12 p-2 pr-10" // Adjust padding to make space for the image
                     placeholder="Type your message here..."
                     value={postText}
                     onChange={(e) => setPostText(e.target.value)}
@@ -330,31 +343,8 @@ export function MailList({ items, category }: MailListProps) {
                       }
                     }}
                   />
-
-                  <div
-                    className="absolute left-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
-                    onClick={handleIconClick}
-                  >
-                    {renderSelectedIcon()}
-                  </div>
-                  {menuVisible && (
-                    <div className="absolute bottom-full bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-                      <button
-                        className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left"
-                        onClick={() => handleMenuOptionClick('chat')}
-                      >
-                        <ChatBubbleIcon style={{ width: '15px', height: '15px' }} /> <span className="ml-2">Chat</span>
-                      </button>
-                      <button
-                        className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-100 w-full text-left"
-                        onClick={() => handleMenuOptionClick('prompt')}
-                      >
-                        <MagicWandIcon style={{ width: '15px', height: '15px' }} /> <span className="ml-2">Prompt</span>
-                      </button>
-                    </div>
-                  )}
                 </div>
-
+              </div>              
               )}
             </div>
           </button>
