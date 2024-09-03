@@ -666,74 +666,35 @@ export const addPost = async (post, category, option) => {
   
 
 
-  export const addReply = async (postId,category,reply,option) => {
-    // console.log("Adding reply:", reply);
-    try {
-      if(option === "prompt" && category !=="Text"){
-        console.log(reply);
-        const data= await fetchImageForMessage(reply.text); 
-        if(data.trails<=0)
-          {
-            return "You have no freeTrails left";
-          }
-        if(data.image=='Failed to generate image. Please try again later.')
-          {
-            return "Failed to Generate Image. Please try again later.";
-          }
-        const postRef = doc(db, category, postId);
-        await addDoc(collection(postRef, "replies"), {
-          name:reply.name,
-          text:reply.text,
-          email:reply.email,
-          date:reply.date,
-          createdAt: serverTimestamp(),
-          image:data.image,
-          photo:reply.photo
-        });
-       return `you have ${data.trails} freeTrails left`;
-      }
-      if(option === "prompt" && category ==="Text"){
-        const data= await FetchText(reply.text); 
-        if(data.trails<=0)
-          {
-            return "You have no freeTrails left";
-          }
-        const postRef = doc(db, category, postId);
-        await addDoc(collection(postRef, "replies"), {
-          name:reply.name,
-          text:reply.text,
-          email:reply.email,
-          date:reply.date,
-          createdAt: serverTimestamp(),
-          image:data.text,
-          photo:reply.photo,
-          likes:[],
-          dislikes:[],
-        });
-       return `you have ${data.trails} freeTrails left`;
-      }
-      if(option === "chat")
-      {
-        if(reply.option === "prompt")
-          {
-            await addRewards(reply.text,2);
-          }
-      const postRef = doc(db, category, postId);
-      await addDoc(collection(postRef, "replies"), {
-        ...reply,
-        createdAt: serverTimestamp(),
-      });
-      return;
-    }
+  export const addReply = async (postId, category, reply, option, parentReplyId) => {
     const postRef = doc(db, category, postId);
-      await addDoc(collection(postRef, "replies"), {
+    const repliesRef = collection(postRef, "replies");
+
+    try {
+      const newReply = {
         ...reply,
         createdAt: serverTimestamp(),
-      });
-      // console.log("Reply added to post ID: ", postId);
-      return;
+        option: option,
+        likes: [],
+        dislikes: [],
+        parentReplyId: parentReplyId || '' // Convert null to empty string
+      };
+
+      const docRef = await addDoc(repliesRef, newReply);
+      console.log("Reply added with ID: ", docRef.id);
+
+      // If it's a nested reply, update the parent reply
+      if (parentReplyId) {
+        const parentReplyRef = doc(repliesRef, parentReplyId);
+        await updateDoc(parentReplyRef, {
+          replies: arrayUnion(docRef.id)
+        });
+      }
+
+      return docRef.id;
     } catch (e) {
       console.error("Error adding reply: ", e);
+      throw e;
     }
   };
 
@@ -861,18 +822,32 @@ export const listenForReplies = (postId, category, callback) => {
   const repliesQuery = query(collection(postRef, "replies"), orderBy("createdAt", "asc"));
 
   return onSnapshot(repliesQuery, async (snapshot) => {
-    const replies = [];
+    const repliesMap = new Map();
     for (const doc of snapshot.docs) {
       const data = doc.data();
       if (data) {
         const userRole = await checkUserRole(data.email);
-        replies.push({ id: doc.id, ...data, role: userRole });
+        repliesMap.set(doc.id, { id: doc.id, ...data, role: userRole, replies: [] });
       } else {
         console.warn("Document with no data found:", doc.id);
       }
     }
-    console.log("Replies:", replies);
-    callback(replies);
+
+    // Build the nested structure
+    const topLevelReplies = [];
+    repliesMap.forEach((reply) => {
+      if (reply.parentReplyId) {
+        const parentReply = repliesMap.get(reply.parentReplyId);
+        if (parentReply) {
+          parentReply.replies.push(reply);
+        }
+      } else {
+        topLevelReplies.push(reply);
+      }
+    });
+
+    console.log("Replies:", topLevelReplies);
+    callback(topLevelReplies);
   }, (error) => {
     console.error("Error listening for replies:", error);
   });
