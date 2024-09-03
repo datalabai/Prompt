@@ -91,7 +91,7 @@ const ReplyList: React.FC<ReplyListProps> = ({
               </div>
             </>
           )}
-          {depth === 0 && currentUserId === postAuthorId && (
+          {depth === 0 && postAuthorId === auth.currentUser?.displayName && (
             <div className="mt-2">
               <input
                 type="text"

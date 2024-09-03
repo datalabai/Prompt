@@ -18,7 +18,7 @@ import { Crown } from 'lucide-react';
 import styled from 'styled-components';
 import ReplyList from "./prompt-reply-list";
 import { Button } from "@/components/ui/button";
-import { Send, Sparkles } from "lucide-react"; // Import Sparkles icon
+import { Send, Sparkles } from "lucide-react"; 
 
 const IconWrapper = styled.div`
   color: ""; /* Default color */
@@ -56,7 +56,6 @@ export function MailList({ items, category }: MailListProps) {
   const toggleInput = (itemId: string) => {
     setShowInputItemId(showInputItemId === itemId ? null : itemId);
     //setReplyVisible(!replyVisible);
-
   };
 
   const handleMagicPrompt = async (message: string, itemId: any) => {
@@ -305,7 +304,7 @@ export function MailList({ items, category }: MailListProps) {
 
                           <ReplyList
                               currentUserId={auth.currentUser?.uid || ''}
-                              postAuthorId={item.id}  
+                              postAuthorId={item.name}  
                               replies={replies[item.id] || []}
                               itemId={item.id}
                               handleMagicPrompt={handleMagicPrompt}
