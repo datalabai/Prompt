@@ -47,19 +47,19 @@ export function Nav({ links: initialLinks, isCollapsed, onLinkClick }: NavProps)
     {
       title: 'Twitter',
       icon: FaTwitter,
-      variant: 'default',
+      variant: 'ghost',
       href: 'https://x.com/promptdotfun', 
     },
     {
       title: 'Linktree',
       icon: FaLink,
-      variant: 'default',
+      variant: 'ghost',
       href: 'https://links.prompt.fun/', 
     },
     {
       title: 'PrductHunt',
       icon: FaProductHunt,
-      variant: 'default',
+      variant: 'ghost',
       href: 'https://www.producthunt.com/posts/prompt-fun?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-prompt&#0045;fun', // Replace with your Twitter handle
     },
   ];
