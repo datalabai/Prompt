@@ -12,12 +12,12 @@ export const ModeToggle = () => {
       className=" justify-start"
     >
       <div className="flex gap-2 dark:hidden">
-        <Moon className="size-7" />
+        <Moon className="size-6" />
         
       </div>
 
       <div className="dark:flex gap-2 hidden">
-        <Sun className="size-7" />
+        <Sun className="size-6" />
         
       </div>
 
