@@ -672,15 +672,14 @@ export const addPost = async (post, category, option) => {
       if(option === "prompt" && category !=="Text"){
         console.log(reply);
         const data= await fetchImageForMessage(reply.text); 
-        if(data.trails<=0)
+      if(data.trials<=0){
+        if(data.credits)
           {
-            return "You have no freeTrails left";
-          }
-        if(data.image=='Failed to generate image. Please try again later.')
-          {
-            return "Failed to Generate Image. Please try again later.";
-          }
-        const postRef = doc(db, category, postId);
+            if(data.credits<10)
+            {
+              return "You have no freeTrails or Credits left ! Please buy credits";
+            }
+            const postRef = doc(db, category, postId);
         await addDoc(collection(postRef, "replies"), {
           name:reply.name,
           text:reply.text,
@@ -690,7 +689,31 @@ export const addPost = async (post, category, option) => {
           image:data.image,
           photo:reply.photo
         });
-       return `you have ${data.trails} freeTrails left`;
+            console.log("Document written with ID: ", docRef.id);
+            return `You have ${data.credits} credits left`;
+          }
+      }
+          if (data.image === 'Failed to generate image. Please try again later.') {
+            return "Fail to generate image. Please try again later.";
+          }
+          try{
+            const postRef = doc(db, category, postId);
+            await addDoc(collection(postRef, "replies"), {
+              name:reply.name,
+              text:reply.text,
+              email:reply.email,
+              date:reply.date,
+              createdAt: serverTimestamp(),
+              image:data.image,
+              photo:reply.photo,
+              likes:[],
+              dislikes:[],
+            });
+            return `You have ${data.trials} free trails left`;
+          } catch (e) {
+            console.error("Error adding reply: ", e);
+            return "Error adding reply";
+          }
       }
       if(option === "prompt" && category ==="Text"){
         const data= await FetchText(reply.text); 

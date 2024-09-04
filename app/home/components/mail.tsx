@@ -142,10 +142,10 @@ export function Mail({
       date: new Date().getTime(),
       read: true,
       photo: auth.currentUser?.photoURL || "",
-      image: selectedIconName === "chat" || selectedIconName === "" ? "" : "./loading.gif",
+      image: isLightbulb ? "" : "./loading.gif",
       likes: [],
       dislikes: [],
-      option: selectedIconName,
+      option: isLightbulb ? "chat" : "prompt"
     };
     
     setInputValue("");
@@ -160,7 +160,7 @@ export function Mail({
         await addMessageToPrivateChannel(newPost, selectedIconName);
       } else {
         toast.info("🎉 Congratulations! You've earned 1 point for your post.");
-        const trailsCount = await addPost(newPost, category, selectedIconName);
+        const trailsCount = await addPost(newPost, category, newPost.option);
         if (trailsCount !== undefined) {
           toast.info(trailsCount);
         }
