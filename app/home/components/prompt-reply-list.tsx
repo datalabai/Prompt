@@ -76,6 +76,7 @@ const ReplyList: React.FC<ReplyListProps> = ({
                 <Star className="ml-1 h-4 w-4 text-blue-500" fill="currentColor" />
               )}
             </div>
+           
             <button 
               className="invisible group-hover:visible"
               onClick={() => {
@@ -86,7 +87,16 @@ const ReplyList: React.FC<ReplyListProps> = ({
               <MessageSquare className="h-4 w-4 text-gray-500" />
             </button>
           </div>
-          <div className="line-clamp-2 text-xs">{reply.text}</div>
+          <div className="line-clamp-2 text-xs flex">{reply.text}
+          {reply.option === 'prompt' && (
+                <img
+                    src="/logo.png" 
+                    alt="Logo"
+                    onClick={() => handleMagicPrompt(reply.text, reply.id)} 
+                    className="w-10 h-10 cursor-pointer" 
+                  />
+            )}
+          </div>
           {reply.image && (
             <>
               <img src={reply.image} alt="Image" width={300} height={550} className="mt-2 mb-2 rounded-lg" />
