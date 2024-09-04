@@ -3,7 +3,9 @@
 import * as React from "react";
 import Link from "next/link";
 import { LucideIcon } from "lucide-react";
-import { FaTwitter, FaLink, FaProductHunt } from "react-icons/fa"; // Import icons for Twitter and Linktree
+import { FaLink, FaProductHunt } from "react-icons/fa"; // Import icons for Twitter and Linktree
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXTwitter } from "@fortawesome/free-brands-svg-icons";
 
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
@@ -45,25 +47,27 @@ export function Nav({ links: initialLinks, isCollapsed, onLinkClick }: NavProps)
   // Add Twitter and Linktree links
   const additionalLinks = [
     {
-      title: 'Twitter',
-      icon: FaTwitter,
-      variant: 'ghost',
-      href: 'https://x.com/promptdotfun',
-      iconSize: 'h-4 w-4 mt-1'
-    },
-    {
       title: 'Linktree',
-      icon: FaLink,
+      icon: () => <svg xmlns="http://www.w3.org/2000/svg" width="1.1em" height="1.1em" viewBox="0 0 24 24">
+      <path fill="currentColor" d="m13.736 5.853l4.005-4.117l2.325 2.38l-4.2 4.005h5.908v3.305h-5.937l4.229 4.108l-2.325 2.334l-5.74-5.769l-5.741 5.769l-2.325-2.325l4.229-4.108H2.226V8.121h5.909l-4.2-4.004l2.324-2.381l4.005 4.117V0h3.472zm-3.472 10.306h3.472V24h-3.472z"></path>
+    </svg>,
       variant: 'ghost',
       href: 'https://links.prompt.fun/',
-      iconSize: 'h-4 w-4 mt-1'
+      iconSize: 'h-4 w-4'
+    },
+    {
+      title: 'Twitter',
+      icon: () => <FontAwesomeIcon icon={faXTwitter} />,
+      variant: 'ghost',
+      href: 'https://x.com/promptdotfun',
+      iconSize: 'h-5 w-5'
     },
     {
       title: 'ProductHunt',
       icon: FaProductHunt,
       variant: 'ghost',
       href: 'https://www.producthunt.com/posts/prompt-fun?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-prompt&#0045;fun',
-      iconSize: 'h-7 w-7'
+      iconSize: 'h-5 w-5'
     },
   ];
 
@@ -138,7 +142,7 @@ export function Nav({ links: initialLinks, isCollapsed, onLinkClick }: NavProps)
                 rel="noopener noreferrer"
                 className={cn(
                   buttonVariants({ variant: link.variant as "default" | "ghost" | "link" | "outline" | "secondary", size: "icon" }),
-                  link.title === 'ProductHunt' ? "h-11 w-11" : "h-9 w-9",
+                  link.title === 'ProductHunt' ? "h-9 w-9" : "h-9 w-9",
                   "rounded-full transition-colors hover:bg-gray-200 dark:hover:bg-gray-800",
                   link.variant === "default" &&
                     "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white"
