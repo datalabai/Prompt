@@ -18,7 +18,7 @@ import { Crown } from 'lucide-react';
 import styled from 'styled-components';
 import ReplyList from "./prompt-reply-list";
 import { Button } from "@/components/ui/button";
-import { Send, Sparkles } from "lucide-react"; // Import Sparkles icon
+import { Send, Sparkles } from "lucide-react"; 
 
 const IconWrapper = styled.div`
   color: ""; /* Default color */
@@ -56,7 +56,6 @@ export function MailList({ items, category }: MailListProps) {
   const toggleInput = (itemId: string) => {
     setShowInputItemId(showInputItemId === itemId ? null : itemId);
     //setReplyVisible(!replyVisible);
-
   };
 
   const handleMagicPrompt = async (message: string, itemId: any) => {
@@ -111,30 +110,31 @@ export function MailList({ items, category }: MailListProps) {
     }
   };
 
-  const handlePostSubmit = async (itemId: any) => {
-    setPostText("");
+  const handlePostSubmit = async (itemId: string, parentReplyId: string | null | undefined, replyText: string) => {
     if (!user) {
       toast.error('Please Login to continue');
       return;
     }
-    if (postText.trim() !== "") {
-      const reply = {
-        name: auth.currentUser?.displayName,
-        email: auth.currentUser?.email,
-        text: postText,
+    if (replyText.trim() !== "") {
+      const newReply = {
+        id: Date.now().toString(),
+        name: auth.currentUser?.displayName || '',
+        email: auth.currentUser?.email || '',
+        text: replyText,
         date: new Date().getTime(),
-        option: isSparklesEnabled  ? 'prompt' : 'chat',
-        photo: auth.currentUser?.photoURL
+        option: isSparklesEnabled ? 'prompt' : 'chat',
+        photo: auth.currentUser?.photoURL || '',
       };
-      setPostText("");
-      setReplies((prevReplies) => ({
-        ...prevReplies,
-        [itemId]: [...(prevReplies[itemId] || []), reply],
-      }));
-      if(reply.option === 'prompt') {
-        toast.info("🎉 Congratulations! You've earned 2 point for your post.");
+      try {
+        await addReply(itemId, category, newReply, newReply.option,parentReplyId);
+        setPostText("");
+        if (newReply.option === 'prompt') {
+          toast.info("🎉 Congratulations! You've earned 2 points for your post.");
+        }
+      } catch (error) {
+        console.error("Error adding reply:", error);
+        toast.error("Failed to add reply. Please try again.");
       }
-      await addReply(itemId, category, reply, 'chat');
     }
   };
 
@@ -165,7 +165,7 @@ export function MailList({ items, category }: MailListProps) {
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, itemId: string) => {
     if (e.key === "Enter" && postText.trim() !== "") {
-      handlePostSubmit(itemId);
+      handlePostSubmit(itemId, null, postText);
     }
   };
 
@@ -215,6 +215,10 @@ export function MailList({ items, category }: MailListProps) {
     return str.replace(/\b\w/g, (char) => char.toUpperCase());
   };
 
+
+  function handleReplyTo(replyId: string): void {
+    throw new Error("Function not implemented.");
+  }
 
   return (
     <div className="h-full overflow-y-auto">
@@ -299,13 +303,15 @@ export function MailList({ items, category }: MailListProps) {
                           )}
 
                           <ReplyList
-                              replies={replies}
-                              item={item}
-                              replyVisible={replyVisible}
+                              currentUserId={auth.currentUser?.uid || ''}
+                              postAuthorId={item.name}  
+                              replies={replies[item.id] || []}
+                              itemId={item.id}
                               handleMagicPrompt={handleMagicPrompt}
                               handleLike={handleLike}
                               handleDislike={handleDislike}
                               Download={Download}
+                              handleReplySubmit={handlePostSubmit}
                             />
                         </div>
                       </div>

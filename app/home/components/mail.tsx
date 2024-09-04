@@ -251,7 +251,7 @@ export function Mail({
                       {/* <PromptModeToggle onIconSelect={handleIconSelect} category={category} /> */}
                       <div className="absolute top-2 my-1 bg-gray" onClick={() => setIsLightbulb(!isLightbulb)}>
                         {isLightbulb ? (
-                          <FaLightbulb color="#2463eb" size={32} className="ml-2" />
+                          <FaLightbulb color="#2463eb" size={24} className="ml-2 mt-1" />
                         ) : (
                           <img src="/logo.png" alt="Logo" className="ml-2" width={32} height={32} />
                         )}
