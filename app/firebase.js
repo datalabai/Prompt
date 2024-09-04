@@ -666,35 +666,97 @@ export const addPost = async (post, category, option) => {
   
 
 
-  export const addReply = async (postId, category, reply, option, parentReplyId) => {
-    const postRef = doc(db, category, postId);
-    const repliesRef = collection(postRef, "replies");
-
+  export const addReply = async (postId,category,reply,option) => {
+    // console.log("Adding reply:", reply);
     try {
-      const newReply = {
+      if(option === "prompt" && category !=="Text"){
+        console.log(reply);
+        const data= await fetchImageForMessage(reply.text); 
+      if(data.trials<=0){
+        if(data.credits)
+          {
+            if(data.credits<10)
+            {
+              return "You have no freeTrails or Credits left ! Please buy credits";
+            }
+            const postRef = doc(db, category, postId);
+        await addDoc(collection(postRef, "replies"), {
+          name:reply.name,
+          text:reply.text,
+          email:reply.email,
+          date:reply.date,
+          createdAt: serverTimestamp(),
+          image:data.image,
+          photo:reply.photo
+        });
+            console.log("Document written with ID: ", docRef.id);
+            return `You have ${data.credits} credits left`;
+          }
+      }
+          if (data.image === 'Failed to generate image. Please try again later.') {
+            return "Fail to generate image. Please try again later.";
+          }
+          try{
+            const postRef = doc(db, category, postId);
+            await addDoc(collection(postRef, "replies"), {
+              name:reply.name,
+              text:reply.text,
+              email:reply.email,
+              date:reply.date,
+              createdAt: serverTimestamp(),
+              image:data.image,
+              photo:reply.photo,
+              likes:[],
+              dislikes:[],
+            });
+            return `You have ${data.trials} free trails left`;
+          } catch (e) {
+            console.error("Error adding reply: ", e);
+            return "Error adding reply";
+          }
+      }
+      if(option === "prompt" && category ==="Text"){
+        const data= await FetchText(reply.text); 
+        if(data.trails<=0)
+          {
+            return "You have no freeTrails left";
+          }
+        const postRef = doc(db, category, postId);
+        await addDoc(collection(postRef, "replies"), {
+          name:reply.name,
+          text:reply.text,
+          email:reply.email,
+          date:reply.date,
+          createdAt: serverTimestamp(),
+          image:data.text,
+          photo:reply.photo,
+          likes:[],
+          dislikes:[],
+        });
+       return `you have ${data.trails} freeTrails left`;
+      }
+      if(option === "chat")
+      {
+        if(reply.option === "prompt")
+          {
+            await addRewards(reply.text,2);
+          }
+      const postRef = doc(db, category, postId);
+      await addDoc(collection(postRef, "replies"), {
         ...reply,
         createdAt: serverTimestamp(),
-        option: option,
-        likes: [],
-        dislikes: [],
-        parentReplyId: parentReplyId || '' // Convert null to empty string
-      };
-
-      const docRef = await addDoc(repliesRef, newReply);
-      console.log("Reply added with ID: ", docRef.id);
-
-      // If it's a nested reply, update the parent reply
-      if (parentReplyId) {
-        const parentReplyRef = doc(repliesRef, parentReplyId);
-        await updateDoc(parentReplyRef, {
-          replies: arrayUnion(docRef.id)
-        });
-      }
-
-      return docRef.id;
+      });
+      return;
+    }
+    const postRef = doc(db, category, postId);
+      await addDoc(collection(postRef, "replies"), {
+        ...reply,
+        createdAt: serverTimestamp(),
+      });
+      // console.log("Reply added to post ID: ", postId);
+      return;
     } catch (e) {
       console.error("Error adding reply: ", e);
-      throw e;
     }
   };
 
@@ -822,32 +884,18 @@ export const listenForReplies = (postId, category, callback) => {
   const repliesQuery = query(collection(postRef, "replies"), orderBy("createdAt", "asc"));
 
   return onSnapshot(repliesQuery, async (snapshot) => {
-    const repliesMap = new Map();
+    const replies = [];
     for (const doc of snapshot.docs) {
       const data = doc.data();
       if (data) {
         const userRole = await checkUserRole(data.email);
-        repliesMap.set(doc.id, { id: doc.id, ...data, role: userRole, replies: [] });
+        replies.push({ id: doc.id, ...data, role: userRole });
       } else {
         console.warn("Document with no data found:", doc.id);
       }
     }
-
-    // Build the nested structure
-    const topLevelReplies = [];
-    repliesMap.forEach((reply) => {
-      if (reply.parentReplyId) {
-        const parentReply = repliesMap.get(reply.parentReplyId);
-        if (parentReply) {
-          parentReply.replies.push(reply);
-        }
-      } else {
-        topLevelReplies.push(reply);
-      }
-    });
-
-    console.log("Replies:", topLevelReplies);
-    callback(topLevelReplies);
+    console.log("Replies:", replies);
+    callback(replies);
   }, (error) => {
     console.error("Error listening for replies:", error);
   });

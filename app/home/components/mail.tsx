@@ -142,10 +142,10 @@ export function Mail({
       date: new Date().getTime(),
       read: true,
       photo: auth.currentUser?.photoURL || "",
-      image: selectedIconName === "chat" || selectedIconName === "" ? "" : "./loading.gif",
+      image: isLightbulb ? "" : "./loading.gif",
       likes: [],
       dislikes: [],
-      option: selectedIconName,
+      option: isLightbulb ? "chat" : "prompt"
     };
     
     setInputValue("");
@@ -160,7 +160,7 @@ export function Mail({
         await addMessageToPrivateChannel(newPost, selectedIconName);
       } else {
         toast.info("🎉 Congratulations! You've earned 1 point for your post.");
-        const trailsCount = await addPost(newPost, category, selectedIconName);
+        const trailsCount = await addPost(newPost, category, newPost.option);
         if (trailsCount !== undefined) {
           toast.info(trailsCount);
         }
@@ -249,11 +249,11 @@ export function Mail({
                         <TypingAnimation speed={50} loop={true} isPaused={isTyping} />
                         )}
                       {/* <PromptModeToggle onIconSelect={handleIconSelect} category={category} /> */}
-                      <div className="absolute top-2 my-1 bg-gray" onClick={() => setIsLightbulb(!isLightbulb)}>
+                      <div className="absolute left-2 top-1/2 transform -translate-y-1/2 mt-1 ml-1" onClick={() => setIsLightbulb(!isLightbulb)}>
                         {isLightbulb ? (
-                          <FaLightbulb color="#2463eb" size={30} className="ml-2 " />
+                          <FaLightbulb className="w-6 h-6 text-blue-600" />
                         ) : (
-                          <img src="/logo.png" alt="Logo" className="ml-2" width={32} height={32} />
+                          <img src="/logo.png" alt="Logo" className="w-6 h-6" />
                         )}
                       </div>
                     </div>
