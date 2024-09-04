@@ -48,23 +48,28 @@ export function Nav({ links: initialLinks, isCollapsed, onLinkClick }: NavProps)
   const additionalLinks = [
     {
       title: 'Linktree',
-      icon: () => <svg xmlns="http://www.w3.org/2000/svg" width="1.1em" height="1.1em" viewBox="0 0 24 24">
+      icon: () => <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24">
       <path fill="currentColor" d="m13.736 5.853l4.005-4.117l2.325 2.38l-4.2 4.005h5.908v3.305h-5.937l4.229 4.108l-2.325 2.334l-5.74-5.769l-5.741 5.769l-2.325-2.325l4.229-4.108H2.226V8.121h5.909l-4.2-4.004l2.324-2.381l4.005 4.117V0h3.472zm-3.472 10.306h3.472V24h-3.472z"></path>
     </svg>,
       variant: 'ghost',
       href: 'https://links.prompt.fun/',
-      iconSize: 'h-4 w-4'
-    },
-    {
-      title: 'Twitter',
-      icon: () => <FontAwesomeIcon icon={faXTwitter} />,
-      variant: 'ghost',
-      href: 'https://x.com/promptdotfun',
       iconSize: 'h-5 w-5'
     },
     {
+      title: 'Twitter',
+      icon: () => <FontAwesomeIcon icon={faXTwitter} size="xl"/>,
+      variant: 'ghost',
+      href: 'https://x.com/promptdotfun',
+      iconSize: 'h-7 w-7'
+    },
+    {
       title: 'ProductHunt',
-      icon: FaProductHunt,
+      icon: () => <svg xmlns="http://www.w3.org/2000/svg" width="2.2em" height="2.2em" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}>
+        <path d="M10 16V8h2.5a2.5 2.5 0 1 1 0 5H10"></path>
+        <path d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0"></path>
+      </g>
+    </svg>,
       variant: 'ghost',
       href: 'https://www.producthunt.com/posts/prompt-fun?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-prompt&#0045;fun',
       iconSize: 'h-5 w-5'
@@ -148,7 +153,7 @@ export function Nav({ links: initialLinks, isCollapsed, onLinkClick }: NavProps)
                     "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white"
                 )}
               >
-                <link.icon className={link.iconSize} />
+                <link.icon />
                 <span className="sr-only">{link.title}</span>
               </a>
             </TooltipTrigger>
