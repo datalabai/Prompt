@@ -235,7 +235,7 @@ export function Mail({
                     <div className="relative w-full">
                       <input
                         type="text"
-                        className="w-full border rounded-lg pl-12 p-2 mt-2"
+                        className="w-full border rounded-lg pl-12 p-2 mt-2 pb-1"
                         
                         value={inputValue}
                         onChange={(e) => setInputValue(e.target.value)}
@@ -251,7 +251,7 @@ export function Mail({
                       {/* <PromptModeToggle onIconSelect={handleIconSelect} category={category} /> */}
                       <div className="absolute top-2 my-1 bg-gray" onClick={() => setIsLightbulb(!isLightbulb)}>
                         {isLightbulb ? (
-                          <FaLightbulb color="#2463eb" size={24} className="ml-2 mt-1" />
+                          <FaLightbulb color="#2463eb" size={30} className="ml-2 " />
                         ) : (
                           <img src="/logo.png" alt="Logo" className="ml-2" width={32} height={32} />
                         )}
