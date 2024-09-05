@@ -230,7 +230,7 @@ export function Mail({
         <ResizableHandle  />
         <ResizablePanel defaultSize={defaultLayout[1600]} minSize={30}>
               <Tabs defaultValue="all" className="border-r-2">
-                <div className="bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+                <div className="bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60 pt-0">
                   <form>
                     <div className="relative w-full">
                       <input
