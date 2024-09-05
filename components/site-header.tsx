@@ -94,7 +94,7 @@ export const SiteHeader = () => {
             <SheetContent className="w-[250px] sm:w-[300px] mx-auto justify-center" side={'left'}>
               <Link href="/home" className="flex items-start space-x-2 -ml-3 mt-4">
                 {/* <RiSparkling2Line className="h-8 w-8 ml-6 text-blue-500"/> */}
-                  <img src="./logo.png " className="h-9 w-9 ml-6"/>
+                  <img src="./PromptCircle.png " className="h-9 w-9 ml-6"/>
                   <span className="font-bold ml-0 mt-1 pl-0">
                   {siteConfig.name}
                 </span>
