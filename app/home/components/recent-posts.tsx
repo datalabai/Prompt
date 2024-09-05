@@ -71,7 +71,7 @@ export function RecentPosts() {
   return (
     <div className="flex flex-col h-full">
       <Card className="border-none shadow-none">
-        <CardHeader className="pb-3">
+        <CardHeader className="pb-3 pt-1">
           <CardTitle className="text-lg font-large">What&rsquo;s happening</CardTitle>
         </CardHeader>
         <CardContent className="overflow-y-auto max-h-[calc(100vh-150px)]">
@@ -89,17 +89,10 @@ export function RecentPosts() {
                     <img 
                       src={post.image} 
                       alt="Image" 
-                      className={`mt-4 mb-2 rounded-lg ${showFullImage[post.id] ? 'h-auto' : 'h-[30%]'} transition-all`} 
+                      className={`mt-4 mb-2 rounded-lg h-auto transition-all`} 
                       style={{ objectFit: 'cover' }}
                     />
-                    {!showFullImage[post.id] && (
-                      <button 
-                        onClick={() => handleShowMore(post.id)} 
-                        className="absolute bottom-0 left-0 right-0 p-24 bg-black text-white text-center"
-                      >
-                        Show More
-                      </button>
-                    )}
+                    
                   </div>
                 )}
               </div>
