@@ -126,7 +126,8 @@ const ReplyList: React.FC<ReplyListProps> = ({
                     src="/logo.png" 
                     alt="Logo"
                     onClick={() => handleMagicPrompt(reply.text, item.id)} 
-                    className="w-10 h-10 cursor-pointer" 
+                    className="w-10 h-10 cursor-pointer prompt-execute" 
+                    data-tour="prompt-execute"
                   />
                
             )}

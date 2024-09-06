@@ -220,7 +220,7 @@ export function MailList({ items, category }: MailListProps) {
     <div className="h-full overflow-y-auto">
       <div className="flex flex-col gap-2 p-4 pt-0 lg:w-full">
         {items.map((item) => (
-          <button
+          <div
             key={item.id}
             className={cn(
               "flex items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent",
@@ -314,7 +314,7 @@ export function MailList({ items, category }: MailListProps) {
                     
                   </div>
                 </div>
-                <IconWrapper><MessageSquare className="" strokeWidth="1.5" size="32" onClick={() => toggleInput(item.id)} /></IconWrapper>
+                <IconWrapper><MessageSquare className="toggle-reply-input" data-tour="toggle-reply-input" strokeWidth="1.5" size="32" onClick={() => toggleInput(item.id)} /></IconWrapper>
               </div>
 
 
@@ -347,7 +347,7 @@ export function MailList({ items, category }: MailListProps) {
               </div>              
               )}
             </div>
-          </button>
+          </div>
         ))}
         <div className="w-[200px] h-[200px]"></div>
 

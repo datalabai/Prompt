@@ -18,6 +18,9 @@ import { usePathname } from 'next/navigation';
 import { CategoryProvider } from './context/CategoryContext';
 import { NotificationProvider } from './context/NotificationContext';
 import Script from 'next/script';
+import dynamic from 'next/dynamic';
+
+const PromptTour = dynamic(() => import('@/components/promptTour'), { ssr: false });
 
 export const viewport: Viewport = {
   themeColor: [
@@ -66,7 +69,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         </head>
         <body
           className={cn(
-            "bg-background font-sans antialiased overflow-hidden",
+            "bg-background font-sans antialiased",
             fontSans.variable
           )}
         >
@@ -90,7 +93,8 @@ export default function RootLayout({ children }: RootLayoutProps) {
                 defaultTheme="system"
                 enableSystem
                 disableTransitionOnChange
-              >
+              > 
+                <PromptTour />
                 <SiteHeader/>
                 <div vaul-drawer-wrapper="" className="flex justify-between mt-2 h-dvh max-w-screen">
                   <div className="relative flex min-h-screen flex-col bg-background mt-2 w-full">
