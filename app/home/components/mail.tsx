@@ -194,94 +194,96 @@ export function Mail({
         }}
         className="min-h-screen container relative pr-0"
       >
-      {!isMobile &&
-        <ResizablePanel
-          defaultSize={defaultLayout[200]}
-          collapsedSize={navCollapsedSize}
-          collapsible={true}
-          minSize={18}
-          maxSize={20}
-          onCollapse={() => {
-            setIsCollapsed(true);
-            document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(true)}`;
-          }}
-          onExpand={() => {
-            setIsCollapsed(false);
-            document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(false)}`;
-          }}
-          className={cn(isCollapsed && "min-w-[50px] md:min-w-[70px] transition-all duration-300 ease-in-out ¯")}
-        >
-         
-          <Nav
-            isCollapsed={isCollapsed}
-            links={[
-              { title: "General", label: "", icon: House, variant: "default" },
-              // { title: "Private", label: "", icon: GlobeLock, variant: "ghost" },
-              { title: "Text", label: "", icon: List, variant: "ghost" },
-              { title: "Images", label: "", icon: Images, variant: "ghost" },
-              // { title: "Logos", label: "", icon: Biohazard, variant: "ghost" },
-              { title: "Memes", label: "", icon: Palette, variant: "ghost" },
-              // { title: "Resumes", label: "", icon: ClipboardList, variant: "ghost" },
-            ]}
-            onLinkClick={handleCategoryChange}
-          />
-        </ResizablePanel>
-        }
-        <ResizableHandle  />
-        <ResizablePanel defaultSize={defaultLayout[1600]} minSize={30}>
-              <Tabs defaultValue="all" className="border-r-2">
-                <div className="bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60 pt-0">
-                  <form>
-                    <div className="relative w-full">
-                      <input
-                        type="text"
-                        className="w-full border rounded-lg pl-12 p-2 mt-2 pb-1"
-                        
-                        value={inputValue}
-                        onChange={(e) => setInputValue(e.target.value)}
-                        onKeyDown={handleKeyDown} 
-                        onFocus={() => setIsTyping(true)} // Set typing to true when input is focused
-                        onBlur={() => setIsTyping(false)}  // Set typing to false when input is blurred
-    
-                        />
-                        {/* <AnimatedPlaceholder /> */}
-                        {!isTyping && inputValue.length === 0 && (
-                        <TypingAnimation speed={50} loop={true} isPaused={isTyping} />
-                        )}
-                      {/* <PromptModeToggle onIconSelect={handleIconSelect} category={category} /> */}
-                      <div className="absolute left-2 top-1/2 transform -translate-y-1/2 mt-1 ml-1" onClick={() => setIsLightbulb(!isLightbulb)}>
-                        {isLightbulb ? (
-                          <FaLightbulb className="w-6 h-6 text-blue-600" />
-                        ) : (
-                          <img src="/logo.png" alt="Logo" className="w-6 h-6" />
-                        )}
-                      </div>
-                    </div>
-                  </form>
-                </div>
-                <TabsContent value="all" className="m-0 h-screen ">
-                  {isLoading ? (
-                    <div className="flex items-center justify-center mt-72 gap-12">
-                      <Spinner size="medium">Loading...</Spinner>
-                    </div>
-                  ) : (
-                    <MailList items={mails} category={category} />
+        {!isMobile && (
+          <ResizablePanel
+            defaultSize={defaultLayout[200]}
+            collapsedSize={navCollapsedSize}
+            collapsible={true}
+            minSize={18}
+            maxSize={20}
+            onCollapse={() => {
+              setIsCollapsed(true);
+              document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(true)}`;
+            }}
+            onExpand={() => {
+              setIsCollapsed(false);
+              document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(false)}`;
+            }}
+            className={cn(isCollapsed && "min-w-[50px] md:min-w-[70px] transition-all duration-300 ease-in-out", "overflow-y-auto")}
+          >
+            <Nav
+              isCollapsed={isCollapsed}
+              links={[
+                { title: "General", label: "", icon: House, variant: "default" },
+                // { title: "Private", label: "", icon: GlobeLock, variant: "ghost" },
+                { title: "Text", label: "", icon: List, variant: "ghost" },
+                { title: "Images", label: "", icon: Images, variant: "ghost" },
+                // { title: "Logos", label: "", icon: Biohazard, variant: "ghost" },
+                { title: "Memes", label: "", icon: Palette, variant: "ghost" },
+                // { title: "Resumes", label: "", icon: ClipboardList, variant: "ghost" },
+              ]}
+              onLinkClick={handleCategoryChange}
+            />
+          </ResizablePanel>
+        )}
+        <ResizableHandle />
+        <ResizablePanel defaultSize={defaultLayout[1600]} minSize={30} className="overflow-hidden">
+          <Tabs defaultValue="all" className="h-full flex flex-col">
+            <div className="bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60 pt-0 pb-0">
+              <form>
+                <div className="relative w-full">
+                  <input
+                    type="text"
+                    className="w-full border rounded-lg pl-12 p-2 mt-2 pb-1"
+                    
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    onKeyDown={handleKeyDown} 
+                    onFocus={() => setIsTyping(true)} // Set typing to true when input is focused
+                    onBlur={() => setIsTyping(false)}  // Set typing to false when input is blurred
+                    data-tour="mail-input"
+                  />
+                  {/* <AnimatedPlaceholder /> */}
+                  {!isTyping && inputValue.length === 0 && (
+                    <TypingAnimation speed={50} loop={true} isPaused={isTyping} />
                   )}
-                </TabsContent>
-                <TabsContent value="unread" className="m-0">
-                  <MailList items={mails.filter((item) => !item.read)} category={category} />
-                </TabsContent>
-              </Tabs>
-            </ResizablePanel>
-            {!isMobile &&
-            <ResizablePanel defaultSize={defaultLayout[1]} minSize={25} maxSize={30}>
-            <Tabs defaultValue="all" className="">
-              <TabsContent value="all" className="m-0 h-screen">
+                  {/* <PromptModeToggle onIconSelect={handleIconSelect} category={category} /> */}
+                  <div id="lightbulb-toggle" className="absolute left-2 top-1/2 transform -translate-y-1/2 mt-1 ml-1 " 
+                    onClick={() => setIsLightbulb(!isLightbulb)}
+                    data-tour="lightbulb-toggle"
+                  >
+                    {isLightbulb ? (
+                      <FaLightbulb className="w-6 h-6 text-blue-600" />
+                    ) : (
+                      <img src="/logo.png" alt="Logo" className="w-6 h-6" />
+                    )}
+                  </div>
+                </div>
+              </form>
+            </div>
+            <TabsContent value="all" className="flex-grow overflow-y-auto">
+              {isLoading ? (
+                <div className="flex items-center justify-center h-full">
+                  <Spinner size="medium">Loading...</Spinner>
+                </div>
+              ) : (
+                <MailList items={mails} category={category} />
+              )}
+            </TabsContent>
+            <TabsContent value="unread" className="flex-grow overflow-y-auto">
+              <MailList items={mails.filter((item) => !item.read)} category={category} />
+            </TabsContent>
+          </Tabs>
+        </ResizablePanel>
+        {!isMobile && (
+          <ResizablePanel defaultSize={defaultLayout[1]} minSize={25} maxSize={30} className="overflow-y-auto">
+            <Tabs defaultValue="all" className="h-full">
+              <TabsContent value="all" className="h-full">
                 <RecentPosts />
               </TabsContent>
             </Tabs>
           </ResizablePanel>
-            }
+        )}
       </ResizablePanelGroup>
     </TooltipProvider>
   );

@@ -12,27 +12,31 @@ export const useNotification = () => useContext(NotificationContext);
 
 export const NotificationProvider = ({ children }) => {
   const audioRef = useRef(null);
-  const user = UserAuth();
+  const { user } = UserAuth(); // Use the user from UserAuth context
   const [isExpert, setIsExpert] = useState(false);
 
   useEffect(() => {
     const checkUserRole = async () => {
-      try {
-        const userDoc = doc(db, "users", auth.currentUser.uid);
-        const docSnap = await getDoc(userDoc);
-        if (docSnap.exists()) {
-          const userData = docSnap.data();
-          setIsExpert(userData.role === 'expert'); // Adjust field name if necessary
-        } else {
-          console.log("No such document!");
+      if (user && user.uid) { // Check if user exists and has a uid
+        try {
+          const userDoc = doc(db, "users", user.uid);
+          const docSnap = await getDoc(userDoc);
+          if (docSnap.exists()) {
+            const userData = docSnap.data();
+            setIsExpert(userData.role === 'expert'); // Adjust field name if necessary
+          } else {
+            console.log("No such document!");
+          }
+        } catch (error) {
+          console.error("Error getting document:", error);
         }
-      } catch (error) {
-        console.error("Error getting document:", error);
+      } else {
+        setIsExpert(false); // Reset isExpert if user is not authenticated
       }
     };
 
     checkUserRole();
-  }, [user]);
+  }, [user]); // Depend on user from UserAuth context
 
   useEffect(() => {
     if (!user || !isExpert) return;
