@@ -246,26 +246,19 @@ export function MailList({ items, category }: MailListProps) {
                         </AvatarFallback>
                       </Avatar>
                       <div className="grid">
-                        <div className="font-semibold ">{capitalizeWords(item.name)} <span className="text-xs text-muted-foreground">{formatDistanceToNow(new Date(item.date), { addSuffix: false })}</span>
-                          {/* <Dot />
-                          {item.date && (
-                            <div className="text-xs text-muted-foreground">
-                              {formatDistanceToNow(new Date(item.date), { addSuffix: false })}
-                            </div>
-                          )} */}
+                        <div className="font-semibold ">{capitalizeWords(item.name)} <span className="text-xs text-muted-foreground">{formatDistanceToNow(new Date(item.date), { addSuffix: false })}</span></div>
+                        <div className="flex items-start">
+                          <div className="flex-grow line-clamp-2 text-sm mb-2">{item.text}</div>
+                          {item.option !== 'chat' && (
+                            <img
+                              src="/logo.png"
+                              alt="Logo"
+                              onClick={() => handleMagicPrompt(item.text, item.id)}
+                              className="w-8 h-8 cursor-pointer prompt-execute ml-2 flex-shrink-0"
+                              data-tour="prompt-execute"
+                            />
+                          )}
                         </div>
-                        <div className="line-clamp-1 text-xs">{item.text.substring(0, 300)}</div>
-                        {item.option !== 'chat' && (
-
-                          <img
-                            src="/logo.png"
-                            alt="Logo"
-                            onClick={() => handleMagicPrompt(item.text, item.id)}
-                            className="w-10 h-10 cursor-pointer prompt-execute"
-                            data-tour="prompt-execute"
-                          />
-
-                        )}
                         <div className="line-clamp-1 text-xs">
                           {item.image && category !== 'Text' && item.option !== 'text' && category !== 'Resumes' && item.option !== 'resumes' && (
                             <>
