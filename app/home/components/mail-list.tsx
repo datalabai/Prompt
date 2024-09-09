@@ -123,7 +123,7 @@ export function MailList({ items, category }: MailListProps) {
         email: auth.currentUser?.email,
         text: postText,
         date: new Date().getTime(),
-        option: isSparklesEnabled  ? 'prompt' : 'chat',
+        option: isSparklesEnabled ? 'prompt' : 'chat',
         photo: auth.currentUser?.photoURL
       };
       setPostText("");
@@ -131,7 +131,7 @@ export function MailList({ items, category }: MailListProps) {
         ...prevReplies,
         [itemId]: [...(prevReplies[itemId] || []), reply],
       }));
-      if(reply.option === 'prompt') {
+      if (reply.option === 'prompt') {
         toast.info("🎉 Congratulations! You've earned 2 point for your post.");
       }
       await addReply(itemId, category, reply, 'chat');
@@ -230,9 +230,9 @@ export function MailList({ items, category }: MailListProps) {
           >
 
             <div className="flex flex-col w-full gap-1">
-            
+
               <div className="flex justify-between">
-             
+
                 <div className="flex items-center w-full">
                   <div className="flex items-start p-2 pl-0 py-0">
                     <div className="flex items-start gap-3 text-sm">
@@ -246,7 +246,7 @@ export function MailList({ items, category }: MailListProps) {
                         </AvatarFallback>
                       </Avatar>
                       <div className="grid">
-                        <div className="font-semibold ">{capitalizeWords(item.name)} <span className="text-xs text-muted-foreground">{formatDistanceToNow(new Date(item.date), { addSuffix: false })}</span> 
+                        <div className="font-semibold ">{capitalizeWords(item.name)} <span className="text-xs text-muted-foreground">{formatDistanceToNow(new Date(item.date), { addSuffix: false })}</span>
                           {/* <Dot />
                           {item.date && (
                             <div className="text-xs text-muted-foreground">
@@ -255,6 +255,17 @@ export function MailList({ items, category }: MailListProps) {
                           )} */}
                         </div>
                         <div className="line-clamp-1 text-xs">{item.text.substring(0, 300)}</div>
+                        {item.option !== 'chat' && (
+
+                          <img
+                            src="/logo.png"
+                            alt="Logo"
+                            onClick={() => handleMagicPrompt(item.text, item.id)}
+                            className="w-10 h-10 cursor-pointer prompt-execute"
+                            data-tour="prompt-execute"
+                          />
+
+                        )}
                         <div className="line-clamp-1 text-xs">
                           {item.image && category !== 'Text' && item.option !== 'text' && category !== 'Resumes' && item.option !== 'resumes' && (
                             <>
@@ -299,19 +310,19 @@ export function MailList({ items, category }: MailListProps) {
                           )}
 
                           <ReplyList
-                              replies={replies}
-                              item={item}
-                              replyVisible={replyVisible}
-                              handleMagicPrompt={handleMagicPrompt}
-                              handleLike={handleLike}
-                              handleDislike={handleDislike}
-                              Download={Download}
-                            />
+                            replies={replies}
+                            item={item}
+                            replyVisible={replyVisible}
+                            handleMagicPrompt={handleMagicPrompt}
+                            handleLike={handleLike}
+                            handleDislike={handleDislike}
+                            Download={Download}
+                          />
                         </div>
                       </div>
                     </div>
 
-                    
+
                   </div>
                 </div>
                 <IconWrapper><MessageSquare className="toggle-reply-input" data-tour="toggle-reply-input" strokeWidth="1.5" size="32" onClick={() => toggleInput(item.id)} /></IconWrapper>
@@ -320,31 +331,31 @@ export function MailList({ items, category }: MailListProps) {
 
               {showInputItemId === item.id && (
                 <div className="relative w-full flex items-center mt-2">
-                <div className="relative w-full">
-                <img
-                    src="/logo.png" // Path to the image in the public folder
-                    alt="Logo"
-                    onClick={() => setIsSparklesEnabled((prevState) => !prevState)} // Toggle button state on click
-                    className="absolute left-2 top-1/2 transform -translate-y-1/2 p-1 rounded-full w-10 h-10 flex items-center justify-center cursor-pointer" // Position image inside input
-                    style={{
-                      opacity: isSparklesEnabled ? 1 : 0.5,
-                    }}
-                  />
-                  <input
-                    type="text"
-                    className="w-full border rounded-lg pl-12 p-2 pr-10" // Adjust padding to make space for the image
-                    placeholder="Type your message here..."
-                    value={postText}
-                    onChange={(e) => setPostText(e.target.value)}
-                    onKeyDown={(e) => handleKeyDown(e, item.id)}
-                    ref={(el) => {
-                      if (el) {
-                        inputRefs.current[item.id] = el;
-                      }
-                    }}
-                  />
+                  <div className="relative w-full">
+                    <img
+                      src="/logo.png" // Path to the image in the public folder
+                      alt="Logo"
+                      onClick={() => setIsSparklesEnabled((prevState) => !prevState)} // Toggle button state on click
+                      className="absolute left-2 top-1/2 transform -translate-y-1/2 p-1 rounded-full w-10 h-10 flex items-center justify-center cursor-pointer" // Position image inside input
+                      style={{
+                        opacity: isSparklesEnabled ? 1 : 0.5,
+                      }}
+                    />
+                    <input
+                      type="text"
+                      className="w-full border rounded-lg pl-12 p-2 pr-10" // Adjust padding to make space for the image
+                      placeholder="Type your message here..."
+                      value={postText}
+                      onChange={(e) => setPostText(e.target.value)}
+                      onKeyDown={(e) => handleKeyDown(e, item.id)}
+                      ref={(el) => {
+                        if (el) {
+                          inputRefs.current[item.id] = el;
+                        }
+                      }}
+                    />
+                  </div>
                 </div>
-              </div>              
               )}
             </div>
           </div>
