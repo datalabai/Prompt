@@ -32,6 +32,17 @@ const nextConfig = {
 
     return config;
   },
+  headers: async () => [
+    {
+      source: '/firebase-messaging-sw.js',
+      headers: [
+        {
+          key: 'Service-Worker-Allowed',
+          value: '/',
+        },
+      ],
+    },
+  ],
 }
 
 module.exports = nextConfig;
