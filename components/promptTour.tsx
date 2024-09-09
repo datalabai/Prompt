@@ -31,24 +31,23 @@ const PromptTour: React.FC = () => {
   const [run, setRun] = useState(false);
 
   useEffect(() => {
-    console.log('PromptTour component mounted');
-    const timer = setTimeout(() => {
-      console.log('Setting run to true');
-      setRun(true);
-    }, 3000);
-    return () => clearTimeout(timer);
+    const hasSeenTour = localStorage.getItem('hasSeenTour');
+    if (!hasSeenTour) {
+      const timer = setTimeout(() => {
+        setRun(true);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
   }, []);
 
   const handleJoyrideCallback = (data: any) => {
-    const { action, index, status, type } = data;
-    console.log('Joyride callback:', data);
+    const { status, type } = data;
 
     if ([EVENTS.STEP_AFTER, EVENTS.TARGET_NOT_FOUND].includes(type)) {
-      // Update state to advance the tour
       setRun(true);
     } else if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
-      // Need to set our running state to false, so we can restart if we click start again.
       setRun(false);
+      localStorage.setItem('hasSeenTour', 'true');
     }
   };
 
