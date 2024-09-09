@@ -12,13 +12,14 @@ import { ThemeSwitcher } from "@/components/theme-switcher";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { AuthContextProvider } from "./context/AuthContext";
-import RightPanel from "@/components/rightPanel";
-import { useEffect } from "react";
-import { usePathname } from 'next/navigation';
 import { CategoryProvider } from './context/CategoryContext';
 import { NotificationProvider } from './context/NotificationContext';
 import Script from 'next/script';
 import dynamic from 'next/dynamic';
+import useFcmToken from "@/hooks/useFCMToken";
+import { useEffect } from "react";
+
+
 
 const PromptTour = dynamic(() => import('@/components/promptTour'), { ssr: false });
 
@@ -34,7 +35,24 @@ interface RootLayoutProps {
 }
 
 export default function RootLayout({ children }: RootLayoutProps) {
+  const { token, notificationPermissionStatus } = useFcmToken();
 
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/firebase-messaging-sw.js')
+        .then(registration => {
+          console.log('Service Worker registered successfully:', registration);
+          Notification.requestPermission().then(permission => {
+            if (permission === 'granted') {
+              console.log('Notification permission granted.');
+            } else {
+              console.log('Unable to get permission to notify.');
+            }
+          });
+        })
+        .catch(err => console.error('Service Worker registration failed:', err));
+    }
+  }, []);
   return (
     <>
       <html lang="en" suppressHydrationWarning>

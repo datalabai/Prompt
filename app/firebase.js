@@ -1,13 +1,13 @@
 import { Avatar } from "@radix-ui/react-avatar";
 import { add } from "date-fns";
-import { initializeApp } from "firebase/app";
+import { getApps, initializeApp } from 'firebase/app';
 import { getAuth } from "firebase/auth";
 import { query,where,getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc,setDoc,orderBy,onSnapshot, getCountFromServer,serverTimestamp,Firestore,arrayUnion, arrayRemove, limit, deleteDoc } from "firebase/firestore";
 import { get } from "http";
 import { format } from "date-fns";
 import dotenv from 'dotenv';
-import { act } from "react";
-import { getFunctions } from 'firebase/functions';
+import { getMessaging, getToken, isSupported } from "firebase/messaging";
+
 
 
 dotenv.config();
@@ -25,16 +25,33 @@ const firebaseConfig = {
 const walletApiUrl = process.env.NEXT_PUBLIC_WALLET_API_URL;
 const sandboxApiUrl = process.env.NEXT_PUBLIC_SANDBOX_API_URL;
 
+
 const app = initializeApp(firebaseConfig);
 
 const auth = getAuth(app);
 const db = getFirestore(app);
-const functions = getFunctions(app);
 
-// const analytics = getAnalytics(app); 
+const messaging = async () => {
+  const supported = await isSupported();
+  return supported ? getMessaging(app) : null;
+};
 
-// logEvent(analytics, 'notification Received');
-// Prefix with _ to indicate it's intentionally unused
+export const fetchToken = async () => {
+  try {
+    const fcmMessaging = await messaging();
+    if (fcmMessaging) {
+      const token = await getToken(fcmMessaging, {
+        vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
+      });
+      return token;
+    }
+    return null;
+  } catch (err) {
+    console.error("An error occurred while fetching the token:", err);
+    return null;
+  }
+};
+
 
 const MAX_FREE_TRIALS =10;
 
@@ -535,6 +552,7 @@ export const addPost = async (post, category, option) => {
 };
 
 
+
   
   
   export const getPosts = (category, callback) => {
@@ -953,4 +971,4 @@ export const listenForMessages = (chatId, callback) => {
 };
 
 
-export { auth, db, query,where, collection, addDoc, getDocs, getDoc, doc, updateDoc,setDoc,orderBy,onSnapshot, getCountFromServer,serverTimestamp,app};
+export { auth, db, query,where, collection, addDoc, getDocs, getDoc, doc, updateDoc,setDoc,orderBy,onSnapshot, getCountFromServer,serverTimestamp,app,messaging};
