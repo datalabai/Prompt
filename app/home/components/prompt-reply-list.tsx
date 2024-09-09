@@ -55,7 +55,7 @@ const ReplyList: React.FC<ReplyListProps> = ({
 
   return (
     <div className="gap-2 mb-2">
-      {replies[item.id] && replies[item.id].length > 0 && (
+      {replies[item.id] && replies[item.id].length > 0 ? (
         replies[item.id].map((reply, index) => (
           <div key={index} className="flex mt-2">
             <Avatar className="h-8 w-8">
@@ -133,6 +133,26 @@ const ReplyList: React.FC<ReplyListProps> = ({
             )}
           </div>
         ))
+      ) : (
+        <div className="flex mt-2 items-center justify-between">
+          <div className="flex items-center flex-1">
+            <Avatar className="h-8 w-8 flex-shrink-0">
+              <AvatarImage src="/PromptCircle.png" alt="Avatar" />
+              <AvatarFallback>AI</AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col ml-2 mr-4">
+              <div className="font-semibold flex items-center">AI Assistant</div>
+              <div className="text-xs">
+                Please wait for a couple of minutes while our expert crafts perfect prompt for you!
+              </div>
+            </div>
+          </div>
+          <img
+            src="/PromptCircle.png"
+            alt="Loading"
+            className="w-6 h-6 animate-spin flex-shrink-0"
+          />
+        </div>
       )}
     </div>
   );
