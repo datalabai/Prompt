@@ -42,7 +42,7 @@ const useFcmToken = () => {
     // Step 4: Prevent multiple fetches if already fetched or in progress.
     if (isLoading.current) return;
 
-    isLoading.current = true; // Mark loading as in progress.
+    isLoading.current = true; // Mark  as in progress.
     const token = await getNotificationPermissionAndToken(); // Fetch the token.
 
     // Step 5: Handle the case where permission is denied.
