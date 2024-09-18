@@ -960,6 +960,7 @@ export const sendMessage = async (receiverEmail, message) => {
     console.error("Error sending message: ", error);
   }
 };
+
 export const listenForMessages = (chatId, callback) => {
   const messagesQuery = query(collection(db, "chats", chatId, "messages"), orderBy("createdAt", "asc"));
   const unsubscribe = onSnapshot(messagesQuery, (querySnapshot) => {
@@ -970,5 +971,23 @@ export const listenForMessages = (chatId, callback) => {
   return unsubscribe;
 };
 
+export const deletePostAndReplies = async (postId, category) => {
+  try {
+    // Delete all replies associated with the post
+    const repliesRef = collection(db, category, postId, 'replies');
+    const repliesSnapshot = await getDocs(repliesRef);
+    const deletePromises = repliesSnapshot.docs.map(doc => deleteDoc(doc.ref));
+    await Promise.all(deletePromises);
 
-export { auth, db, query,where, collection, addDoc, getDocs, getDoc, doc, updateDoc,setDoc,orderBy,onSnapshot, getCountFromServer,serverTimestamp,app,messaging};
+    // Delete the post document
+    await deleteDoc(doc(db, category, postId));
+
+    console.log(`Post ${postId} and its replies have been deleted.`);
+    return true;
+  } catch (error) {
+    console.error("Error deleting post and replies: ", error);
+    return false;
+  }
+};
+
+export { auth, db, query,where, collection, addDoc, getDocs, getDoc, doc, updateDoc,setDoc,orderBy,onSnapshot, getCountFromServer,serverTimestamp,app,messaging };
