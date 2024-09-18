@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Mail } from "../data";
 import { useMail } from "../use-mail";
 import { MessageSquare } from "lucide-react";
-import { addReply, listenForReplies, auth, likeReply, dislikeReply, likePost, dislikePost, deletePostAndReplies } from "@/app/firebase";
+import { addReply, listenForReplies, auth, likeReply, dislikeReply, likePost, dislikePost, deletePostAndReplies, checkUserRole } from "@/app/firebase";
 import { ChatBubbleIcon, MagicWandIcon, PlusCircledIcon } from '@radix-ui/react-icons';
 import { ThumbsUp, ThumbsDown, ArrowDownToLine, Dot } from "lucide-react";
 import { UserAuth } from "@/app/context/AuthContext";
@@ -48,6 +48,7 @@ export function MailList({ items, category }: MailListProps) {
   const [replyVisible, setReplyVisible] = useState<boolean>(true);
   const inputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
   const [isSparklesEnabled, setIsSparklesEnabled] = useState(false); // State for Sparkles button
+  const [userRole, setUserRole] = useState<string>("user");
 
   const toggleTextArea = (itemId: string) => {
     setOpenTextAreaId(openTextAreaId === itemId ? null : itemId);
@@ -223,6 +224,15 @@ export function MailList({ items, category }: MailListProps) {
     return str.replace(/\b\w/g, (char) => char.toUpperCase());
   };
 
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      if (user && user.email) {
+        const role = await checkUserRole(user.email);
+        setUserRole(role);
+      }
+    };
+    fetchUserRole();
+  }, [user]);
 
   return (
     <div className="h-full overflow-y-auto">
@@ -325,7 +335,7 @@ export function MailList({ items, category }: MailListProps) {
 
                 </div>
                 <div className="flex items-center space-x-2">
-                  {item.email === auth.currentUser?.email && (
+                  {userRole === "expert" && (
                     <IconWrapper>
                       <Trash2
                         className="delete-post"
